@@ -4,55 +4,85 @@
   
     
     <entry>
-      <title></title>
-      <link href="/2023/02/03/index/"/>
-      <url>/2023/02/03/index/</url>
+      <title>Python 01 簡介</title>
+      <link href="/2023/02/06/Python/python_01/"/>
+      <url>/2023/02/06/Python/python_01/</url>
       
-        <content type="html"><![CDATA[<div class="gallery-group-main">   <figure class="gallery-group">  <img class="gallery-group-img no-lightbox" src='https://i.loli.net/2019/11/10/T7Mu8Aod3egmC4Q.png' alt="Group Image Gallery">  <figcaption>  <div class="gallery-group-name">�६</div>  <p>����६</p>  <a href='/Gallery/wallpaper'></a>  </figcaption>  </figure>     <figure class="gallery-group">  <img class="gallery-group-img no-lightbox" src='https://i.loli.net/2019/12/25/8t97aVlp4hgyBGu.jpg' alt="Group Image Gallery">  <figcaption>  <div class="gallery-group-name">����</div>  <p>���󺩫ª��Ϥ�</p>  <a href='/Gallery/marvel'></a>  </figcaption>  </figure>     <figure class="gallery-group">  <img class="gallery-group-img no-lightbox" src='https://i.loli.net/2019/12/25/hOqbQ3BIwa6KWpo.jpg' alt="Group Image Gallery">  <figcaption>  <div class="gallery-group-name">OH MY GIRL</div>  <p>About OH MY GIRL</p>  <a href='/Gallery/ohmygirl'></a>  </figcaption>  </figure>   </div>]]></content>
-      
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>Hello World</title>
-      <link href="/2023/02/03/hello-world/"/>
-      <url>/2023/02/03/hello-world/</url>
-      
-        <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
-      
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>Hello World</title>
-      <link href="/2020/02/14/first-post/"/>
-      <url>/2020/02/14/first-post/</url>
-      
-        <content type="html"><![CDATA[<h1 id="我的第一篇文章的標題"><a href="#我的第一篇文章的標題" class="headerlink" title="我的第一篇文章的標題"></a>我的第一篇文章的標題</h1><p>hihihi ~ 你好～ 😍 我是第一篇文章的內容～<br>在這裏可以用 <code>Markdown</code> 語法撰寫喔～</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Hello World!&#x27;</span>);</span><br></pre></td></tr></table></figure>]]></content>
+        <content type="html"><![CDATA[<h1 id="安装Python"><a href="#安装Python" class="headerlink" title="安装Python"></a>安装Python</h1><p>　　首先，先從<a href="https://www.python.org/downloads/">Python官網</a>下載Python並安裝(3.7各套件支援最完整，但於今年都就不再更新，建議使用3.8或3.9)，之後環境變數在PATH中會自動設定。</p><h1 id="安装開發工具-IDE"><a href="#安装開發工具-IDE" class="headerlink" title="安装開發工具(IDE)"></a>安装開發工具(IDE)</h1><p>　　接著再從<a href="https://code.visualstudio.com/download">Visual Stdio Code官網</a>下載IDE並安裝，然後就可以開啟使用了。</p><h1 id="介紹Hello-World"><a href="#介紹Hello-World" class="headerlink" title="介紹Hello World!"></a>介紹Hello World!</h1><p>　　不能免俗的要介紹一下Hello World！</p><h2 id="範例"><a href="#範例" class="headerlink" title="範例"></a>範例</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">  多行註解</span></span><br><span class="line"><span class="string">  測試第一個class</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">HelloWorld</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">main</span>(<span class="params">self</span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">        <span class="comment"># 顯示在Console的Hello World!</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Hello World!&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    hw = HelloWorld()</span><br><span class="line">    hw.main()</span><br></pre></td></tr></table></figure><h2 id="說明"><a href="#說明" class="headerlink" title="說明"></a>說明</h2><p>　　一般市面上的書籍或線上教學都不是從物件導向設計（請參考<strong>物件導向設計</strong>）開始說明，但為了要能無縫接軌，我還是以類別為範例開始說起。讓我們從頭開始一行一行的看下去吧！</p><blockquote><p><strong>物件導向設計（英語：Object-oriented programming，縮寫：OOP）</strong><br>　　真實世界的事物轉為各種物件，物件之間彼此能互相操作溝通。而產生物件的東西就是類別。類別就如同設計圖一樣，依照此設計圖就能產生一個個的物件。</p></blockquote><ul><li>Line 1-4：多行註解</li><li>Line 5：class就是類別，類別會產生一個個的物件，就如同設計圖一樣，依照此設計圖就能產生一個個的物件。HelloWorld就是此類別的名稱，其命名方式是「大駝峰」（類別的命名方式請參考<strong>駝峰式命名</strong>）。</li><li>Line 6：def定義一個函式(function)，main為此函式名稱。self代表此類別或物件。-&gt;None定義此函式的回傳值，在Python回傳值的定義可有可無，無強制規定需定義。</li><li>Line 7：單行註解</li><li>Line 8：print此方法會將字串列印在標準輸入輸出裝置(Console)。</li><li>Line 10：當直接執行這隻程式時，__name__這個變數中的名稱會是__main__，若是由其他不同檔案的程式來呼叫這隻程式的話，就不會繼續執行裡面的東西。</li><li>Line 11：用這個類別新增一個物件hw。</li><li>Line 12：用這個物件去執行main的函式。</li></ul><blockquote><p><strong>駝峰式命名（Camel case）</strong><br>　　* 就像駝峰會一高一低<br>　　* 單字之間不空格，而是直接連起來，但是連起來的第一個字要大寫<br>　　* 例如：有一個 handle add post 的 function，就會叫做 handleAddPost<br>駝峰又有分兩種：<br>　　1. 小駝峰（lower camel case）：開頭是小寫，就像上面的範例 handleAddPost<br>　　2. 大駝峰（upper camel case）：又被稱為 Pascal Case。開頭變成大寫，也就會變成 HandleAddPost</p></blockquote><h2 id="練習題"><a href="#練習題" class="headerlink" title="練習題"></a>練習題</h2><p>　　1. 試著說明何謂 類別(Class)<br>　　2. 試著說明何謂 if <strong>name</strong> &#x3D;&#x3D; “<strong>main</strong>“ 的用途<br>　　3. 試著建立一個類別為Homework，在Console中顯示您的個人資料，例：姓名、年齡、生日、喜好…等等。</p>]]></content>
       
       
       <categories>
           
-          <category> 1stCategory </category>
+          <category> Python </category>
           
-          <category> sub-category-of-1st </category>
-          
-          <category> 2ndCategory </category>
+          <category> 初學Python </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> tag1 </tag>
+            <tag> 程式設計 </tag>
             
-            <tag> tag2 </tag>
+            <tag> Python </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Python 02 變數及資料型態</title>
+      <link href="/2023/02/06/Python/python-02/"/>
+      <url>/2023/02/06/Python/python-02/</url>
+      
+        <content type="html"><![CDATA[<h1 id="變數"><a href="#變數" class="headerlink" title="變數"></a>變數</h1><p>　　<em><strong>變數&#x3D;變數值</strong></em><br>　　<font color=dodgerblue size=5>深藍色</font></p><div class="gallery-group-main">  <figure class="gallery-group">  <img class="gallery-group-img no-lightbox" src='https://i.loli.net/2019/11/10/T7Mu8Aod3egmC4Q.png' alt="Group Image Gallery">  <figcaption>  <div class="gallery-group-name">桌布</div>  <p>關於桌布</p>  <a href='/Gallery/wallpaper'></a>  </figcaption>  </figure>    <figure class="gallery-group">  <img class="gallery-group-img no-lightbox" src='https://i.loli.net/2019/12/25/8t97aVlp4hgyBGu.jpg' alt="Group Image Gallery">  <figcaption>  <div class="gallery-group-name">漫威</div>  <p>關於漫威的圖片</p>  <a href='/Gallery/marvel'></a>  </figcaption>  </figure>    <figure class="gallery-group">  <img class="gallery-group-img no-lightbox" src='https://i.loli.net/2019/12/25/hOqbQ3BIwa6KWpo.jpg' alt="Group Image Gallery">  <figcaption>  <div class="gallery-group-name">OH MY GIRL</div>  <p>About OH MY GIRL</p>  <a href='/Gallery/ohmygirl'></a>  </figcaption>  </figure>  </div>]]></content>
+      
+      
+      <categories>
+          
+          <category> Python </category>
+          
+          <category> 初學Python </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 程式設計 </tag>
+            
+            <tag> Python </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Java 01 簡介</title>
+      <link href="/2023/02/04/Java/java_01/"/>
+      <url>/2023/02/04/Java/java_01/</url>
+      
+        <content type="html"><![CDATA[<h1 id="安装Java-JDK"><a href="#安装Java-JDK" class="headerlink" title="安装Java(JDK)"></a>安装Java(JDK)</h1><p>　　首先，先從<a href="https://www.azul.com/downloads/?package=jdk#download-openjdk">Zulu官網</a>下載Java Development Kit(JDK)並安裝，之後設定環境變數JAVA_HOME及在PATH中設定%JAVA_HOME%&#x2F;bin。</p><h1 id="安装開發工具-IDE"><a href="#安装開發工具-IDE" class="headerlink" title="安装開發工具(IDE)"></a>安装開發工具(IDE)</h1><p>　　接著再從<a href="https://netbeans.apache.org/download/index.html">NetBeans官網</a>下載IDE並安裝，然後就可以開啟使用了。</p><h1 id="介紹Hello-World"><a href="#介紹Hello-World" class="headerlink" title="介紹Hello World!"></a>介紹Hello World!</h1><p>　　不能免俗的要介紹一下Hello World！</p><h2 id="範例"><a href="#範例" class="headerlink" title="範例"></a>範例</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.mendel.teaching;</span><br><span class="line"><span class="comment">/* 多行註解</span></span><br><span class="line"><span class="comment"> * 測試第一個class</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyClass</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 顯示在Console的Hello World!</span></span><br><span class="line">        System.out.println(<span class="string">&quot;Hello World!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="說明"><a href="#說明" class="headerlink" title="說明"></a>說明</h2><p>　　因為Java是典型的物件導向設計的程式語言（請參考<strong>物件導向設計</strong>），所以以上的範例是用類別來寫的。讓我們從頭開始一行一行的看下去吧！</p><blockquote><p><strong>物件導向設計（英語：Object-oriented programming，縮寫：OOP）</strong><br>　　真實世界的事物轉為各種物件，物件之間彼此能互相操作溝通。而產生物件的東西就是類別。類別就如同設計圖一樣，依照此設計圖就能產生一個個的物件。</p></blockquote><ul><li>Line 1：提供「套件」（package）來管理類別，套件被設計與檔案系統結構相對應，如果您的套件設定為org.mendel.teaching，則該類別應該在 Classpath(程式編譯後的位置) 可以存取到的路徑下的 org 目錄下之 mendel 目錄下之 teaching 找到，沒有設定套件管理的類別會歸為「預設套件」（default package）。</li><li>Line 2-4：多行註解</li><li>Line 5：public是存取修飾符(Access Modifiers)，主要是用在其他的物件可否存取這個物件的內容。class就是類別。MyClass就是此類別的名稱，其命名方式是「大駝峰」（類別的命名方式請參考<strong>駝峰式命名</strong>）。</li><li>Line 6：static靜態的意思，此為靜態方法(Method)，也就是不管有幾個物件全都共用這個方法。void代表不回傳值，執行方法之後可以回傳一個值。main此為Java程式的「進入點」（Entry point），也就是程式會從此方法的第一行開始執行。String[] args傳入的參數，呼叫此方法會傳入的字串陣列(Array)的參數(Parameter)。</li><li>Line 7：單行註解</li><li>Line 8：System.out.println此方法會將字串列印在標準輸入輸出裝置(Console)。<blockquote><p><strong>駝峰式命名（Camel case）</strong><br>　　* 就像駝峰會一高一低<br>　　* 單字之間不空格，而是直接連起來，但是連起來的第一個字要大寫<br>　　* 例如：有一個 handle add post 的 function，就會叫做 handleAddPost<br>駝峰又有分兩種：<br>　　1. 小駝峰（lower camel case）：開頭是小寫，就像上面的範例 handleAddPost<br>　　2. 大駝峰（upper camel case）：又被稱為 Pascal Case。開頭變成大寫，也就會變成 HandleAddPost</p></blockquote></li></ul><h2 id="練習題"><a href="#練習題" class="headerlink" title="練習題"></a>練習題</h2><p>　　1. 試著說明何謂 套件(Package)<br>　　2. 試著說明何謂 main<br>　　3. 試著建立一個類別為Homework，在Console中顯示您的個人資料，例：姓名、年齡、生日、喜好…等等。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Java </category>
+          
+          <category> 初學Java </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Java </tag>
+            
+            <tag> 程式設計 </tag>
             
         </tags>
       
