@@ -1,0 +1,364 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>Java 02 基本語法：變數、常數與資料型態 | ⅙阿諺、⅓Mendel、½麵條爸の部落格</title><meta name="author" content="Mendel Lee"><meta name="copyright" content="Mendel Lee"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Java 02 - 基本語法（變數、常數、資料型態）、變數作用範圍與存取修飾子。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 02 基本語法：變數、常數與資料型態">
+<meta property="og:url" content="https://lmy46.github.io/2025/05/01/Java/java-02/index.html">
+<meta property="og:site_name" content="⅙阿諺、⅓Mendel、½麵條爸の部落格">
+<meta property="og:description" content="Java 02 - 基本語法（變數、常數、資料型態）、變數作用範圍與存取修飾子。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://lmy46.github.io/img/avatar.png">
+<meta property="article:published_time" content="2025-05-01T12:45:00.000Z">
+<meta property="article:modified_time" content="2025-05-04T12:46:57.996Z">
+<meta property="article:author" content="Mendel Lee">
+<meta property="article:tag" content="程式設計">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lmy46.github.io/img/avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lmy46.github.io/2025/05/01/Java/java-02/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"languages":{"hits_empty":"找不到您查詢的內容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '複製成功',
+    error: '複製錯誤',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Java 02 基本語法：變數、常數與資料型態',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-05-04 20:46:57'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = url => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      link.onload = () => resolve()
+      link.onerror = () => reject()
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">4</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://picsum.photos/id/20/1920/942')"><nav id="nav"><span id="blog-info"><a href="/" title="⅙阿諺、⅓Mendel、½麵條爸の部落格"><span class="site-name">⅙阿諺、⅓Mendel、½麵條爸の部落格</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Java 02 基本語法：變數、常數與資料型態</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2025-05-01T12:45:00.000Z" title="發表於 2025-05-01 20:45:00">2025-05-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2025-05-04T12:46:57.996Z" title="更新於 2025-05-04 20:46:57">2025-05-04</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Java%E5%9F%BA%E6%9C%AC/">Java基本</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字數總計:</span><span class="word-count">1.2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時長:</span><span>4分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Java 02 基本語法：變數、常數與資料型態"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="認識基本語法"><a href="#認識基本語法" class="headerlink" title="認識基本語法"></a>認識基本語法</h1><p>本章節將學習以下主題：</p>
+<ul>
+<li>變數與常數的宣告方式</li>
+<li>Java 資料型態分類</li>
+<li>區域與全域變數的差異</li>
+<li>常見存取修飾子（Access Modifiers）</li>
+</ul>
+<hr>
+<h1 id="變數（Variable）"><a href="#變數（Variable）" class="headerlink" title="變數（Variable）"></a>變數（Variable）</h1><p>變數是用來儲存資料的命名空間，必須先宣告型別。<br>Java 中變數也有<strong>作用範圍（Scope）</strong>與<strong>存取權限（Access Level）</strong>的概念。</p>
+<h2 id="範例：區域變數"><a href="#範例：區域變數" class="headerlink" title="範例：區域變數"></a>範例：區域變數</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.mendel.teaching;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">VariableExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">age</span> <span class="operator">=</span> <span class="number">25</span>;</span><br><span class="line">        <span class="type">double</span> <span class="variable">height</span> <span class="operator">=</span> <span class="number">175.5</span>;</span><br><span class="line">        <span class="type">boolean</span> <span class="variable">isStudent</span> <span class="operator">=</span> <span class="literal">true</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;Mendel&quot;</span>;</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;姓名：&quot;</span> + name);</span><br><span class="line">        System.out.println(<span class="string">&quot;年齡：&quot;</span> + age);</span><br><span class="line">        System.out.println(<span class="string">&quot;身高：&quot;</span> + height);</span><br><span class="line">        System.out.println(<span class="string">&quot;是否為學生：&quot;</span> + isStudent);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="說明"><a href="#說明" class="headerlink" title="說明"></a>說明</h2><ul>
+<li>Line 1: 「套件」（package）→請參考 Java 01.簡介</li>
+<li>Line 3: 「類別」（class）→請參考 Java 01.簡介</li>
+<li>Line 4: 「主方法」（main）→請參考 Java 01.簡介</li>
+<li>Line 5-8: 宣告區域變數（僅在 main 方法內有效）</li>
+<li>Line 10-13: 使用變數輸出資訊</li>
+</ul>
+<hr>
+<h1 id="Global-vs-Local-變數"><a href="#Global-vs-Local-變數" class="headerlink" title="Global vs Local 變數"></a>Global vs Local 變數</h1><table>
+<thead>
+<tr>
+<th>類型</th>
+<th>宣告位置</th>
+<th>作用範圍</th>
+<th>是否需初始化</th>
+<th>常見用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>區域變數 (Local)</td>
+<td>方法或區塊內</td>
+<td>只能在該區塊使用</td>
+<td>必須初始化</td>
+<td>計算用、短暫記錄</td>
+</tr>
+<tr>
+<td>成員變數 (Global)</td>
+<td>類別中、方法外</td>
+<td>整個類別中可用</td>
+<td>有預設值</td>
+<td>物件屬性、常數</td>
+</tr>
+</tbody></table>
+<h2 id="範例：全域變數"><a href="#範例：全域變數" class="headerlink" title="範例：全域變數"></a>範例：全域變數</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.mendel.teaching;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ScopeExample</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="type">String</span> <span class="variable">schoolName</span> <span class="operator">=</span> <span class="string">&quot;Mendel College&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">student</span> <span class="operator">=</span> <span class="string">&quot;Alice&quot;</span>;</span><br><span class="line">        System.out.println(<span class="string">&quot;學校名稱：&quot;</span> + schoolName);</span><br><span class="line">        System.out.println(<span class="string">&quot;學生：&quot;</span> + student);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="說明-1"><a href="#說明-1" class="headerlink" title="說明"></a>說明</h2><ul>
+<li>Line 1: 「套件」（package）→請參考 Java 01.簡介</li>
+<li>Line 3: 「類別」（class）→請參考 Java 01.簡介</li>
+<li>Line 4: 宣告全域變數 <code>schoolName</code>，<code>static</code> 讓它不需建立物件即可使用</li>
+<li>Line 6-8: 宣告區域變數、並輸出兩者結果</li>
+</ul>
+<hr>
+<h1 id="存取修飾子（Access-Modifiers）"><a href="#存取修飾子（Access-Modifiers）" class="headerlink" title="存取修飾子（Access Modifiers）"></a>存取修飾子（Access Modifiers）</h1><p>在 Java 中，變數與方法都可以設定不同的存取權限，決定外部是否可存取。</p>
+<table>
+<thead>
+<tr>
+<th>修飾子</th>
+<th>說明</th>
+<th>使用範圍</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>public</code></td>
+<td>完全開放</td>
+<td>任意類別皆可使用</td>
+</tr>
+<tr>
+<td><code>protected</code></td>
+<td>類別與子類別共享</td>
+<td>包含 package 與繼承</td>
+</tr>
+<tr>
+<td><em>(無修飾詞)</em></td>
+<td>預設（default）</td>
+<td>僅限同一個 package</td>
+</tr>
+<tr>
+<td><code>private</code></td>
+<td>完全封閉</td>
+<td>僅限當前類別中使用</td>
+</tr>
+</tbody></table>
+<h2 id="小提醒：變數範例"><a href="#小提醒：變數範例" class="headerlink" title="小提醒：變數範例"></a>小提醒：變數範例</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ModifierExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;公開變數&quot;</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> <span class="variable">age</span> <span class="operator">=</span> <span class="number">20</span>;</span><br><span class="line">    <span class="keyword">protected</span> <span class="type">boolean</span> <span class="variable">isMember</span> <span class="operator">=</span> <span class="literal">true</span>;</span><br><span class="line">    <span class="type">String</span> <span class="variable">note</span> <span class="operator">=</span> <span class="string">&quot;package可見&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="常數（Constant）"><a href="#常數（Constant）" class="headerlink" title="常數（Constant）"></a>常數（Constant）</h1><p>若變數值需固定不可變，則可使用 <code>final</code>。<br>而若常數需被整個專案共用，會使用 <strong><code>public static final</code></strong> 宣告於類別中。</p>
+<h2 id="範例：宣告全域常數"><a href="#範例：宣告全域常數" class="headerlink" title="範例：宣告全域常數"></a>範例：宣告全域常數</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.mendel.teaching;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ConstantExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">double</span> <span class="variable">PI</span> <span class="operator">=</span> <span class="number">3.14159</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;圓周率：&quot;</span> + PI);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="說明-2"><a href="#說明-2" class="headerlink" title="說明"></a>說明</h2><ul>
+<li>Line 1: 「套件」（package）→請參考 Java 01.簡介</li>
+<li>Line 3: 「類別」（class）→請參考 Java 01.簡介</li>
+<li>Line 4: 宣告常數，使用 <code>public static final</code> 修飾，可供外部存取、不可變</li>
+<li>Line 6: 「主方法」（main）→請參考 Java 01.簡介</li>
+<li>Line 7: 輸出常數</li>
+</ul>
+<blockquote>
+<h3 id="小提醒：常數命名"><a href="#小提醒：常數命名" class="headerlink" title="小提醒：常數命名"></a>小提醒：常數命名</h3><p>建議使用全大寫 + 底線（如：<code>MAX_SPEED</code>, <code>PI_VALUE</code>）</p>
+</blockquote>
+<hr>
+<h1 id="資料型態（Data-Types）"><a href="#資料型態（Data-Types）" class="headerlink" title="資料型態（Data Types）"></a>資料型態（Data Types）</h1><p>Java 資料型態分為兩大類：</p>
+<table>
+<thead>
+<tr>
+<th>類型</th>
+<th>說明</th>
+<th>範例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>基本型別（Primitive）</td>
+<td>儲存基本數值</td>
+<td><code>int</code>, <code>double</code>, <code>boolean</code>, <code>char</code></td>
+</tr>
+<tr>
+<td>參考型別（Reference）</td>
+<td>儲存物件參考</td>
+<td><code>String</code>, 陣列, 自訂類別</td>
+</tr>
+</tbody></table>
+<h2 id="小整理：基本型別對照表"><a href="#小整理：基本型別對照表" class="headerlink" title="小整理：基本型別對照表"></a>小整理：基本型別對照表</h2><table>
+<thead>
+<tr>
+<th>型別</th>
+<th>大小</th>
+<th>範例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>byte</td>
+<td>1 byte</td>
+<td><code>byte b = 10;</code></td>
+</tr>
+<tr>
+<td>short</td>
+<td>2 bytes</td>
+<td><code>short s = 1000;</code></td>
+</tr>
+<tr>
+<td>int</td>
+<td>4 bytes</td>
+<td><code>int i = 100000;</code></td>
+</tr>
+<tr>
+<td>long</td>
+<td>8 bytes</td>
+<td><code>long l = 10000000000L;</code></td>
+</tr>
+<tr>
+<td>float</td>
+<td>4 bytes（小數）</td>
+<td><code>float f = 3.14f;</code></td>
+</tr>
+<tr>
+<td>double</td>
+<td>8 bytes（更高精度）</td>
+<td><code>double d = 3.14159;</code></td>
+</tr>
+<tr>
+<td>char</td>
+<td>2 bytes（Unicode）</td>
+<td><code>char c = &#39;A&#39;;</code></td>
+</tr>
+<tr>
+<td>boolean</td>
+<td>1 bit（true&#x2F;false）</td>
+<td><code>boolean flag = true;</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h1 id="綜合範例"><a href="#綜合範例" class="headerlink" title="綜合範例"></a>綜合範例</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.mendel.teaching;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DataTypePractice</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">SCHOOL_NAME</span> <span class="operator">=</span> <span class="string">&quot;Mendel College&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">studentName</span> <span class="operator">=</span> <span class="string">&quot;Mendel&quot;</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">birthYear</span> <span class="operator">=</span> <span class="number">2000</span>;</span><br><span class="line">        <span class="keyword">final</span> <span class="type">int</span> <span class="variable">CURRENT_YEAR</span> <span class="operator">=</span> <span class="number">2025</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">age</span> <span class="operator">=</span> CURRENT_YEAR - birthYear;</span><br><span class="line">        <span class="type">boolean</span> <span class="variable">isAdult</span> <span class="operator">=</span> age &gt;= <span class="number">18</span>;</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;學生：&quot;</span> + studentName);</span><br><span class="line">        System.out.println(<span class="string">&quot;學校：&quot;</span> + SCHOOL_NAME);</span><br><span class="line">        System.out.println(<span class="string">&quot;年齡：&quot;</span> + age);</span><br><span class="line">        System.out.println(<span class="string">&quot;是否成年：&quot;</span> + isAdult);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="說明-3"><a href="#說明-3" class="headerlink" title="說明"></a>說明</h2><ul>
+<li>Line 1: 「套件」（package）→請參考 Java 01.簡介</li>
+<li>Line 3: 「類別」（class）→請參考 Java 01.簡介</li>
+<li>Line 4: 宣告全域常數 <code>SCHOOL_NAME</code></li>
+<li>Line 6: 「主方法」（main）→請參考 Java 01.簡介</li>
+<li>Line 7-10: 使用變數、常數與基本運算邏輯</li>
+<li>Line 12-15: 印出所有資訊</li>
+</ul>
+<hr>
+<h1 id="本章練習題"><a href="#本章練習題" class="headerlink" title="本章練習題"></a>本章練習題</h1><ol>
+<li><p>宣告三個變數，分別代表：</p>
+<ul>
+<li>姓名（String）</li>
+<li>年齡（int）</li>
+<li>是否為學生（boolean）</li>
+</ul>
+</li>
+<li><p>宣告常數 <code>COUNTRY</code> 並賦值你最喜歡的國家<br>將其設為 <code>public static final</code></p>
+</li>
+<li><p>建立一個類別變數 <code>schoolName</code> 並在 <code>main()</code> 中輸出它（用 <code>static</code>）</p>
+</li>
+<li><p>建立一個全域變數為 <code>int MAX_SCORE = 100</code>，然後在 <code>main()</code> 使用它輸出格式化成績</p>
+</li>
+<li><p>（加分題）創建一個類別，包含：</p>
+<ul>
+<li>一個 <code>private</code> 的整數變數 <code>score</code></li>
+<li>一個 <code>public</code> 的方法 <code>printScore()</code> 印出該變數</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<h3 id="提示"><a href="#提示" class="headerlink" title="提示"></a>提示</h3><p>嘗試組合使用：<code>public</code> &#x2F; <code>private</code>、<code>static</code>、<code>final</code>、與不同作用範圍的變數。</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://lmy46.github.io">Mendel Lee</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章連結: </span><span class="post-copyright-info"><a href="https://lmy46.github.io/2025/05/01/Java/java-02/">https://lmy46.github.io/2025/05/01/Java/java-02/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 許可協議。轉載請註明來自 <a href="https://lmy46.github.io" target="_blank">⅙阿諺、⅓Mendel、½麵條爸の部落格</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%A8%8B%E5%BC%8F%E8%A8%AD%E8%A8%88/">程式設計</a><a class="post-meta__tags" href="/tags/Java/">Java</a></div><div class="post_share"><div class="social-share" data-image="/img/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/05/01/Java/java-02-2/" title="Java 02-2 字串處理：String 與 StringBuilder"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Java 02-2 字串處理：String 與 StringBuilder</div></div></a></div><div class="next-post pull-right"><a href="/2025/05/01/Java/java-01-2/" title="Java 01-2 簡介（二）輸入：使用 Scanner 接收使用者輸入"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Java 01-2 簡介（二）輸入：使用 Scanner 接收使用者輸入</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><div><a href="/2023/02/04/Java/java-01/" title="Java 01 簡介"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-02-04</div><div class="title">Java 01 簡介</div></div></a></div><div><a href="/2025/05/01/Java/java-01-2/" title="Java 01-2 簡介（二）輸入：使用 Scanner 接收使用者輸入"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-01</div><div class="title">Java 01-2 簡介（二）輸入：使用 Scanner 接收使用者輸入</div></div></a></div><div><a href="/2025/05/01/Java/java-03-2/" title="Java 03-2 條件判斷與邏輯運算（二）Switch語法"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-01</div><div class="title">Java 03-2 條件判斷與邏輯運算（二）Switch語法</div></div></a></div><div><a href="/2025/05/01/Java/java-03/" title="Java 03 條件判斷與邏輯運算（一）if、邏輯運算與方法"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-01</div><div class="title">Java 03 條件判斷與邏輯運算（一）if、邏輯運算與方法</div></div></a></div><div><a href="/2025/05/03/Java/java-04/" title="Java 04 迴圈控制：for、while、do-while、for-each 整合"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-03</div><div class="title">Java 04 迴圈控制：for、while、do-while、for-each 整合</div></div></a></div><div><a href="/2025/05/03/Java/java-05/" title="Java 05 陣列與巢狀迴圈"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-03</div><div class="title">Java 05 陣列與巢狀迴圈</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Mendel Lee</div><div class="author-info__description">用來記錄在阿諺小小的腦袋中，很容易因塞不下而忘記的東西</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AA%8D%E8%AD%98%E5%9F%BA%E6%9C%AC%E8%AA%9E%E6%B3%95"><span class="toc-number">1.</span> <span class="toc-text">認識基本語法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AE%8A%E6%95%B8%EF%BC%88Variable%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">變數（Variable）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AF%84%E4%BE%8B%EF%BC%9A%E5%8D%80%E5%9F%9F%E8%AE%8A%E6%95%B8"><span class="toc-number">2.1.</span> <span class="toc-text">範例：區域變數</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AA%AA%E6%98%8E"><span class="toc-number">2.2.</span> <span class="toc-text">說明</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Global-vs-Local-%E8%AE%8A%E6%95%B8"><span class="toc-number">3.</span> <span class="toc-text">Global vs Local 變數</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AF%84%E4%BE%8B%EF%BC%9A%E5%85%A8%E5%9F%9F%E8%AE%8A%E6%95%B8"><span class="toc-number">3.1.</span> <span class="toc-text">範例：全域變數</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AA%AA%E6%98%8E-1"><span class="toc-number">3.2.</span> <span class="toc-text">說明</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AD%98%E5%8F%96%E4%BF%AE%E9%A3%BE%E5%AD%90%EF%BC%88Access-Modifiers%EF%BC%89"><span class="toc-number">4.</span> <span class="toc-text">存取修飾子（Access Modifiers）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E6%8F%90%E9%86%92%EF%BC%9A%E8%AE%8A%E6%95%B8%E7%AF%84%E4%BE%8B"><span class="toc-number">4.1.</span> <span class="toc-text">小提醒：變數範例</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E6%95%B8%EF%BC%88Constant%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">常數（Constant）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AF%84%E4%BE%8B%EF%BC%9A%E5%AE%A3%E5%91%8A%E5%85%A8%E5%9F%9F%E5%B8%B8%E6%95%B8"><span class="toc-number">5.1.</span> <span class="toc-text">範例：宣告全域常數</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AA%AA%E6%98%8E-2"><span class="toc-number">5.2.</span> <span class="toc-text">說明</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E6%8F%90%E9%86%92%EF%BC%9A%E5%B8%B8%E6%95%B8%E5%91%BD%E5%90%8D"><span class="toc-number">5.2.1.</span> <span class="toc-text">小提醒：常數命名</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B3%87%E6%96%99%E5%9E%8B%E6%85%8B%EF%BC%88Data-Types%EF%BC%89"><span class="toc-number">6.</span> <span class="toc-text">資料型態（Data Types）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E6%95%B4%E7%90%86%EF%BC%9A%E5%9F%BA%E6%9C%AC%E5%9E%8B%E5%88%A5%E5%B0%8D%E7%85%A7%E8%A1%A8"><span class="toc-number">6.1.</span> <span class="toc-text">小整理：基本型別對照表</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%B6%9C%E5%90%88%E7%AF%84%E4%BE%8B"><span class="toc-number">7.</span> <span class="toc-text">綜合範例</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AA%AA%E6%98%8E-3"><span class="toc-number">7.1.</span> <span class="toc-text">說明</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%AC%E7%AB%A0%E7%B7%B4%E7%BF%92%E9%A1%8C"><span class="toc-number">8.</span> <span class="toc-text">本章練習題</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E7%A4%BA"><span class="toc-number">8.0.1.</span> <span class="toc-text">提示</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/05/04/Java/java-09/" title="Java 09 例外處理 try-catch-finally">Java 09 例外處理 try-catch-finally</a><time datetime="2025-05-04T12:24:00.000Z" title="發表於 2025-05-04 20:24:00">2025-05-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/05/04/Java/java-08/" title="Java 08 繼承、多型與介面">Java 08 繼承、多型與介面</a><time datetime="2025-05-04T12:20:00.000Z" title="發表於 2025-05-04 20:20:00">2025-05-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/05/04/Java/java-07/" title="Java 07 物件導向基礎（OOP）：類別、屬性、建構子">Java 07 物件導向基礎（OOP）：類別、屬性、建構子</a><time datetime="2025-05-04T11:54:00.000Z" title="發表於 2025-05-04 19:54:00">2025-05-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/05/03/Java/java-06/" title="Java 06 方法進階與參數設計">Java 06 方法進階與參數設計</a><time datetime="2025-05-03T03:59:00.000Z" title="發表於 2025-05-03 11:59:00">2025-05-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/05/03/Java/java-05-2/" title="Java 05-2 集合（List / Set / Map）">Java 05-2 集合（List / Set / Map）</a><time datetime="2025-05-03T03:43:00.000Z" title="發表於 2025-05-03 11:43:00">2025-05-03</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By Mendel Lee</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主題 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="淺色和深色模式轉換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到頂部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料庫載入中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜尋文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

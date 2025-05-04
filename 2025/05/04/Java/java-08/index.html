@@ -1,0 +1,247 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>Java 08 繼承、多型與介面 | ⅙阿諺、⅓Mendel、½麵條爸の部落格</title><meta name="author" content="Mendel Lee"><meta name="copyright" content="Mendel Lee"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Java 08 - 學習類別之間的繼承關係、方法多型（Override）與介面實作，掌握物件導向核心。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 08 繼承、多型與介面">
+<meta property="og:url" content="https://lmy46.github.io/2025/05/04/Java/java-08/index.html">
+<meta property="og:site_name" content="⅙阿諺、⅓Mendel、½麵條爸の部落格">
+<meta property="og:description" content="Java 08 - 學習類別之間的繼承關係、方法多型（Override）與介面實作，掌握物件導向核心。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://lmy46.github.io/img/avatar.png">
+<meta property="article:published_time" content="2025-05-04T12:20:00.000Z">
+<meta property="article:modified_time" content="2025-05-04T12:50:44.602Z">
+<meta property="article:author" content="Mendel Lee">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="OOP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lmy46.github.io/img/avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lmy46.github.io/2025/05/04/Java/java-08/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"languages":{"hits_empty":"找不到您查詢的內容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '複製成功',
+    error: '複製錯誤',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Java 08 繼承、多型與介面',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-05-04 20:50:44'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = url => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      link.onload = () => resolve()
+      link.onerror = () => reject()
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">4</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://picsum.photos/id/20/1920/942')"><nav id="nav"><span id="blog-info"><a href="/" title="⅙阿諺、⅓Mendel、½麵條爸の部落格"><span class="site-name">⅙阿諺、⅓Mendel、½麵條爸の部落格</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Java 08 繼承、多型與介面</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2025-05-04T12:20:00.000Z" title="發表於 2025-05-04 20:20:00">2025-05-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2025-05-04T12:50:44.602Z" title="更新於 2025-05-04 20:50:44">2025-05-04</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Java%E5%9F%BA%E6%9C%AC/">Java基本</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字數總計:</span><span class="word-count">764</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時長:</span><span>3分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Java 08 繼承、多型與介面"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Java-OOP：繼承、多型、介面"><a href="#Java-OOP：繼承、多型、介面" class="headerlink" title="Java OOP：繼承、多型、介面"></a>Java OOP：繼承、多型、介面</h1><p>本章進一步擴充物件導向設計，讓類別之間可共享功能並擴展彈性。<br>三個關鍵核心：</p>
+<ul>
+<li>繼承（extends）→ 子類別複用父類別邏輯</li>
+<li>多型（override）→ 子類別自定義方法行為</li>
+<li>介面（interface）→ 行為契約設計</li>
+</ul>
+<hr>
+<h1 id="類別一：Animal（父類別）"><a href="#類別一：Animal（父類別）" class="headerlink" title="類別一：Animal（父類別）"></a>類別一：Animal（父類別）</h1><h2 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h2><p>建立一個可被繼承的基本類別，提供共通欄位與方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.mendel.teaching;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Animal</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Animal</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">speak</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;[Animal] &quot;</span> + name + <span class="string">&quot; 發出聲音&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">````</span><br><span class="line"></span><br><span class="line">## 說明</span><br><span class="line"></span><br><span class="line">* Line <span class="number">1</span>: 套件 →請參考 Java <span class="number">01.</span>簡介</span><br><span class="line">* Line <span class="number">3</span>: 宣告父類別 `Animal`</span><br><span class="line">* Line <span class="number">4</span>: 公開屬性 `name`</span><br><span class="line">* Line <span class="number">6</span>: 建構子接收名稱參數</span><br><span class="line">* Line <span class="number">9</span>: 方法 `speak()` 為共通行為，可被覆寫</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line"># 類別二：Dog（子類別繼承 Animal）</span><br><span class="line"></span><br><span class="line">## 功能</span><br><span class="line"></span><br><span class="line">繼承 Animal，並改寫 `speak()` 方法行為</span><br><span class="line"></span><br><span class="line">```java</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Dog</span> <span class="keyword">extends</span> <span class="title class_">Animal</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Dog</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">speak</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;[Dog] &quot;</span> + name + <span class="string">&quot;：汪汪！&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="說明"><a href="#說明" class="headerlink" title="說明"></a>說明</h2><ul>
+<li>Line 1: 使用 <code>extends</code> 繼承 <code>Animal</code></li>
+<li>Line 3: 呼叫父類別建構子 <code>super(name)</code></li>
+<li>Line 6: 使用 <code>@Override</code> 覆寫 <code>speak()</code> 方法</li>
+</ul>
+<blockquote>
+<p><strong>小提醒</strong><br><code>super()</code> 是呼叫父類別的建構子<br><code>@Override</code> 用於確認你確實覆寫了父類別的方法</p>
+</blockquote>
+<hr>
+<h1 id="類別三：OopTest（建立物件與執行）"><a href="#類別三：OopTest（建立物件與執行）" class="headerlink" title="類別三：OopTest（建立物件與執行）"></a>類別三：OopTest（建立物件與執行）</h1><h2 id="功能-1"><a href="#功能-1" class="headerlink" title="功能"></a>功能</h2><p>建立 <code>Animal</code> 與 <code>Dog</code> 物件，執行多型測試</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OopTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Animal</span> <span class="variable">a1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Animal</span>(<span class="string">&quot;動物&quot;</span>);</span><br><span class="line">        a1.speak();</span><br><span class="line"></span><br><span class="line">        <span class="type">Dog</span> <span class="variable">d1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Dog</span>(<span class="string">&quot;小黑&quot;</span>);</span><br><span class="line">        d1.speak();</span><br><span class="line"></span><br><span class="line">        <span class="type">Animal</span> <span class="variable">a2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Dog</span>(<span class="string">&quot;小白&quot;</span>);</span><br><span class="line">        a2.speak(); <span class="comment">// 多型：Animal 型別 → Dog 實體</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="說明-1"><a href="#說明-1" class="headerlink" title="說明"></a>說明</h2><ul>
+<li>Line 3: 建立父類別物件</li>
+<li>Line 6: 建立子類別物件</li>
+<li>Line 9: 父型別接收子類別 → 多型現象</li>
+</ul>
+<hr>
+<h1 id="介面：Walkable（定義行為契約）"><a href="#介面：Walkable（定義行為契約）" class="headerlink" title="介面：Walkable（定義行為契約）"></a>介面：Walkable（定義行為契約）</h1><h2 id="功能-2"><a href="#功能-2" class="headerlink" title="功能"></a>功能</h2><p>定義 <code>walk()</code> 方法，讓類別能選擇實作（implements）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Walkable</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">walk</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="說明-2"><a href="#說明-2" class="headerlink" title="說明"></a>說明</h2><ul>
+<li>Line 1: 介面不包含邏輯，只定義方法名稱</li>
+<li>Line 2: 無實作內容；實作時必須實作該方法</li>
+</ul>
+<hr>
+<h1 id="實作介面：Dog-加入-walk-功能"><a href="#實作介面：Dog-加入-walk-功能" class="headerlink" title="實作介面：Dog 加入 walk 功能"></a>實作介面：Dog 加入 walk 功能</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Dog</span> <span class="keyword">extends</span> <span class="title class_">Animal</span> <span class="keyword">implements</span> <span class="title class_">Walkable</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Dog</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">speak</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;[Dog] &quot;</span> + name + <span class="string">&quot;：汪汪！&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">walk</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;[Dog] &quot;</span> + name + <span class="string">&quot; 開始散步&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="說明-3"><a href="#說明-3" class="headerlink" title="說明"></a>說明</h2><ul>
+<li>Line 1: 同時繼承類別與實作介面（<code>extends + implements</code>）</li>
+<li>Line 9: 需實作介面中的 <code>walk()</code> 方法</li>
+</ul>
+<hr>
+<h1 id="本章練習題"><a href="#本章練習題" class="headerlink" title="本章練習題"></a>本章練習題</h1><ol>
+<li><p>建立 <code>Cat</code> 類別，繼承 <code>Animal</code> 並覆寫 <code>speak()</code> 印出 <code>喵喵</code></p>
+</li>
+<li><p>建立介面 <code>Playable</code>，定義 <code>play()</code> 方法，讓 <code>Cat</code> 加以實作</p>
+</li>
+<li><p>在 <code>main()</code> 中建立 <code>Animal</code>, <code>Dog</code>, <code>Cat</code> 實體並統一使用 <code>Animal[]</code> 儲存，呼叫 <code>speak()</code> 展示多型</p>
+</li>
+<li><p>（加分題）建立另一個介面 <code>Swimmable</code>，定義 <code>swim()</code>，讓 <code>Dog</code> 可同時 <code>walk()</code> 與 <code>swim()</code></p>
+</li>
+</ol>
+<hr>
+<h1 id="本章總結"><a href="#本章總結" class="headerlink" title="本章總結"></a>本章總結</h1><table>
+<thead>
+<tr>
+<th>概念</th>
+<th>說明</th>
+<th>關鍵語法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>繼承</td>
+<td>子類別複用父類別欄位與方法</td>
+<td><code>class Dog extends Animal</code></td>
+</tr>
+<tr>
+<td>建構子傳遞</td>
+<td>子類別使用 <code>super()</code> 呼叫父建構子</td>
+<td><code>super(name)</code></td>
+</tr>
+<tr>
+<td>覆寫</td>
+<td>子類別覆寫父類別方法</td>
+<td><code>@Override</code></td>
+</tr>
+<tr>
+<td>多型</td>
+<td>父類別變數 → 子類別實體</td>
+<td><code>Animal a = new Dog()</code></td>
+</tr>
+<tr>
+<td>介面</td>
+<td>定義方法規格（無邏輯）</td>
+<td><code>interface Walkable</code></td>
+</tr>
+</tbody></table>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://lmy46.github.io">Mendel Lee</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章連結: </span><span class="post-copyright-info"><a href="https://lmy46.github.io/2025/05/04/Java/java-08/">https://lmy46.github.io/2025/05/04/Java/java-08/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 許可協議。轉載請註明來自 <a href="https://lmy46.github.io" target="_blank">⅙阿諺、⅓Mendel、½麵條爸の部落格</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/OOP/">OOP</a></div><div class="post_share"><div class="social-share" data-image="/img/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/05/04/Java/java-09/" title="Java 09 例外處理 try-catch-finally"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Java 09 例外處理 try-catch-finally</div></div></a></div><div class="next-post pull-right"><a href="/2025/05/04/Java/java-07/" title="Java 07 物件導向基礎（OOP）：類別、屬性、建構子"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Java 07 物件導向基礎（OOP）：類別、屬性、建構子</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><div><a href="/2025/05/04/Java/java-07/" title="Java 07 物件導向基礎（OOP）：類別、屬性、建構子"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-04</div><div class="title">Java 07 物件導向基礎（OOP）：類別、屬性、建構子</div></div></a></div><div><a href="/2023/02/04/Java/java-01/" title="Java 01 簡介"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-02-04</div><div class="title">Java 01 簡介</div></div></a></div><div><a href="/2025/05/01/Java/java-01-2/" title="Java 01-2 簡介（二）輸入：使用 Scanner 接收使用者輸入"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-01</div><div class="title">Java 01-2 簡介（二）輸入：使用 Scanner 接收使用者輸入</div></div></a></div><div><a href="/2025/05/01/Java/java-02-2/" title="Java 02-2 字串處理：String 與 StringBuilder"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-01</div><div class="title">Java 02-2 字串處理：String 與 StringBuilder</div></div></a></div><div><a href="/2025/05/01/Java/java-02/" title="Java 02 基本語法：變數、常數與資料型態"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-01</div><div class="title">Java 02 基本語法：變數、常數與資料型態</div></div></a></div><div><a href="/2025/05/01/Java/java-03-2/" title="Java 03-2 條件判斷與邏輯運算（二）Switch語法"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-01</div><div class="title">Java 03-2 條件判斷與邏輯運算（二）Switch語法</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Mendel Lee</div><div class="author-info__description">用來記錄在阿諺小小的腦袋中，很容易因塞不下而忘記的東西</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Java-OOP%EF%BC%9A%E7%B9%BC%E6%89%BF%E3%80%81%E5%A4%9A%E5%9E%8B%E3%80%81%E4%BB%8B%E9%9D%A2"><span class="toc-number">1.</span> <span class="toc-text">Java OOP：繼承、多型、介面</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A1%9E%E5%88%A5%E4%B8%80%EF%BC%9AAnimal%EF%BC%88%E7%88%B6%E9%A1%9E%E5%88%A5%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">類別一：Animal（父類別）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD"><span class="toc-number">2.1.</span> <span class="toc-text">功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AA%AA%E6%98%8E"><span class="toc-number">2.2.</span> <span class="toc-text">說明</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A1%9E%E5%88%A5%E4%B8%89%EF%BC%9AOopTest%EF%BC%88%E5%BB%BA%E7%AB%8B%E7%89%A9%E4%BB%B6%E8%88%87%E5%9F%B7%E8%A1%8C%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">類別三：OopTest（建立物件與執行）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD-1"><span class="toc-number">3.1.</span> <span class="toc-text">功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AA%AA%E6%98%8E-1"><span class="toc-number">3.2.</span> <span class="toc-text">說明</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%8B%E9%9D%A2%EF%BC%9AWalkable%EF%BC%88%E5%AE%9A%E7%BE%A9%E8%A1%8C%E7%82%BA%E5%A5%91%E7%B4%84%EF%BC%89"><span class="toc-number">4.</span> <span class="toc-text">介面：Walkable（定義行為契約）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD-2"><span class="toc-number">4.1.</span> <span class="toc-text">功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AA%AA%E6%98%8E-2"><span class="toc-number">4.2.</span> <span class="toc-text">說明</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AF%A6%E4%BD%9C%E4%BB%8B%E9%9D%A2%EF%BC%9ADog-%E5%8A%A0%E5%85%A5-walk-%E5%8A%9F%E8%83%BD"><span class="toc-number">5.</span> <span class="toc-text">實作介面：Dog 加入 walk 功能</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AA%AA%E6%98%8E-3"><span class="toc-number">5.1.</span> <span class="toc-text">說明</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%AC%E7%AB%A0%E7%B7%B4%E7%BF%92%E9%A1%8C"><span class="toc-number">6.</span> <span class="toc-text">本章練習題</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%AC%E7%AB%A0%E7%B8%BD%E7%B5%90"><span class="toc-number">7.</span> <span class="toc-text">本章總結</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/05/04/Java/java-09/" title="Java 09 例外處理 try-catch-finally">Java 09 例外處理 try-catch-finally</a><time datetime="2025-05-04T12:24:00.000Z" title="發表於 2025-05-04 20:24:00">2025-05-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/05/04/Java/java-08/" title="Java 08 繼承、多型與介面">Java 08 繼承、多型與介面</a><time datetime="2025-05-04T12:20:00.000Z" title="發表於 2025-05-04 20:20:00">2025-05-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/05/04/Java/java-07/" title="Java 07 物件導向基礎（OOP）：類別、屬性、建構子">Java 07 物件導向基礎（OOP）：類別、屬性、建構子</a><time datetime="2025-05-04T11:54:00.000Z" title="發表於 2025-05-04 19:54:00">2025-05-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/05/03/Java/java-06/" title="Java 06 方法進階與參數設計">Java 06 方法進階與參數設計</a><time datetime="2025-05-03T03:59:00.000Z" title="發表於 2025-05-03 11:59:00">2025-05-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/05/03/Java/java-05-2/" title="Java 05-2 集合（List / Set / Map）">Java 05-2 集合（List / Set / Map）</a><time datetime="2025-05-03T03:43:00.000Z" title="發表於 2025-05-03 11:43:00">2025-05-03</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By Mendel Lee</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主題 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="淺色和深色模式轉換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到頂部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料庫載入中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜尋文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
