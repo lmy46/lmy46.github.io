@@ -1,0 +1,233 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>Spring Boot 22 - Spring Security 基礎與 Filter Chain | ⅙阿諺、⅓Mendel、½麵條爸の部落格</title><meta name="author" content="Mendel Lee"><meta name="copyright" content="Mendel Lee"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="本篇將帶您踏入 Spring Security 的世界，學習如何為您的應用程式加上第一道安全防線。我們將探討加入依賴後的預設安全行為，理解其背後核心的 Servlet 過濾鏈 (Filter Chain) 機制，並學習如何建立一個基礎的 SecurityFilterChain Bean 來客製化我們的安全規則。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Boot 22 - Spring Security 基礎與 Filter Chain">
+<meta property="og:url" content="https://lmy46.github.io/2025/08/13/java-spring-boot-22/index.html">
+<meta property="og:site_name" content="⅙阿諺、⅓Mendel、½麵條爸の部落格">
+<meta property="og:description" content="本篇將帶您踏入 Spring Security 的世界，學習如何為您的應用程式加上第一道安全防線。我們將探討加入依賴後的預設安全行為，理解其背後核心的 Servlet 過濾鏈 (Filter Chain) 機制，並學習如何建立一個基礎的 SecurityFilterChain Bean 來客製化我們的安全規則。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://lmy46.github.io/img/avatar.png">
+<meta property="article:published_time" content="2025-08-13T03:22:47.000Z">
+<meta property="article:modified_time" content="2025-09-26T05:05:42.991Z">
+<meta property="article:author" content="Mendel Lee">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Spring Boot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lmy46.github.io/img/avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lmy46.github.io/2025/08/13/java-spring-boot-22/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"languages":{"hits_empty":"找不到您查詢的內容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '複製成功',
+    error: '複製錯誤',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Spring Boot 22 - Spring Security 基礎與 Filter Chain',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-09-26 13:05:42'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = url => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      link.onload = () => resolve()
+      link.onerror = () => reject()
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">54</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">11</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://picsum.photos/id/20/1920/942')"><nav id="nav"><span id="blog-info"><a href="/" title="⅙阿諺、⅓Mendel、½麵條爸の部落格"><span class="site-name">⅙阿諺、⅓Mendel、½麵條爸の部落格</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Spring Boot 22 - Spring Security 基礎與 Filter Chain</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2025-08-13T03:22:47.000Z" title="發表於 2025-08-13 11:22:47">2025-08-13</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2025-09-26T05:05:42.991Z" title="更新於 2025-09-26 13:05:42">2025-09-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Spring/">Spring</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Spring/Spring-Boot-%E5%9F%BA%E7%A4%8E/">Spring Boot 基礎</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字數總計:</span><span class="word-count">1.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時長:</span><span>5分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Spring Boot 22 - Spring Security 基礎與 Filter Chain"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前言：為您的-API-加上門鎖"><a href="#前言：為您的-API-加上門鎖" class="headerlink" title="前言：為您的 API 加上門鎖"></a>前言：為您的 API 加上門鎖</h2><p>到目前為止，我們建立的所有 API 端點都像是一座「不設防的城市」，任何人只要知道網址，就可以隨意地存取、新增或刪除使用者資料。這在真實世界的應用程式中是絕對無法接受的。</p>
+<p>為了保護我們的應用程式，我們需要引入兩大核心安全概念：</p>
+<ol>
+<li>**認證 (Authentication)**：驗證「你是誰？」。系統需要確認使用者的身分，例如透過使用者名稱和密碼。</li>
+<li>**授權 (Authorization)**：驗證「你能做什麼？」。確認了使用者身分後，系統需要判斷這個使用者是否擁有執行特定操作的權限。</li>
+</ol>
+<p><strong>Spring Security</strong> 是 Spring 生態系中，專門用來處理這兩大問題的官方框架。它功能強大、高度可客製化，是保護 Spring 應用程式的業界標準。雖然它以學習曲線陡峭聞名，但 Spring Boot 的自動化設定已經為我們鋪平了入門的道路。</p>
+<p>本篇文章將帶您為專案整合 Spring Security，觀察它所帶來的預設安全行為，理解其背後核心的「過濾鏈 (Filter Chain)」機制，並最終建立我們的第一個客製化安全組態。</p>
+<h2 id="步驟一：加入-Spring-Security-依賴與預設行為"><a href="#步驟一：加入-Spring-Security-依賴與預設行為" class="headerlink" title="步驟一：加入 Spring Security 依賴與預設行為"></a>步驟一：加入 Spring Security 依賴與預設行為</h2><ol>
+<li><p><strong>加入 Maven 相依性</strong><br>打開 <code>pom.xml</code> 檔案，在 <code>&lt;dependencies&gt;</code> 區塊中，加入 Spring Security 的起步依賴：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-security<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>重新啟動應用程式</strong><br><strong>不做任何其他程式碼修改</strong>，直接重新啟動您的 Spring Boot 應用。</p>
+</li>
+<li><p><strong>觀察變化</strong></p>
+<ul>
+<li><strong>主控台</strong>：您會在啟動日誌中發現多了一行類似這樣的訊息：<br><code>Using generated security password: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</code></li>
+<li><strong>API 測試</strong>：使用 Postman 或瀏覽器，再次嘗試訪問之前的任何 API，例如 <code>GET http://localhost:8080/users</code>。</li>
+</ul>
+</li>
+</ol>
+<p>您會發現，請求失敗了！如果您使用瀏覽器，會被重導到一個預設的登入頁面；如果您使用 Postman，會收到 <code>401 Unauthorized</code> 的回應。</p>
+<p>這就是 Spring Security 的威力。僅僅是加入一個依賴，Spring Boot 的自動化設定就為我們完成了以下工作：</p>
+<ul>
+<li><strong>保護了所有 API 端點</strong>，預設要求所有請求都必須經過認證。</li>
+<li>啟用<strong>表單登入 (Form Login)</strong> 與 <strong>HTTP Basic</strong> 兩種認證方式。</li>
+<li>在記憶體中建立了一個預設使用者，其使用者名稱為 <code>user</code>，密碼則是每次啟動時隨機產生並印在主控台上的那一長串字元。</li>
+</ul>
+<h2 id="步驟二：核心機制：Servlet-過濾鏈-Filter-Chain"><a href="#步驟二：核心機制：Servlet-過濾鏈-Filter-Chain" class="headerlink" title="步驟二：核心機制：Servlet 過濾鏈 (Filter Chain)"></a>步驟二：核心機制：Servlet 過濾鏈 (Filter Chain)</h2><p>Spring Security 是如何攔截到所有請求的呢？答案是透過 **Servlet 過濾鏈 (Servlet Filter Chain)**。</p>
+<p>您可以將其想像成一系列站在您應用程式門口的「保全人員 (Filter)」。每一個 HTTP 請求，在真正到達我們的 Controller 之前，都必須先依序通過這一排保全的檢查。</p>
+<p>每一個「保全 (Filter)」都有其特定的職責：</p>
+<ul>
+<li><code>UsernamePasswordAuthenticationFilter</code>：負責處理使用者名稱和密碼的登入請求。</li>
+<li><code>CsrfFilter</code>：負責防禦 CSRF 攻擊。</li>
+<li><code>LogoutFilter</code>：負責處理登出請求。</li>
+<li><code>AuthorizationFilter</code>：負責檢查使用者是否有權限訪問特定資源。</li>
+<li>…還有很多其他的 Filter。</li>
+</ul>
+<p>這一整排保全所組成的隊伍，就是 <strong>Filter Chain</strong>。而我們接下來要做的「安全設定」，本質上就是在告訴 Spring Security：「我想要如何組織我的保全隊伍，以及每一位保全的執勤規則是什麼」。</p>
+<h2 id="步驟三：建立第一個客製化安全設定"><a href="#步驟三：建立第一個客製化安全設定" class="headerlink" title="步驟三：建立第一個客製化安全設定"></a>步驟三：建立第一個客製化安全設定</h2><p>預設的行為雖然安全，但並不實用。我們需要定義自己的安全規則，例如，我們希望 API 文件 (Swagger UI) 是可以公開訪問的。</p>
+<p>在 Spring Security 5.7 版之後，官方推薦使用「元件化」的方式來進行安全設定，也就是將 <code>SecurityFilterChain</code> 註冊為一個 Bean。</p>
+<ol>
+<li><p><strong>建立設定檔</strong><br>在 <code>com.example.demoapp.config</code> 套件下，建立新檔案 <code>SecurityConfig.java</code>。</p>
+</li>
+<li><p><strong>撰寫組態程式碼</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demoapp.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.security.config.annotation.web.builders.HttpSecurity;</span><br><span class="line"><span class="keyword">import</span> org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;</span><br><span class="line"><span class="keyword">import</span> org.springframework.security.web.SecurityFilterChain;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.springframework.security.config.Customizer.withDefaults;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span> <span class="comment">// 1. 標示為 Spring 的組態類別</span></span><br><span class="line"><span class="meta">@EnableWebSecurity</span> <span class="comment">// 2. 啟用 Spring Security 的 Web 安全性功能</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SecurityConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span> <span class="comment">// 3. 將 SecurityFilterChain 物件註冊為一個 Bean，交由 Spring 管理</span></span><br><span class="line">    <span class="keyword">public</span> SecurityFilterChain <span class="title function_">securityFilterChain</span><span class="params">(HttpSecurity http)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        http</span><br><span class="line">            .authorizeHttpRequests(authorize -&gt; authorize</span><br><span class="line">                <span class="comment">// 4. 對 /swagger-ui/** 和 /v3/api-docs/** 的請求，允許所有人 (permitAll) 訪問</span></span><br><span class="line">                .requestMatchers(<span class="string">&quot;/swagger-ui/**&quot;</span>, <span class="string">&quot;/v3/api-docs/**&quot;</span>).permitAll()</span><br><span class="line">                <span class="comment">// 5. 其他所有 (anyRequest) 的請求，都必須經過認證 (authenticated)</span></span><br><span class="line">                .anyRequest().authenticated()</span><br><span class="line">            )</span><br><span class="line">            .httpBasic(withDefaults()) <span class="comment">// 6. 啟用 HTTP Basic 認證</span></span><br><span class="line">            .formLogin(withDefaults()); <span class="comment">// 7. 啟用表單登入</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> http.build();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<!-- end list -->
+
+<ul>
+<li><strong>程式碼詳解</strong>：<ol>
+<li><code>@Configuration</code> &amp; <code>@EnableWebSecurity</code>：啟用 Spring 的 Java 組態功能與 Web 安全性。</li>
+<li><code>@Bean public SecurityFilterChain ...</code>：我們定義了一個 <code>SecurityFilterChain</code> 型別的 Bean。Spring Security 會偵測到這個 Bean，並將其作為主要的安全性設定。</li>
+<li><code>.authorizeHttpRequests(...)</code>：這是定義「授權」規則的地方。</li>
+<li><code>.requestMatchers(...).permitAll()</code>：這是我們的第一條客製化規則。<code>requestMatchers</code> 用於匹配 HTTP 請求的路徑，<code>permitAll()</code> 表示允許所有使用者（無論是否登入）訪問。</li>
+<li><code>.anyRequest().authenticated()</code>：這是一個「兜底」規則，表示<strong>任何其他</strong>未被前面規則匹配到的請求，都必須是已認證的狀態才能訪問。<strong>規則的順序非常重要</strong>，Spring Security 會由上到下依序匹配。</li>
+<li><code>.httpBasic()</code> 和 <code>.formLogin()</code>：我們明確地啟用這兩種認證方式。<code>withDefaults()</code> 表示使用 Spring Security 提供的預設設定。</li>
+</ol>
+</li>
+</ul>
+<h2 id="步驟四：測試客製化設定"><a href="#步驟四：測試客製化設定" class="headerlink" title="步驟四：測試客製化設定"></a>步驟四：測試客製化設定</h2><ol>
+<li>重新啟動您的應用程式。</li>
+<li><strong>測試公開路徑</strong>：在瀏覽器中訪問 <code>http://localhost:8080/swagger-ui.html</code>。這次，您應該可以直接看到 API 文件頁面，而不會被要求登入。</li>
+<li><strong>測試受保護路徑</strong>：在瀏覽器中訪問 <code>http://localhost:8080/users</code>。您仍然會被重導到登入頁面。</li>
+</ol>
+<p>這證明了我們的客製化規則已經生效！</p>
+<h2 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h2><p>在本篇文章中，我們成功地為應用程式加上了第一道安全防線。</p>
+<ul>
+<li>我們了解了僅僅加入 <code>spring-boot-starter-security</code> 依賴，就能立即保護我們的應用。</li>
+<li>我們學習了 <strong>Servlet 過濾鏈 (Filter Chain)</strong> 是 Spring Security 運作的核心機制。</li>
+<li>我們學會了使用現代化的元件化方式，建立一個 <strong><code>SecurityFilterChain</code> Bean</strong> 來客製化安全規則。</li>
+<li>我們撰寫了第一條授權規則，將特定路徑公開，同時保護其他所有路徑。</li>
+</ul>
+<p>我們已經建立了基本的安全規則，但目前我們還在使用 Spring Boot 預設的 <code>user</code> 和隨機密碼。這在真實世界中是不可行的。在下一篇文章中，我們將學習如何捨棄預設使用者，並設定一個從<strong>資料庫中讀取使用者資訊</strong>的驗證機制。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://lmy46.github.io">Mendel Lee</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章連結: </span><span class="post-copyright-info"><a href="https://lmy46.github.io/2025/08/13/java-spring-boot-22/">https://lmy46.github.io/2025/08/13/java-spring-boot-22/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 許可協議。轉載請註明來自 <a href="https://lmy46.github.io" target="_blank">⅙阿諺、⅓Mendel、½麵條爸の部落格</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/Spring-Boot/">Spring Boot</a></div><div class="post_share"><div class="social-share" data-image="/img/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/08/13/java-spring-boot-23/" title="Spring Boot 23 - 基於資料庫的使用者驗證"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Spring Boot 23 - 基於資料庫的使用者驗證</div></div></a></div><div class="next-post pull-right"><a href="/2025/08/13/java-spring-boot-21/" title="Spring Boot 21 - 整合測試：MockMvc 與 Controller 層測試"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Spring Boot 21 - 整合測試：MockMvc 與 Controller 層測試</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><div><a href="/2025/08/08/ide-plugin-01/" title="VSCode 插件：建立 Spring Boot 專案 (含 Lombok)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-08</div><div class="title">VSCode 插件：建立 Spring Boot 專案 (含 Lombok)</div></div></a></div><div><a href="/2025/08/08/java-spring-boot-01/" title="Spring Boot 01 - 學習路徑總覽：從入門到專家之路"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-08</div><div class="title">Spring Boot 01 - 學習路徑總覽：從入門到專家之路</div></div></a></div><div><a href="/2025/08/11/java-spring-boot-03/" title="Spring Boot 03 - 第一個 RESTful API"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">Spring Boot 03 - 第一個 RESTful API</div></div></a></div><div><a href="/2025/08/08/java-spring-boot-02/" title="Spring Boot 02 - 專案結構與核心概念"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-08</div><div class="title">Spring Boot 02 - 專案結構與核心概念</div></div></a></div><div><a href="/2025/08/11/java-spring-boot-05/" title="Spring Boot 05 - 處理請求本文 (Body) 與 DTO"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">Spring Boot 05 - 處理請求本文 (Body) 與 DTO</div></div></a></div><div><a href="/2025/08/11/java-spring-boot-04/" title="Spring Boot 04 - 處理請求參數"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">Spring Boot 04 - 處理請求參數</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Mendel Lee</div><div class="author-info__description">用來記錄在阿諺小小的腦袋中，很容易因塞不下而忘記的東西</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">54</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">11</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80%EF%BC%9A%E7%82%BA%E6%82%A8%E7%9A%84-API-%E5%8A%A0%E4%B8%8A%E9%96%80%E9%8E%96"><span class="toc-number">1.</span> <span class="toc-text">前言：為您的 API 加上門鎖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%A9%9F%E4%B8%80%EF%BC%9A%E5%8A%A0%E5%85%A5-Spring-Security-%E4%BE%9D%E8%B3%B4%E8%88%87%E9%A0%90%E8%A8%AD%E8%A1%8C%E7%82%BA"><span class="toc-number">2.</span> <span class="toc-text">步驟一：加入 Spring Security 依賴與預設行為</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%A9%9F%E4%BA%8C%EF%BC%9A%E6%A0%B8%E5%BF%83%E6%A9%9F%E5%88%B6%EF%BC%9AServlet-%E9%81%8E%E6%BF%BE%E9%8F%88-Filter-Chain"><span class="toc-number">3.</span> <span class="toc-text">步驟二：核心機制：Servlet 過濾鏈 (Filter Chain)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%A9%9F%E4%B8%89%EF%BC%9A%E5%BB%BA%E7%AB%8B%E7%AC%AC%E4%B8%80%E5%80%8B%E5%AE%A2%E8%A3%BD%E5%8C%96%E5%AE%89%E5%85%A8%E8%A8%AD%E5%AE%9A"><span class="toc-number">4.</span> <span class="toc-text">步驟三：建立第一個客製化安全設定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%A9%9F%E5%9B%9B%EF%BC%9A%E6%B8%AC%E8%A9%A6%E5%AE%A2%E8%A3%BD%E5%8C%96%E8%A8%AD%E5%AE%9A"><span class="toc-number">5.</span> <span class="toc-text">步驟四：測試客製化設定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B8%BD%E7%B5%90"><span class="toc-number">6.</span> <span class="toc-text">總結</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/15/java-spring-boot-30/" title="Spring Boot 30 - 部署至雲端平台 (初步探討)">Spring Boot 30 - 部署至雲端平台 (初步探討)</a><time datetime="2025-08-15T02:56:29.000Z" title="發表於 2025-08-15 10:56:29">2025-08-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/14/java-spring-boot-29/" title="Spring Boot 29 - 使用 Buildpacks 建置 Docker 映像檔">Spring Boot 29 - 使用 Buildpacks 建置 Docker 映像檔</a><time datetime="2025-08-14T07:45:20.000Z" title="發表於 2025-08-14 15:45:20">2025-08-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-28/" title="Spring Boot 28 - 檔案上傳與下載">Spring Boot 28 - 檔案上傳與下載</a><time datetime="2025-08-13T08:25:43.000Z" title="發表於 2025-08-13 16:25:43">2025-08-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-27/" title="Spring Boot 27 - 使用 Spring Mail 寄送電子郵件">Spring Boot 27 - 使用 Spring Mail 寄送電子郵件</a><time datetime="2025-08-13T05:58:46.000Z" title="發表於 2025-08-13 13:58:46">2025-08-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-26/" title="Spring Boot 26 - 非同步 (@Async) 與排程 (@Scheduled) 任務">Spring Boot 26 - 非同步 (@Async) 與排程 (@Scheduled) 任務</a><time datetime="2025-08-13T05:54:09.000Z" title="發表於 2025-08-13 13:54:09">2025-08-13</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By Mendel Lee</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主題 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="淺色和深色模式轉換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到頂部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料庫載入中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜尋文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

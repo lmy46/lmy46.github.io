@@ -1,0 +1,214 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>VSCode 03 檔案與工作區管理 | ⅙阿諺、⅓Mendel、½麵條爸の部落格</title><meta name="author" content="Mendel Lee"><meta name="copyright" content="Mendel Lee"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="VSCode 03 - 學習如何高效地管理檔案與資料夾，並深入了解工作區 (Workspace) 的概念，以及如何區分使用者與工作區設定。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VSCode 03 檔案與工作區管理">
+<meta property="og:url" content="https://lmy46.github.io/2025/07/29/vscode-03/index.html">
+<meta property="og:site_name" content="⅙阿諺、⅓Mendel、½麵條爸の部落格">
+<meta property="og:description" content="VSCode 03 - 學習如何高效地管理檔案與資料夾，並深入了解工作區 (Workspace) 的概念，以及如何區分使用者與工作區設定。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://lmy46.github.io/img/avatar.png">
+<meta property="article:published_time" content="2025-07-29T08:18:00.000Z">
+<meta property="article:modified_time" content="2025-09-07T00:04:00.423Z">
+<meta property="article:author" content="Mendel Lee">
+<meta property="article:tag" content="IDE">
+<meta property="article:tag" content="VSCode">
+<meta property="article:tag" content="整合開發環境">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lmy46.github.io/img/avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lmy46.github.io/2025/07/29/vscode-03/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"languages":{"hits_empty":"找不到您查詢的內容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '複製成功',
+    error: '複製錯誤',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'VSCode 03 檔案與工作區管理',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-09-07 08:04:00'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = url => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      link.onload = () => resolve()
+      link.onerror = () => reject()
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">54</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">11</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://picsum.photos/id/20/1920/942')"><nav id="nav"><span id="blog-info"><a href="/" title="⅙阿諺、⅓Mendel、½麵條爸の部落格"><span class="site-name">⅙阿諺、⅓Mendel、½麵條爸の部落格</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">VSCode 03 檔案與工作區管理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2025-07-29T08:18:00.000Z" title="發表於 2025-07-29 16:18:00">2025-07-29</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2025-09-07T00:04:00.423Z" title="更新於 2025-09-07 08:04:00">2025-09-07</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/IDE/">IDE</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/IDE/VSCode/">VSCode</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/IDE/VSCode/VSCode-%E5%9F%BA%E7%A4%8E/">VSCode 基礎</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字數總計:</span><span class="word-count">1.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時長:</span><span>3分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="VSCode 03 檔案與工作區管理"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="檔案與工作區管理"><a href="#檔案與工作區管理" class="headerlink" title="檔案與工作區管理"></a>檔案與工作區管理</h1><p>高效的檔案與專案管理是順暢開發流程的基礎。VSCode 提供了直觀的檔案總管，並透過「工作區」的概念，讓您能輕鬆應對從單一專案到複雜的多專案場景。</p>
+<h2 id="檔案與資料夾操作"><a href="#檔案與資料夾操作" class="headerlink" title="檔案與資料夾操作"></a>檔案與資料夾操作</h2><p>VSCode 左側的「檔案總管 (Explorer)」是您管理專案檔案的主要區域。</p>
+<h3 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h3><ul>
+<li><strong>建立</strong>：將滑鼠移至檔案總管面板，會出現「新增檔案」與「新增資料夾」的圖示。</li>
+<li><strong>重新命名&#x2F;刪除</strong>：在檔案或資料夾上按右鍵，即可找到對應選項。</li>
+<li><strong>拖放</strong>：您可以直接從桌面或其他視窗將檔案或資料夾拖曳至 VSCode 的檔案總管中來加入它們。</li>
+</ul>
+<h3 id="快速開啟檔案"><a href="#快速開啟檔案" class="headerlink" title="快速開啟檔案"></a>快速開啟檔案</h3><ul>
+<li>按下 <code>Ctrl+P</code> (macOS 為 <code>Cmd+P</code>)，會開啟一個檔案搜尋框。</li>
+<li>直接輸入檔名，VSCode 會即時列出符合的檔案，按下 <code>Enter</code> 即可開啟。這通常比在檔案總管中層層尋找快得多。</li>
+</ul>
+<h2 id="工作區-Workspace-的概念"><a href="#工作區-Workspace-的概念" class="headerlink" title="工作區 (Workspace) 的概念"></a>工作區 (Workspace) 的概念</h2><p>在 VSCode 中，「工作區」不僅僅是您開啟的資料夾，它是一個更強大的概念，代表了您當前的開發環境。</p>
+<h3 id="單一資料夾模式-Single-folder"><a href="#單一資料夾模式-Single-folder" class="headerlink" title="單一資料夾模式 (Single-folder)"></a>單一資料夾模式 (Single-folder)</h3><p>這是最常見的使用方式。當您透過「檔案」&gt;「開啟資料夾…」來開啟一個專案時，VSCode 就會為這個資料夾建立一個工作區環境。所有設定、偵錯配置與任務都會與這個資料夾關聯。</p>
+<h3 id="多根工作區-Multi-root-Workspace"><a href="#多根工作區-Multi-root-Workspace" class="headerlink" title="多根工作區 (Multi-root Workspace)"></a>多根工作區 (Multi-root Workspace)</h3><p>當您的專案變得複雜，例如一個包含前端專案、後端 API 專案以及共用文件資料夾的大型專案時，多根工作區就顯得非常有用。它允許您在<strong>同一個 VSCode 視窗</strong>中，同時開啟並管理多個不相關或相關的資料夾。</p>
+<ul>
+<li><p><strong>建立</strong>：</p>
+<ol>
+<li>先開啟一個主要的資料夾。</li>
+<li>點擊「檔案」&gt;「將資料夾新增至工作區…」。</li>
+<li>選擇您想加入的第二個、第三個資料夾。</li>
+<li>完成後，點擊「檔案」&gt;「將工作區另存為…」，將這個組合儲存成一個 <code>.code-workspace</code> 檔案。</li>
+</ol>
+</li>
+<li><p><strong>優點</strong>：</p>
+<ul>
+<li><strong>集中管理</strong>：所有專案都在一個視窗內，方便切換與查看。</li>
+<li><strong>共用終端機</strong>：可以在同一個終端機面板中，為不同的專案執行指令。</li>
+<li><strong>全域搜尋</strong>：搜尋時可以一次涵蓋所有在工作區內的專案。</li>
+</ul>
+</li>
+<li><p><strong>範例情境</strong>：一個 Python Web 專案，前端使用 React，後端使用 Django。</p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">my-web-app.code-workspace</span><br><span class="line">├── frontend (React 專案資料夾)</span><br><span class="line">│   ├── src</span><br><span class="line">│   └── package.json</span><br><span class="line">└── backend (Django 專案資料夾)</span><br><span class="line">    ├── myproject</span><br><span class="line">    └── manage.py</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>透過 <code>.code-workspace</code> 檔案打開後，<code>frontend</code> 和 <code>backend</code> 會同時出現在檔案總管中，各自獨立但又便於管理。</p>
+<h2 id="設定檔：使用者-vs-工作區"><a href="#設定檔：使用者-vs-工作區" class="headerlink" title="設定檔：使用者 vs. 工作區"></a>設定檔：使用者 vs. 工作區</h2><p>VSCode 的設定非常有彈性，可以分為兩個層級，讓您能精準控制設定的套用範圍。</p>
+<h3 id="使用者設定-User-Settings"><a href="#使用者設定-User-Settings" class="headerlink" title="使用者設定 (User Settings)"></a>使用者設定 (User Settings)</h3><ul>
+<li><strong>作用範圍</strong>：全域，適用於您用 VSCode 開啟的所有專案。</li>
+<li><strong>設定方式</strong>：點擊左下角齒輪圖示 &gt;「設定」，在「使用者」分頁下修改。</li>
+<li><strong>適合的設定</strong>：通用的個人偏好，例如佈景主題、字體大小、<code>&quot;editor.autoSave&quot;: &quot;onFocusChange&quot;</code> (當焦點離開編輯器時自動儲存) 等。</li>
+</ul>
+<h3 id="工作區設定-Workspace-Settings"><a href="#工作區設定-Workspace-Settings" class="headerlink" title="工作區設定 (Workspace Settings)"></a>工作區設定 (Workspace Settings)</h3><ul>
+<li><p><strong>作用範圍</strong>：僅對目前開啟的工作區有效。此設定會覆寫使用者設定。</p>
+</li>
+<li><p><strong>設定方式</strong>：點擊左下角齒輪圖示 &gt;「設定」，在「工作區」分頁下修改。設定會被儲存到目前資料夾下的 <code>.vscode/settings.json</code> 檔案中。</p>
+</li>
+<li><p><strong>適合的設定</strong>：特定專案的需求，例如專案的 Python 直譯器路徑、程式碼排版風格、或是專案特定的檔案排除規則。</p>
+<p><strong>範例</strong>：您的個人偏好是使用 4 個空格進行縮排，但某個 Python 專案規定必須使用 2 個空格。</p>
+<ol>
+<li>**使用者設定 (<code>settings.json</code>)**：<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;editor.tabSize&quot;</span><span class="punctuation">:</span> <span class="number">4</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;editor.insertSpaces&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+<li>**在該專案的 <code>.vscode/settings.json</code> 中設定 (工作區設定)**：<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;editor.tabSize&quot;</span><span class="punctuation">:</span> <span class="number">2</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+</ul>
+<p>當您開啟這個專案時，VSCode 會優先採用工作區的設定，使用 2 個空格縮排。當您開啟其他專案時，則會回復到使用者設定的 4 個空格。這個機制對於團隊協作與維持專案風格一致性至關重要。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://lmy46.github.io">Mendel Lee</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章連結: </span><span class="post-copyright-info"><a href="https://lmy46.github.io/2025/07/29/vscode-03/">https://lmy46.github.io/2025/07/29/vscode-03/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 許可協議。轉載請註明來自 <a href="https://lmy46.github.io" target="_blank">⅙阿諺、⅓Mendel、½麵條爸の部落格</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/IDE/">IDE</a><a class="post-meta__tags" href="/tags/VSCode/">VSCode</a><a class="post-meta__tags" href="/tags/%E6%95%B4%E5%90%88%E9%96%8B%E7%99%BC%E7%92%B0%E5%A2%83/">整合開發環境</a></div><div class="post_share"><div class="social-share" data-image="/img/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/07/29/vscode-04/" title="VSCode 04 整合式終端機"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">VSCode 04 整合式終端機</div></div></a></div><div class="next-post pull-right"><a href="/2025/07/29/vscode-02/" title="VSCode 02 核心編輯技巧"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">VSCode 02 核心編輯技巧</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><div><a href="/2025/07/29/vscode-01/" title="VSCode 01 下戴、安裝、設定及執行"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-29</div><div class="title">VSCode 01 下戴、安裝、設定及執行</div></div></a></div><div><a href="/2025/07/29/vscode-02/" title="VSCode 02 核心編輯技巧"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-29</div><div class="title">VSCode 02 核心編輯技巧</div></div></a></div><div><a href="/2025/07/29/vscode-04/" title="VSCode 04 整合式終端機"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-29</div><div class="title">VSCode 04 整合式終端機</div></div></a></div><div><a href="/2025/07/29/vscode-05/" title="VSCode 05 原始碼控制 (Git 整合)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-29</div><div class="title">VSCode 05 原始碼控制 (Git 整合)</div></div></a></div><div><a href="/2025/07/30/vscode-06/" title="VSCode 06 執行與偵錯"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-30</div><div class="title">VSCode 06 執行與偵錯</div></div></a></div><div><a href="/2025/07/30/vscode-07/" title="VSCode 07 工作自動化 (Tasks)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-30</div><div class="title">VSCode 07 工作自動化 (Tasks)</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Mendel Lee</div><div class="author-info__description">用來記錄在阿諺小小的腦袋中，很容易因塞不下而忘記的東西</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">54</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">11</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%AA%94%E6%A1%88%E8%88%87%E5%B7%A5%E4%BD%9C%E5%8D%80%E7%AE%A1%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">檔案與工作區管理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AA%94%E6%A1%88%E8%88%87%E8%B3%87%E6%96%99%E5%A4%BE%E6%93%8D%E4%BD%9C"><span class="toc-number">1.1.</span> <span class="toc-text">檔案與資料夾操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="toc-number">1.1.1.</span> <span class="toc-text">基本操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BF%AB%E9%80%9F%E9%96%8B%E5%95%9F%E6%AA%94%E6%A1%88"><span class="toc-number">1.1.2.</span> <span class="toc-text">快速開啟檔案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E5%8D%80-Workspace-%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="toc-number">1.2.</span> <span class="toc-text">工作區 (Workspace) 的概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%96%AE%E4%B8%80%E8%B3%87%E6%96%99%E5%A4%BE%E6%A8%A1%E5%BC%8F-Single-folder"><span class="toc-number">1.2.1.</span> <span class="toc-text">單一資料夾模式 (Single-folder)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E6%A0%B9%E5%B7%A5%E4%BD%9C%E5%8D%80-Multi-root-Workspace"><span class="toc-number">1.2.2.</span> <span class="toc-text">多根工作區 (Multi-root Workspace)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A8%AD%E5%AE%9A%E6%AA%94%EF%BC%9A%E4%BD%BF%E7%94%A8%E8%80%85-vs-%E5%B7%A5%E4%BD%9C%E5%8D%80"><span class="toc-number">1.3.</span> <span class="toc-text">設定檔：使用者 vs. 工作區</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E8%80%85%E8%A8%AD%E5%AE%9A-User-Settings"><span class="toc-number">1.3.1.</span> <span class="toc-text">使用者設定 (User Settings)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E5%8D%80%E8%A8%AD%E5%AE%9A-Workspace-Settings"><span class="toc-number">1.3.2.</span> <span class="toc-text">工作區設定 (Workspace Settings)</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/15/java-spring-boot-30/" title="Spring Boot 30 - 部署至雲端平台 (初步探討)">Spring Boot 30 - 部署至雲端平台 (初步探討)</a><time datetime="2025-08-15T02:56:29.000Z" title="發表於 2025-08-15 10:56:29">2025-08-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/14/java-spring-boot-29/" title="Spring Boot 29 - 使用 Buildpacks 建置 Docker 映像檔">Spring Boot 29 - 使用 Buildpacks 建置 Docker 映像檔</a><time datetime="2025-08-14T07:45:20.000Z" title="發表於 2025-08-14 15:45:20">2025-08-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-28/" title="Spring Boot 28 - 檔案上傳與下載">Spring Boot 28 - 檔案上傳與下載</a><time datetime="2025-08-13T08:25:43.000Z" title="發表於 2025-08-13 16:25:43">2025-08-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-27/" title="Spring Boot 27 - 使用 Spring Mail 寄送電子郵件">Spring Boot 27 - 使用 Spring Mail 寄送電子郵件</a><time datetime="2025-08-13T05:58:46.000Z" title="發表於 2025-08-13 13:58:46">2025-08-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-26/" title="Spring Boot 26 - 非同步 (@Async) 與排程 (@Scheduled) 任務">Spring Boot 26 - 非同步 (@Async) 與排程 (@Scheduled) 任務</a><time datetime="2025-08-13T05:54:09.000Z" title="發表於 2025-08-13 13:54:09">2025-08-13</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By Mendel Lee</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主題 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="淺色和深色模式轉換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到頂部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料庫載入中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜尋文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>Spring Boot 29 - 使用 Buildpacks 建置 Docker 映像檔 | ⅙阿諺、⅓Mendel、½麵條爸の部落格</title><meta name="author" content="Mendel Lee"><meta name="copyright" content="Mendel Lee"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="本篇將帶您進入雲原生 (Cloud Native) 的世界，學習如何將我們的 Spring Boot 應用程式打包成一個標準化的 Docker 容器映像檔。我們將介紹 Docker 的基礎概念，並使用 Spring Boot 內建的 Cloud Native Buildpacks 功能，僅用一行指令就完成映像檔的建置，為最終部署做好準備。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Boot 29 - 使用 Buildpacks 建置 Docker 映像檔">
+<meta property="og:url" content="https://lmy46.github.io/2025/08/14/java-spring-boot-29/index.html">
+<meta property="og:site_name" content="⅙阿諺、⅓Mendel、½麵條爸の部落格">
+<meta property="og:description" content="本篇將帶您進入雲原生 (Cloud Native) 的世界，學習如何將我們的 Spring Boot 應用程式打包成一個標準化的 Docker 容器映像檔。我們將介紹 Docker 的基礎概念，並使用 Spring Boot 內建的 Cloud Native Buildpacks 功能，僅用一行指令就完成映像檔的建置，為最終部署做好準備。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://lmy46.github.io/img/avatar.png">
+<meta property="article:published_time" content="2025-08-14T07:45:20.000Z">
+<meta property="article:modified_time" content="2025-09-26T05:07:06.499Z">
+<meta property="article:author" content="Mendel Lee">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Spring Boot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lmy46.github.io/img/avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lmy46.github.io/2025/08/14/java-spring-boot-29/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"languages":{"hits_empty":"找不到您查詢的內容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '複製成功',
+    error: '複製錯誤',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Spring Boot 29 - 使用 Buildpacks 建置 Docker 映像檔',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-09-26 13:07:06'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = url => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      link.onload = () => resolve()
+      link.onerror = () => reject()
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">54</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">11</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://picsum.photos/id/20/1920/942')"><nav id="nav"><span id="blog-info"><a href="/" title="⅙阿諺、⅓Mendel、½麵條爸の部落格"><span class="site-name">⅙阿諺、⅓Mendel、½麵條爸の部落格</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Spring Boot 29 - 使用 Buildpacks 建置 Docker 映像檔</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2025-08-14T07:45:20.000Z" title="發表於 2025-08-14 15:45:20">2025-08-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2025-09-26T05:07:06.499Z" title="更新於 2025-09-26 13:07:06">2025-09-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Spring/">Spring</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Spring/Spring-Boot-%E5%9F%BA%E7%A4%8E/">Spring Boot 基礎</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字數總計:</span><span class="word-count">1.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時長:</span><span>5分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Spring Boot 29 - 使用 Buildpacks 建置 Docker 映像檔"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前言：告別「在我電腦上可以跑」的窘境"><a href="#前言：告別「在我電腦上可以跑」的窘境" class="headerlink" title="前言：告別「在我電腦上可以跑」的窘境"></a>前言：告別「在我電腦上可以跑」的窘境</h2><p>我們已經成功開發了一個功能豐富的 Spring Boot 應用程式。現在，下一個問題是：如何將它部署到真實的伺服器或雲端平台上？</p>
+<p>傳統的方式可能是：在伺服器上安裝好特定版本的 Java，然後將我們打包好的 JAR 檔複製上去，再透過指令列執行。這種方式常常會引發經典的窘境——「在我電腦上明明可以跑，為什麼在伺服器上就不行了？」，問題通常出在環境不一致（如 Java 版本、作業系統依賴等）。</p>
+<p>為了解決這個問題，<strong>容器化 (Containerization)</strong> 技術應運而生，而 <strong>Docker</strong> 正是這項技術的代名詞。</p>
+<p><strong>Docker 容器</strong>可以被想像成一個輕量級、獨立的「箱子」，這個箱子裡打包了執行我們應用程式所需的一切：程式碼、執行環境 (JVM)、系統工具、函式庫等等。這個「箱子」可以在任何安裝了 Docker 的機器上以完全相同的方式執行，從而徹底解決了環境不一致的問題。</p>
+<p>本篇文章將帶您學習如何使用 Spring Boot 內建的 <strong>Cloud Native Buildpacks</strong> 功能，以一種極其簡單的方式，將我們的應用程式打包成一個專業的 Docker 映像檔 (Image)。</p>
+<h2 id="Docker-與傳統-Dockerfile"><a href="#Docker-與傳統-Dockerfile" class="headerlink" title="Docker 與傳統 Dockerfile"></a>Docker 與傳統 <code>Dockerfile</code></h2><p><strong>前置條件</strong>：在開始之前，請確保您的電腦上已經安裝並正在執行 <strong>Docker Desktop</strong> (適用於 Windows&#x2F;macOS) 或 Docker Engine (適用於 Linux)。您可以從 <a target="_blank" rel="noopener" href="https://www.docker.com/products/docker-desktop/">Docker 官網</a>下載。</p>
+<p>傳統上，要建立一個 Docker 映像檔，我們需要手動撰寫一個名為 <code>Dockerfile</code> 的設定檔，內容大致如下：</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 傳統方式：手動撰寫 Dockerfile</span></span><br><span class="line"><span class="keyword">FROM</span> openjdk:<span class="number">21</span>-slim</span><br><span class="line"><span class="keyword">ARG</span> JAR_FILE=target/*.jar</span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> <span class="variable">$&#123;JAR_FILE&#125;</span> app.jar</span></span><br><span class="line"><span class="keyword">ENTRYPOINT</span><span class="language-bash"> [<span class="string">&quot;java&quot;</span>, <span class="string">&quot;-jar&quot;</span>, <span class="string">&quot;/app.jar&quot;</span>]</span></span><br></pre></td></tr></table></figure>
+
+<p>這種方式需要開發者自己選擇基礎映像檔、撰寫指令、並手動進行最佳化，有一定的學習成本。</p>
+<h2 id="現代化的選擇：Cloud-Native-Buildpacks"><a href="#現代化的選擇：Cloud-Native-Buildpacks" class="headerlink" title="現代化的選擇：Cloud Native Buildpacks"></a>現代化的選擇：Cloud Native Buildpacks</h2><p>幸運的是，Spring Boot 2.3 版之後，內建了對 <strong>Cloud Native Buildpacks</strong> 的支援，徹底改變了遊戲規則。</p>
+<p><strong>Buildpacks</strong> 是一種比 <code>Dockerfile</code> 更高層次的抽象。您可以把它想像成一個「智慧建築師」，它會自動檢測您的專案類型（「喔，這是一個 Spring Boot 應用！」），然後運用它的專業知識，自動地為您選擇最佳的基礎作業系統、設定最合適的 JVM，並以最高效的方式，建置出一個分層優化、安全且標準化的 Docker 映像檔。</p>
+<p><strong>使用 Buildpacks 的優點</strong>：</p>
+<ul>
+<li>**無需 <code>Dockerfile</code>**：完全不需要撰寫任何 Docker 相關的設定檔。</li>
+<li><strong>分層優化</strong>：Buildpacks 會智慧地將應用程式拆分成多個圖層（作業系統、JVM、相依性函式庫、您自己的程式碼）。當您修改程式碼並重新建置時，只需要更新變動的圖層，大幅提升了建置與部署的速度。</li>
+<li><strong>安全性</strong>：當底層的作業系統或 JVM 出現安全漏洞時，平台可以集中更新基礎映像檔，您只需重新建置即可套用安全補丁，而無需修改任何應用程式程式碼。</li>
+</ul>
+<h2 id="步驟一：使用-Buildpacks-建置您的第一個映像檔"><a href="#步驟一：使用-Buildpacks-建置您的第一個映像檔" class="headerlink" title="步驟一：使用 Buildpacks 建置您的第一個映像檔"></a>步驟一：使用 Buildpacks 建置您的第一個映像檔</h2><p>得益於 <code>spring-boot-maven-plugin</code>（它已預設包含在我們的 <code>pom.xml</code> 中），將我們的應用程式打包成 Docker 映像檔，只需要<strong>一個指令</strong>。</p>
+<ol>
+<li><p><strong>打開終端機</strong><br>在您的專案根目錄下（與 <code>pom.xml</code> 同一層），打開 VSCode 的整合式終端機。</p>
+</li>
+<li><p><strong>執行建置指令</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn spring-boot:build-image</span><br></pre></td></tr></table></figure>
+
+<p>第一次執行時，Maven 會需要一些時間來下載所需的「建置器 (builder)」映像檔。請耐心等待。當您看到 <code>Successfully built image ...</code> 的訊息時，就代表成功了！</p>
+</li>
+<li><p><strong>（選用）自訂映像檔名稱</strong><br>預設情況下，映像檔的名稱會是 <code>pom.xml</code> 中的 <code>artifactId</code> 和 <code>version</code> 的組合（例如 <code>demo-app:0.0.1-SNAPSHOT</code>）。您可以使用 <code>-D</code> 參數來指定一個更具意義的名稱：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn spring-boot:build-image -Dspring-boot.build-image.imageName=your-dockerhub-id/demo-app:1.0</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="步驟二：執行您的-Docker-容器"><a href="#步驟二：執行您的-Docker-容器" class="headerlink" title="步驟二：執行您的 Docker 容器"></a>步驟二：執行您的 Docker 容器</h2><ol>
+<li><p><strong>驗證映像檔</strong><br>在終端機中執行以下指令，來查看您本機的所有 Docker 映像檔：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker images</span><br></pre></td></tr></table></figure>
+
+<p>您應該能在列表中看到我們剛剛建立的 <code>demo-app</code> 映像檔。</p>
+</li>
+<li><p><strong>執行容器</strong><br>使用 <code>docker run</code> 指令來從這個映像檔啟動一個新的容器：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 8080:8080 demo-app:0.0.1-SNAPSHOT</span><br></pre></td></tr></table></figure></li>
+</ol>
+<!-- end list -->
+
+<ul>
+<li><strong>指令詳解</strong>：<ul>
+<li><code>docker run</code>：從映像檔建立並啟動一個容器。</li>
+<li><code>-p 8080:8080</code>：<strong>埠口映射 (Port Mapping)<strong>。這一步非常關鍵。它將我們</strong>本機電腦 (Host) 的 8080 埠</strong>，映射到<strong>容器內部 (Container) 的 8080 埠</strong>（Spring Boot 應用預設監聽的埠口）。這使得我們可以透過本機的瀏覽器來訪問在容器中執行的應用程式。</li>
+<li><code>demo-app:0.0.1-SNAPSHOT</code>：您要執行的映像檔名稱。</li>
+</ul>
+</li>
+</ul>
+<!-- end list -->
+
+<ol start="3">
+<li><p><strong>測試應用</strong><br>容器啟動後，它就像一個獨立的迷你伺服器。打開您的瀏覽器，訪問 <code>http://localhost:8080/swagger-ui.html</code> 或任何其他的 API 端點。您會發現，應用程式的行為與我們之前直接在本機執行時<strong>完全一樣</strong>！</p>
+</li>
+<li><p><strong>管理容器</strong></p>
+<ul>
+<li>查看正在執行的容器：<code>docker ps</code></li>
+<li>停止容器：<code>docker stop &lt;容器ID&gt;</code>（容器 ID 可以從 <code>docker ps</code> 的結果中找到）</li>
+</ul>
+</li>
+</ol>
+<h2 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h2><p>在本篇文章中，我們成功地將我們的 Spring Boot 應用程式「容器化」，使其成為一個可移植、獨立且環境一致的專業交付產物。</p>
+<ul>
+<li>我們理解了 <strong>Docker 容器</strong>對於解決「環境不一致」問題的重要性。</li>
+<li>我們學會了使用 Spring Boot 內建的 <strong>Cloud Native Buildpacks</strong> 功能，僅用一個 <code>mvn</code> 指令就完成了 Docker 映像檔的建置，而無需手寫 <code>Dockerfile</code>。</li>
+<li>我們掌握了如何使用 <code>docker run</code> 指令來啟動我們的應用程式容器，並透過埠口映射從外部訪問它。</li>
+</ul>
+<p>我們已經將我們的應用程式打包成一個標準的 Docker 容器。在我們這個基礎系列的最後一篇文章中，我們將一起探討將這個容器<strong>部署到雲端平台</strong>的基本思路與常見選擇，為您的專案上線畫上圓滿的句點。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://lmy46.github.io">Mendel Lee</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章連結: </span><span class="post-copyright-info"><a href="https://lmy46.github.io/2025/08/14/java-spring-boot-29/">https://lmy46.github.io/2025/08/14/java-spring-boot-29/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 許可協議。轉載請註明來自 <a href="https://lmy46.github.io" target="_blank">⅙阿諺、⅓Mendel、½麵條爸の部落格</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/Spring-Boot/">Spring Boot</a></div><div class="post_share"><div class="social-share" data-image="/img/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/08/15/java-spring-boot-30/" title="Spring Boot 30 - 部署至雲端平台 (初步探討)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Spring Boot 30 - 部署至雲端平台 (初步探討)</div></div></a></div><div class="next-post pull-right"><a href="/2025/08/13/java-spring-boot-28/" title="Spring Boot 28 - 檔案上傳與下載"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Spring Boot 28 - 檔案上傳與下載</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><div><a href="/2025/08/08/ide-plugin-01/" title="VSCode 插件：建立 Spring Boot 專案 (含 Lombok)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-08</div><div class="title">VSCode 插件：建立 Spring Boot 專案 (含 Lombok)</div></div></a></div><div><a href="/2025/08/08/java-spring-boot-01/" title="Spring Boot 01 - 學習路徑總覽：從入門到專家之路"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-08</div><div class="title">Spring Boot 01 - 學習路徑總覽：從入門到專家之路</div></div></a></div><div><a href="/2025/08/11/java-spring-boot-03/" title="Spring Boot 03 - 第一個 RESTful API"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">Spring Boot 03 - 第一個 RESTful API</div></div></a></div><div><a href="/2025/08/08/java-spring-boot-02/" title="Spring Boot 02 - 專案結構與核心概念"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-08</div><div class="title">Spring Boot 02 - 專案結構與核心概念</div></div></a></div><div><a href="/2025/08/11/java-spring-boot-05/" title="Spring Boot 05 - 處理請求本文 (Body) 與 DTO"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">Spring Boot 05 - 處理請求本文 (Body) 與 DTO</div></div></a></div><div><a href="/2025/08/11/java-spring-boot-04/" title="Spring Boot 04 - 處理請求參數"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">Spring Boot 04 - 處理請求參數</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Mendel Lee</div><div class="author-info__description">用來記錄在阿諺小小的腦袋中，很容易因塞不下而忘記的東西</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">54</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">11</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80%EF%BC%9A%E5%91%8A%E5%88%A5%E3%80%8C%E5%9C%A8%E6%88%91%E9%9B%BB%E8%85%A6%E4%B8%8A%E5%8F%AF%E4%BB%A5%E8%B7%91%E3%80%8D%E7%9A%84%E7%AA%98%E5%A2%83"><span class="toc-number">1.</span> <span class="toc-text">前言：告別「在我電腦上可以跑」的窘境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker-%E8%88%87%E5%82%B3%E7%B5%B1-Dockerfile"><span class="toc-number">2.</span> <span class="toc-text">Docker 與傳統 Dockerfile</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8F%BE%E4%BB%A3%E5%8C%96%E7%9A%84%E9%81%B8%E6%93%87%EF%BC%9ACloud-Native-Buildpacks"><span class="toc-number">3.</span> <span class="toc-text">現代化的選擇：Cloud Native Buildpacks</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%A9%9F%E4%B8%80%EF%BC%9A%E4%BD%BF%E7%94%A8-Buildpacks-%E5%BB%BA%E7%BD%AE%E6%82%A8%E7%9A%84%E7%AC%AC%E4%B8%80%E5%80%8B%E6%98%A0%E5%83%8F%E6%AA%94"><span class="toc-number">4.</span> <span class="toc-text">步驟一：使用 Buildpacks 建置您的第一個映像檔</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%A9%9F%E4%BA%8C%EF%BC%9A%E5%9F%B7%E8%A1%8C%E6%82%A8%E7%9A%84-Docker-%E5%AE%B9%E5%99%A8"><span class="toc-number">5.</span> <span class="toc-text">步驟二：執行您的 Docker 容器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B8%BD%E7%B5%90"><span class="toc-number">6.</span> <span class="toc-text">總結</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/15/java-spring-boot-30/" title="Spring Boot 30 - 部署至雲端平台 (初步探討)">Spring Boot 30 - 部署至雲端平台 (初步探討)</a><time datetime="2025-08-15T02:56:29.000Z" title="發表於 2025-08-15 10:56:29">2025-08-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/14/java-spring-boot-29/" title="Spring Boot 29 - 使用 Buildpacks 建置 Docker 映像檔">Spring Boot 29 - 使用 Buildpacks 建置 Docker 映像檔</a><time datetime="2025-08-14T07:45:20.000Z" title="發表於 2025-08-14 15:45:20">2025-08-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-28/" title="Spring Boot 28 - 檔案上傳與下載">Spring Boot 28 - 檔案上傳與下載</a><time datetime="2025-08-13T08:25:43.000Z" title="發表於 2025-08-13 16:25:43">2025-08-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-27/" title="Spring Boot 27 - 使用 Spring Mail 寄送電子郵件">Spring Boot 27 - 使用 Spring Mail 寄送電子郵件</a><time datetime="2025-08-13T05:58:46.000Z" title="發表於 2025-08-13 13:58:46">2025-08-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-26/" title="Spring Boot 26 - 非同步 (@Async) 與排程 (@Scheduled) 任務">Spring Boot 26 - 非同步 (@Async) 與排程 (@Scheduled) 任務</a><time datetime="2025-08-13T05:54:09.000Z" title="發表於 2025-08-13 13:54:09">2025-08-13</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By Mendel Lee</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主題 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="淺色和深色模式轉換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到頂部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料庫載入中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜尋文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

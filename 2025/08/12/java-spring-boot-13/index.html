@@ -1,0 +1,224 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>Spring Boot 13 - 使用 @Query 進行複雜查詢 (JPQL) | ⅙阿諺、⅓Mendel、½麵條爸の部落格</title><meta name="author" content="Mendel Lee"><meta name="copyright" content="Mendel Lee"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="本篇將帶您突破查詢方法 (Query Methods) 的限制，學習如何使用 @Query 註解在 Repository 中直接撰寫 JPQL (Java Persistence Query Language)，實現更複雜、更具彈性的資料庫查詢，並掌握具名參數與位置參數的使用技巧。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Boot 13 - 使用 @Query 進行複雜查詢 (JPQL)">
+<meta property="og:url" content="https://lmy46.github.io/2025/08/12/java-spring-boot-13/index.html">
+<meta property="og:site_name" content="⅙阿諺、⅓Mendel、½麵條爸の部落格">
+<meta property="og:description" content="本篇將帶您突破查詢方法 (Query Methods) 的限制，學習如何使用 @Query 註解在 Repository 中直接撰寫 JPQL (Java Persistence Query Language)，實現更複雜、更具彈性的資料庫查詢，並掌握具名參數與位置參數的使用技巧。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://lmy46.github.io/img/avatar.png">
+<meta property="article:published_time" content="2025-08-12T07:36:25.000Z">
+<meta property="article:modified_time" content="2025-09-26T05:04:14.201Z">
+<meta property="article:author" content="Mendel Lee">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Spring Boot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lmy46.github.io/img/avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lmy46.github.io/2025/08/12/java-spring-boot-13/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"languages":{"hits_empty":"找不到您查詢的內容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '複製成功',
+    error: '複製錯誤',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Spring Boot 13 - 使用 @Query 進行複雜查詢 (JPQL)',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-09-26 13:04:14'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = url => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      link.onload = () => resolve()
+      link.onerror = () => reject()
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">54</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">11</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://picsum.photos/id/20/1920/942')"><nav id="nav"><span id="blog-info"><a href="/" title="⅙阿諺、⅓Mendel、½麵條爸の部落格"><span class="site-name">⅙阿諺、⅓Mendel、½麵條爸の部落格</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Spring Boot 13 - 使用 @Query 進行複雜查詢 (JPQL)</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2025-08-12T07:36:25.000Z" title="發表於 2025-08-12 15:36:25">2025-08-12</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2025-09-26T05:04:14.201Z" title="更新於 2025-09-26 13:04:14">2025-09-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Spring/">Spring</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Spring/Spring-Boot-%E5%9F%BA%E7%A4%8E/">Spring Boot 基礎</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字數總計:</span><span class="word-count">1.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時長:</span><span>5分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Spring Boot 13 - 使用 @Query 進行複雜查詢 (JPQL)"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前言：當查詢方法不夠用時"><a href="#前言：當查詢方法不夠用時" class="headerlink" title="前言：當查詢方法不夠用時"></a>前言：當查詢方法不夠用時</h2><p>在上一篇文章中，我們體驗了 Spring Data JPA 查詢方法 (Query Methods) 的魔力，僅僅透過方法命名就能實現多樣化的查詢。這個功能在多數情況下都非常出色，但當查詢邏輯變得非常複雜時，它也會遇到瓶頸：</p>
+<ul>
+<li><strong>方法名稱過於冗長</strong>：一個包含多個 <code>And</code>、<code>Or</code> 和其他條件的查詢，會導致方法名稱變得極其冗長且難以閱讀。</li>
+<li><strong>功能限制</strong>：對於需要複雜 <code>JOIN</code>、子查詢 (Sub-queries) 或資料庫彙總函式 (<code>AVG</code>, <code>SUM</code> 等) 的操作，查詢方法便無能為力。</li>
+</ul>
+<p>為了解決這些問題，Spring Data JPA 提供了終極武器——<code>@Query</code> 註解。它允許我們在 Repository 方法上，直接撰寫查詢語句，從而給予我們完全的控制權與靈活性。</p>
+<h2 id="什麼是-JPQL？"><a href="#什麼是-JPQL？" class="headerlink" title="什麼是 JPQL？"></a>什麼是 JPQL？</h2><p>在使用 <code>@Query</code> 之前，我們需要先認識 **JPQL (Java Persistence Query Language)**。</p>
+<p>JPQL 是一種<strong>物件導向的查詢語言</strong>，語法上與 SQL 非常相似，但它有著本質的區別：</p>
+<ul>
+<li><strong>SQL</strong> 操作的是**資料庫的表格 (Table) 與欄位 (Column)**。</li>
+<li><strong>JPQL</strong> 操作的是 **JPA 的實體 (Entity) 與其屬性 (Property)**。</li>
+</ul>
+<p><strong>比較範例：</strong></p>
+<ul>
+<li><strong>SQL</strong>: <code>SELECT * FROM users WHERE username = &#39;alice&#39;</code></li>
+<li><strong>JPQL</strong>: <code>SELECT u FROM User u WHERE u.username = &#39;alice&#39;</code></li>
+</ul>
+<p>請注意，JPQL 查詢的是 <code>User</code> 這個 <strong>Java 類別</strong>，並使用 <code>u.username</code> 這個<strong>類別屬性</strong>，而不是底層的 <code>users</code> 表格與 <code>username</code> 欄位。這使得 JPQL 具有<strong>資料庫獨立性</strong>，同樣的 JPQL 查詢可以執行在不同的資料庫上。</p>
+<h2 id="使用-Query-與具名參數-推薦"><a href="#使用-Query-與具名參數-推薦" class="headerlink" title="使用 @Query 與具名參數 (推薦)"></a>使用 <code>@Query</code> 與具名參數 (推薦)</h2><p>具名參數 (Named Parameters) 是使用 <code>@Query</code> 時最推薦的方式，因為它可讀性高且不易出錯。</p>
+<p>讓我們打開 <code>com.example.demoapp.repository.UserRepository.java</code> 介面，並加入新的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demoapp.repository;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ... 其他 import ...</span></span><br><span class="line"><span class="keyword">import</span> org.springframework.data.jpa.repository.Query;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.repository.query.Param;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserRepository</span> <span class="keyword">extends</span> <span class="title class_">JpaRepository</span>&lt;User, Long&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ... 保留之前的方法 ...</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 使用具名參數 (:nameOfParam)，可讀性高，推薦使用</span></span><br><span class="line">    <span class="meta">@Query(&quot;SELECT u FROM User u WHERE u.username = :name AND u.age &gt;= :age&quot;)</span></span><br><span class="line">    List&lt;User&gt; <span class="title function_">findUsersByUsernameAndAge</span><span class="params">(<span class="meta">@Param(&quot;name&quot;)</span> String username, <span class="meta">@Param(&quot;age&quot;)</span> Integer age)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>程式碼詳解</strong>：<ul>
+<li><code>@Query(...)</code>：我們在此註解中直接撰寫 JPQL 語句。</li>
+<li><code>:name</code> 和 <code>:age</code>：這是 JPQL 中的<strong>具名參數佔位符</strong>。</li>
+<li><code>@Param(&quot;name&quot;)</code>：這個註解將方法的參數 <code>String username</code>，與 JPQL 中名為 <code>:name</code> 的佔位符進行綁定。使用 <code>@Param</code> 的好處是，方法參數的順序不再重要，程式碼更易於維護。</li>
+</ul>
+</li>
+</ul>
+<h2 id="使用-Query-與位置參數"><a href="#使用-Query-與位置參數" class="headerlink" title="使用 @Query 與位置參數"></a>使用 <code>@Query</code> 與位置參數</h2><p>除了具名參數，<code>@Query</code> 也支援傳統的位置參數 (Positional Parameters)，其佔位符格式為 <code>?</code> 後面跟著參數的順序（從 1 開始）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ... in UserRepository.java</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用位置參數 (?1, ?2)，參數順序必須嚴格對應</span></span><br><span class="line"><span class="meta">@Query(&quot;SELECT u FROM User u WHERE u.username = ?1 AND u.age &gt;= ?2&quot;)</span></span><br><span class="line">List&lt;User&gt; <span class="title function_">findUsersByUsernameAndAgePositional</span><span class="params">(String username, Integer age)</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>程式碼詳解</strong>：<code>?1</code> 會被綁定到方法的第一個參數 <code>username</code>，<code>?2</code> 則被綁定到第二個參數 <code>age</code>。雖然這種寫法比較簡潔，但當參數一多，就很容易因順序變動而出錯，因此<strong>優先推薦使用具名參數</strong>。</li>
+</ul>
+<h2 id="執行修改與刪除操作-Modifying"><a href="#執行修改與刪除操作-Modifying" class="headerlink" title="執行修改與刪除操作 (@Modifying)"></a>執行修改與刪除操作 (<code>@Modifying</code>)</h2><p><code>@Query</code> 預設用於執行查詢 (SELECT) 操作。如果您希望執行會修改資料庫狀態的操作（如 <code>UPDATE</code> 或 <code>DELETE</code>），您必須額外加上 <code>@Modifying</code> 註解。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ... in UserRepository.java</span></span><br><span class="line"><span class="keyword">import</span> org.springframework.data.jpa.repository.Modifying;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Modifying</span></span><br><span class="line"><span class="meta">@Query(&quot;UPDATE User u SET u.email = :newEmail WHERE u.id = :id&quot;)</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">updateUserEmailById</span><span class="params">(<span class="meta">@Param(&quot;id&quot;)</span> Long id, <span class="meta">@Param(&quot;newEmail&quot;)</span> String email)</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>程式碼詳解</strong>：<ul>
+<li><code>@Modifying</code>：告知 Spring Data JPA，這是一個<strong>修改型</strong>的查詢，而不是一個查詢型的查詢。</li>
+<li><code>int</code> 返回值：對於修改型的查詢，方法可以返回 <code>int</code> 或 <code>void</code>。返回 <code>int</code> 時，其值代表此次操作影響的紀錄筆數。</li>
+<li><strong>重要提示</strong>：所有修改型的操作，都應該在一個交易 (Transaction) 中執行。我們通常會在呼叫此方法的 <code>Service</code> 層方法上，加上 <code>@Transactional</code> 註解。</li>
+</ul>
+</li>
+</ul>
+<h2 id="撰寫原生-SQL-查詢"><a href="#撰寫原生-SQL-查詢" class="headerlink" title="撰寫原生 SQL 查詢"></a>撰寫原生 SQL 查詢</h2><p>雖然 JPQL 能應對絕大多數場景，但有時您可能需要使用特定資料庫才有的函式，或是處理一些用 JPQL 極其複雜的查詢。此時，您也可以透過 <code>@Query</code> 來執行原生 SQL。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ... in UserRepository.java</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用原生 SQL 查詢，需將 nativeQuery 設為 true</span></span><br><span class="line"><span class="meta">@Query(value = &quot;SELECT * FROM users WHERE username LIKE %:keyword%&quot;, nativeQuery = true)</span></span><br><span class="line">List&lt;User&gt; <span class="title function_">findByUsernameWithNativeSql</span><span class="params">(<span class="meta">@Param(&quot;keyword&quot;)</span> String keyword)</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>程式碼詳解</strong>：<ul>
+<li><code>nativeQuery = true</code>：這是啟用原生 SQL 查詢的開關。</li>
+<li><strong>注意語法</strong>：在原生 SQL 中，您必須使用實際的<strong>表格名稱 (<code>users</code>)</strong> 和<strong>欄位名稱</strong>，而不是 JPQL 的實體名稱 (<code>User</code>) 和屬性名稱。</li>
+</ul>
+</li>
+</ul>
+<h2 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h2><p>在本篇文章中，我們學會了如何使用 <code>@Query</code> 註解來突破查詢方法的限制，從而獲得對資料庫查詢的完全控制。</p>
+<ul>
+<li>我們理解了 <strong>JPQL</strong> 是基於<strong>實體與屬性</strong>的物件導向查詢語言。</li>
+<li>我們掌握了使用<strong>具名參數</strong>（推薦）與<strong>位置參數</strong>來傳遞查詢條件。</li>
+<li>我們學會了如何透過 <code>@Modifying</code> 註解來執行 <code>UPDATE</code> 或 <code>DELETE</code> 操作。</li>
+<li>我們知道了如何在必要時，切換到<strong>原生 SQL</strong> 來應對特殊需求。</li>
+</ul>
+<p>我們已經掌握了各種單一表格的查詢技巧。然而，真實世界的資料模型是相互關聯的。在下一篇文章中，我們將探討 JPA 的核心概念之一——<strong>Entity 關聯</strong>，學習如何使用 <code>@OneToMany</code> 和 <code>@ManyToOne</code> 等註解來建立不同表格之間的關係。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://lmy46.github.io">Mendel Lee</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章連結: </span><span class="post-copyright-info"><a href="https://lmy46.github.io/2025/08/12/java-spring-boot-13/">https://lmy46.github.io/2025/08/12/java-spring-boot-13/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 許可協議。轉載請註明來自 <a href="https://lmy46.github.io" target="_blank">⅙阿諺、⅓Mendel、½麵條爸の部落格</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/Spring-Boot/">Spring Boot</a></div><div class="post_share"><div class="social-share" data-image="/img/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/08/12/java-spring-boot-14/" title="Spring Boot 14 - Entity 關聯：一對多與多對一"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Spring Boot 14 - Entity 關聯：一對多與多對一</div></div></a></div><div class="next-post pull-right"><a href="/2025/08/11/java-spring-boot-12/" title="Spring Boot 12 - 進階查詢方法 (Query Methods)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Spring Boot 12 - 進階查詢方法 (Query Methods)</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><div><a href="/2025/08/08/ide-plugin-01/" title="VSCode 插件：建立 Spring Boot 專案 (含 Lombok)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-08</div><div class="title">VSCode 插件：建立 Spring Boot 專案 (含 Lombok)</div></div></a></div><div><a href="/2025/08/08/java-spring-boot-01/" title="Spring Boot 01 - 學習路徑總覽：從入門到專家之路"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-08</div><div class="title">Spring Boot 01 - 學習路徑總覽：從入門到專家之路</div></div></a></div><div><a href="/2025/08/11/java-spring-boot-03/" title="Spring Boot 03 - 第一個 RESTful API"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">Spring Boot 03 - 第一個 RESTful API</div></div></a></div><div><a href="/2025/08/08/java-spring-boot-02/" title="Spring Boot 02 - 專案結構與核心概念"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-08</div><div class="title">Spring Boot 02 - 專案結構與核心概念</div></div></a></div><div><a href="/2025/08/11/java-spring-boot-05/" title="Spring Boot 05 - 處理請求本文 (Body) 與 DTO"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">Spring Boot 05 - 處理請求本文 (Body) 與 DTO</div></div></a></div><div><a href="/2025/08/11/java-spring-boot-04/" title="Spring Boot 04 - 處理請求參數"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">Spring Boot 04 - 處理請求參數</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Mendel Lee</div><div class="author-info__description">用來記錄在阿諺小小的腦袋中，很容易因塞不下而忘記的東西</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">54</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">11</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80%EF%BC%9A%E7%95%B6%E6%9F%A5%E8%A9%A2%E6%96%B9%E6%B3%95%E4%B8%8D%E5%A4%A0%E7%94%A8%E6%99%82"><span class="toc-number">1.</span> <span class="toc-text">前言：當查詢方法不夠用時</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E9%BA%BC%E6%98%AF-JPQL%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">什麼是 JPQL？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-Query-%E8%88%87%E5%85%B7%E5%90%8D%E5%8F%83%E6%95%B8-%E6%8E%A8%E8%96%A6"><span class="toc-number">3.</span> <span class="toc-text">使用 @Query 與具名參數 (推薦)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-Query-%E8%88%87%E4%BD%8D%E7%BD%AE%E5%8F%83%E6%95%B8"><span class="toc-number">4.</span> <span class="toc-text">使用 @Query 與位置參數</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%B7%E8%A1%8C%E4%BF%AE%E6%94%B9%E8%88%87%E5%88%AA%E9%99%A4%E6%93%8D%E4%BD%9C-Modifying"><span class="toc-number">5.</span> <span class="toc-text">執行修改與刪除操作 (@Modifying)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%92%B0%E5%AF%AB%E5%8E%9F%E7%94%9F-SQL-%E6%9F%A5%E8%A9%A2"><span class="toc-number">6.</span> <span class="toc-text">撰寫原生 SQL 查詢</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B8%BD%E7%B5%90"><span class="toc-number">7.</span> <span class="toc-text">總結</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/15/java-spring-boot-30/" title="Spring Boot 30 - 部署至雲端平台 (初步探討)">Spring Boot 30 - 部署至雲端平台 (初步探討)</a><time datetime="2025-08-15T02:56:29.000Z" title="發表於 2025-08-15 10:56:29">2025-08-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/14/java-spring-boot-29/" title="Spring Boot 29 - 使用 Buildpacks 建置 Docker 映像檔">Spring Boot 29 - 使用 Buildpacks 建置 Docker 映像檔</a><time datetime="2025-08-14T07:45:20.000Z" title="發表於 2025-08-14 15:45:20">2025-08-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-28/" title="Spring Boot 28 - 檔案上傳與下載">Spring Boot 28 - 檔案上傳與下載</a><time datetime="2025-08-13T08:25:43.000Z" title="發表於 2025-08-13 16:25:43">2025-08-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-27/" title="Spring Boot 27 - 使用 Spring Mail 寄送電子郵件">Spring Boot 27 - 使用 Spring Mail 寄送電子郵件</a><time datetime="2025-08-13T05:58:46.000Z" title="發表於 2025-08-13 13:58:46">2025-08-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-26/" title="Spring Boot 26 - 非同步 (@Async) 與排程 (@Scheduled) 任務">Spring Boot 26 - 非同步 (@Async) 與排程 (@Scheduled) 任務</a><time datetime="2025-08-13T05:54:09.000Z" title="發表於 2025-08-13 13:54:09">2025-08-13</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By Mendel Lee</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主題 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="淺色和深色模式轉換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到頂部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料庫載入中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜尋文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

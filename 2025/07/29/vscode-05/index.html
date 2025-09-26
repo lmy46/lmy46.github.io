@@ -1,0 +1,229 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>VSCode 05 原始碼控制 (Git 整合) | ⅙阿諺、⅓Mendel、½麵條爸の部落格</title><meta name="author" content="Mendel Lee"><meta name="copyright" content="Mendel Lee"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="VSCode 05 - 學習如何使用 VSCode 強大的 Git 整合功能，直接在編輯器中完成版本控制的日常操作，如提交、推送、切換分支與解決衝突。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VSCode 05 原始碼控制 (Git 整合)">
+<meta property="og:url" content="https://lmy46.github.io/2025/07/29/vscode-05/index.html">
+<meta property="og:site_name" content="⅙阿諺、⅓Mendel、½麵條爸の部落格">
+<meta property="og:description" content="VSCode 05 - 學習如何使用 VSCode 強大的 Git 整合功能，直接在編輯器中完成版本控制的日常操作，如提交、推送、切換分支與解決衝突。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://lmy46.github.io/img/avatar.png">
+<meta property="article:published_time" content="2025-07-29T09:21:00.000Z">
+<meta property="article:modified_time" content="2025-09-07T00:04:00.429Z">
+<meta property="article:author" content="Mendel Lee">
+<meta property="article:tag" content="IDE">
+<meta property="article:tag" content="VSCode">
+<meta property="article:tag" content="整合開發環境">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lmy46.github.io/img/avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lmy46.github.io/2025/07/29/vscode-05/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"languages":{"hits_empty":"找不到您查詢的內容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '複製成功',
+    error: '複製錯誤',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'VSCode 05 原始碼控制 (Git 整合)',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-09-07 08:04:00'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = url => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      link.onload = () => resolve()
+      link.onerror = () => reject()
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">54</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">11</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://picsum.photos/id/20/1920/942')"><nav id="nav"><span id="blog-info"><a href="/" title="⅙阿諺、⅓Mendel、½麵條爸の部落格"><span class="site-name">⅙阿諺、⅓Mendel、½麵條爸の部落格</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">VSCode 05 原始碼控制 (Git 整合)</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2025-07-29T09:21:00.000Z" title="發表於 2025-07-29 17:21:00">2025-07-29</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2025-09-07T00:04:00.429Z" title="更新於 2025-09-07 08:04:00">2025-09-07</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/IDE/">IDE</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/IDE/VSCode/">VSCode</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/IDE/VSCode/VSCode-%E5%9F%BA%E7%A4%8E/">VSCode 基礎</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字數總計:</span><span class="word-count">1.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時長:</span><span>3分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="VSCode 05 原始碼控制 (Git 整合)"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="原始碼控制-Git-整合"><a href="#原始碼控制-Git-整合" class="headerlink" title="原始碼控制 (Git 整合)"></a>原始碼控制 (Git 整合)</h1><p>版本控制是現代軟體開發的基石，而 Git 是目前最流行的版本控制系統。VSCode 內建了極其強大的 Git 整合功能，讓您可以透過圖形化介面，直觀地完成絕大多數的日常版本控制操作，而無需頻繁地在終端機與編輯器之間切換。</p>
+<blockquote>
+<p>前置條件：<br>本篇教學假設您的電腦上已經成功安裝了 <a target="_blank" rel="noopener" href="https://git-scm.com/downloads">Git</a>。</p>
+</blockquote>
+<h2 id="基本設定與初始化"><a href="#基本設定與初始化" class="headerlink" title="基本設定與初始化"></a>基本設定與初始化</h2><p>要開始使用，首先要讓 VSCode 知道您的專案是一個 Git 倉庫。</p>
+<h3 id="初始化倉庫-Initialize-Repository-："><a href="#初始化倉庫-Initialize-Repository-：" class="headerlink" title="初始化倉庫 (Initialize Repository)："></a>初始化倉庫 (Initialize Repository)：</h3><ol>
+<li>在 VSCode 中開啟您的專案資料夾。</li>
+<li>點擊左側活動列的「原始碼控制」圖示 (一個分岔的圖案)。</li>
+<li>如果專案尚未被 Git 管理，您會看到一個「初始化存放庫」的按鈕，點擊它。這個動作等同於在專案根目錄執行 <code>git init</code> 指令。</li>
+</ol>
+<h3 id="「原始碼控制」面板概覽："><a href="#「原始碼控制」面板概覽：" class="headerlink" title="「原始碼控制」面板概覽："></a>「原始碼控制」面板概覽：</h3><ul>
+<li><p><strong>訊息框</strong>：位於最上方，用於輸入您的提交訊息 (Commit Message)。</p>
+</li>
+<li><p><strong>變更(Changes)</strong>：列出所有被修改過或新建立的檔案 (尚未被 Git 追蹤的檔案會標示為 <code>U</code>)。</p>
+</li>
+<li><p><strong>暫存的變更(Staged Changes)</strong>：列出已經被您加入到「暫存區」的檔案，這些檔案將會包含在下一次的提交中。</p>
+</li>
+</ul>
+<h2 id="日常操作-Daily-Workflow"><a href="#日常操作-Daily-Workflow" class="headerlink" title="日常操作 (Daily Workflow)"></a>日常操作 (Daily Workflow)</h2><p>讓我們以一個 Python 檔案為例，走一遍最常見的「修改 -&gt; 暫存 -&gt; 提交」流程。</p>
+<h3 id="做出變更："><a href="#做出變更：" class="headerlink" title="做出變更："></a>做出變更：</h3><ul>
+<li>建立一個名為 <code>calculator.py</code> 的新檔案，並加入以下內容：  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">x, y</span>):</span><br><span class="line">    <span class="keyword">return</span> x + y</span><br></pre></td></tr></table></figure></li>
+<li>儲存後，您會看到 <code>calculator.py</code> 出現在「變更」清單中。</li>
+</ul>
+<h3 id="暫存變更-Stage-Changes-："><a href="#暫存變更-Stage-Changes-：" class="headerlink" title="暫存變更 (Stage Changes)："></a>暫存變更 (Stage Changes)：</h3><ul>
+<li>「暫存」是一個確認您希望將哪些變更納入下一次提交的動作。</li>
+<li>將滑鼠移到 <code>calculator.py</code> 檔案旁，點擊 <code>+</code> 圖示。檔案便會從「變更」區移動到「暫存的變更」區。這個動作等同於 <code>git add calculator.py</code>。</li>
+</ul>
+<h3 id="提交變更-Commit-Changes-："><a href="#提交變更-Commit-Changes-：" class="headerlink" title="提交變更 (Commit Changes)："></a>提交變更 (Commit Changes)：</h3><ul>
+<li>在訊息框中，輸入有意義的提交訊息，例如 <code>feat: Add initial calculator function</code>。</li>
+<li>點擊上方的**打勾 (✓)**圖示，或按下 <code>Ctrl+Enter</code> (macOS 為 <code>Cmd+Enter</code>) 完成提交。這個動作等同於 <code>git commit -m &quot;Your Message&quot;</code>。</li>
+</ul>
+<h3 id="推送與拉取-Push-amp-Pull-："><a href="#推送與拉取-Push-amp-Pull-：" class="headerlink" title="推送與拉取 (Push &amp; Pull)："></a>推送與拉取 (Push &amp; Pull)：</h3><ul>
+<li>提交後的變更還只存在您的本機。要將它們分享到遠端倉庫 (如 GitHub)，您需要「推送」。</li>
+<li>點擊左下角狀態列的分支名稱旁的「同步變更」按鈕。此按鈕會先「拉取 (Pull)」遠端的變更，然後再「推送 (Push)」您本機的變更，確保兩邊同步。</li>
+</ul>
+<h2 id="分支管理-Branch-Management"><a href="#分支管理-Branch-Management" class="headerlink" title="分支管理 (Branch Management)"></a>分支管理 (Branch Management)</h2><p>分支是 Git 的核心功能之一，它讓您可以獨立於主線程 (例如 <code>main</code> 或 <code>master</code> 分支) 來開發新功能或修復錯誤。</p>
+<h3 id="檢視與切換分支："><a href="#檢視與切換分支：" class="headerlink" title="檢視與切換分支："></a>檢視與切換分支：</h3><ul>
+<li>點擊 VSCode 介面左下角的目前分支名稱 (例如 <code>main</code>)。</li>
+<li>頂部會彈出一個選單，列出所有本機分支，點擊即可切換。</li>
+</ul>
+<h3 id="建立新分支："><a href="#建立新分支：" class="headerlink" title="建立新分支："></a>建立新分支：</h3><ul>
+<li>同樣點擊左下角的分支名稱。</li>
+<li>在彈出選單中選擇「+ 建立新分支…」。</li>
+<li>輸入新分支的名稱，例如 <code>feature/subtract</code>，然後按下 <code>Enter</code>。VSCode 會自動為您建立並切換到這個新分支。</li>
+</ul>
+<h2 id="解決衝突-Resolving-Conflicts"><a href="#解決衝突-Resolving-Conflicts" class="headerlink" title="解決衝突 (Resolving Conflicts)"></a>解決衝突 (Resolving Conflicts)</h2><p>當您與團隊成員修改了同一個檔案的同一行程式碼時，合併分支就會產生「衝突」。VSCode 提供了優秀的視覺化工具來解決衝突。</p>
+<ol>
+<li><p><strong>製造一個衝突</strong>：</p>
+<ul>
+<li>假設在 <code>feature/subtract</code> 分支，您修改了 <code>calculator.py</code>：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># calculator.py in feature/subtract branch</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">x, y</span>):</span><br><span class="line">    <span class="comment"># Adds two numbers together</span></span><br><span class="line">    <span class="keyword">return</span> x + y</span><br></pre></td></tr></table></figure></li>
+<li>同時，另一位同事在 <code>main</code> 分支也修改了同一份檔案：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># calculator.py in main branch</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">x, y</span>):</span><br><span class="line">    <span class="comment"># Function to add two numbers</span></span><br><span class="line">    <span class="keyword">return</span> x + y</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>合併與解決</strong>：</p>
+<ul>
+<li>當您試圖將 <code>main</code> 合併到 <code>feature/subtract</code> 時，VSCode 會偵測到衝突。</li>
+<li>衝突的檔案會被標示出來，打開檔案，您會看到 VSCode 的**合併編輯器 (Merge Editor)**。</li>
+<li>編輯器會清楚地標示出 <code>&lt;&lt;&lt;&lt;&lt; 目前的變更</code> (您分支上的) 和 <code>&gt;&gt;&gt;&gt;&gt; 傳入的變更</code> (要合併進來的分支上的)。</li>
+<li>您可以點擊程式碼上方的按鈕：<ul>
+<li><strong>接受目前的變更</strong></li>
+<li><strong>接受傳入的變更</strong></li>
+<li><strong>接受兩者</strong></li>
+</ul>
+</li>
+<li>選擇您希望保留的程式碼版本，或手動編輯成最終想要的樣子。</li>
+<li>解決所有衝突後，儲存檔案，並再次<strong>暫存</strong>與<strong>提交</strong>這個解決衝突的合併結果。</li>
+</ul>
+</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://lmy46.github.io">Mendel Lee</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章連結: </span><span class="post-copyright-info"><a href="https://lmy46.github.io/2025/07/29/vscode-05/">https://lmy46.github.io/2025/07/29/vscode-05/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 許可協議。轉載請註明來自 <a href="https://lmy46.github.io" target="_blank">⅙阿諺、⅓Mendel、½麵條爸の部落格</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/IDE/">IDE</a><a class="post-meta__tags" href="/tags/VSCode/">VSCode</a><a class="post-meta__tags" href="/tags/%E6%95%B4%E5%90%88%E9%96%8B%E7%99%BC%E7%92%B0%E5%A2%83/">整合開發環境</a></div><div class="post_share"><div class="social-share" data-image="/img/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/07/30/vscode-06/" title="VSCode 06 執行與偵錯"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">VSCode 06 執行與偵錯</div></div></a></div><div class="next-post pull-right"><a href="/2025/07/29/vscode-04/" title="VSCode 04 整合式終端機"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">VSCode 04 整合式終端機</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><div><a href="/2025/07/29/vscode-01/" title="VSCode 01 下戴、安裝、設定及執行"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-29</div><div class="title">VSCode 01 下戴、安裝、設定及執行</div></div></a></div><div><a href="/2025/07/29/vscode-02/" title="VSCode 02 核心編輯技巧"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-29</div><div class="title">VSCode 02 核心編輯技巧</div></div></a></div><div><a href="/2025/07/29/vscode-04/" title="VSCode 04 整合式終端機"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-29</div><div class="title">VSCode 04 整合式終端機</div></div></a></div><div><a href="/2025/07/30/vscode-06/" title="VSCode 06 執行與偵錯"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-30</div><div class="title">VSCode 06 執行與偵錯</div></div></a></div><div><a href="/2025/07/30/vscode-07/" title="VSCode 07 工作自動化 (Tasks)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-30</div><div class="title">VSCode 07 工作自動化 (Tasks)</div></div></a></div><div><a href="/2025/07/29/vscode-03/" title="VSCode 03 檔案與工作區管理"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-29</div><div class="title">VSCode 03 檔案與工作區管理</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Mendel Lee</div><div class="author-info__description">用來記錄在阿諺小小的腦袋中，很容易因塞不下而忘記的東西</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">54</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">11</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8E%9F%E5%A7%8B%E7%A2%BC%E6%8E%A7%E5%88%B6-Git-%E6%95%B4%E5%90%88"><span class="toc-number">1.</span> <span class="toc-text">原始碼控制 (Git 整合)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E8%A8%AD%E5%AE%9A%E8%88%87%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">1.1.</span> <span class="toc-text">基本設定與初始化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E5%80%89%E5%BA%AB-Initialize-Repository-%EF%BC%9A"><span class="toc-number">1.1.1.</span> <span class="toc-text">初始化倉庫 (Initialize Repository)：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E3%80%8C%E5%8E%9F%E5%A7%8B%E7%A2%BC%E6%8E%A7%E5%88%B6%E3%80%8D%E9%9D%A2%E6%9D%BF%E6%A6%82%E8%A6%BD%EF%BC%9A"><span class="toc-number">1.1.2.</span> <span class="toc-text">「原始碼控制」面板概覽：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A5%E5%B8%B8%E6%93%8D%E4%BD%9C-Daily-Workflow"><span class="toc-number">1.2.</span> <span class="toc-text">日常操作 (Daily Workflow)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%81%9A%E5%87%BA%E8%AE%8A%E6%9B%B4%EF%BC%9A"><span class="toc-number">1.2.1.</span> <span class="toc-text">做出變更：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9A%AB%E5%AD%98%E8%AE%8A%E6%9B%B4-Stage-Changes-%EF%BC%9A"><span class="toc-number">1.2.2.</span> <span class="toc-text">暫存變更 (Stage Changes)：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E4%BA%A4%E8%AE%8A%E6%9B%B4-Commit-Changes-%EF%BC%9A"><span class="toc-number">1.2.3.</span> <span class="toc-text">提交變更 (Commit Changes)：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A8%E9%80%81%E8%88%87%E6%8B%89%E5%8F%96-Push-amp-Pull-%EF%BC%9A"><span class="toc-number">1.2.4.</span> <span class="toc-text">推送與拉取 (Push &amp; Pull)：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%94%AF%E7%AE%A1%E7%90%86-Branch-Management"><span class="toc-number">1.3.</span> <span class="toc-text">分支管理 (Branch Management)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AA%A2%E8%A6%96%E8%88%87%E5%88%87%E6%8F%9B%E5%88%86%E6%94%AF%EF%BC%9A"><span class="toc-number">1.3.1.</span> <span class="toc-text">檢視與切換分支：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BB%BA%E7%AB%8B%E6%96%B0%E5%88%86%E6%94%AF%EF%BC%9A"><span class="toc-number">1.3.2.</span> <span class="toc-text">建立新分支：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E6%B1%BA%E8%A1%9D%E7%AA%81-Resolving-Conflicts"><span class="toc-number">1.4.</span> <span class="toc-text">解決衝突 (Resolving Conflicts)</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/15/java-spring-boot-30/" title="Spring Boot 30 - 部署至雲端平台 (初步探討)">Spring Boot 30 - 部署至雲端平台 (初步探討)</a><time datetime="2025-08-15T02:56:29.000Z" title="發表於 2025-08-15 10:56:29">2025-08-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/14/java-spring-boot-29/" title="Spring Boot 29 - 使用 Buildpacks 建置 Docker 映像檔">Spring Boot 29 - 使用 Buildpacks 建置 Docker 映像檔</a><time datetime="2025-08-14T07:45:20.000Z" title="發表於 2025-08-14 15:45:20">2025-08-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-28/" title="Spring Boot 28 - 檔案上傳與下載">Spring Boot 28 - 檔案上傳與下載</a><time datetime="2025-08-13T08:25:43.000Z" title="發表於 2025-08-13 16:25:43">2025-08-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-27/" title="Spring Boot 27 - 使用 Spring Mail 寄送電子郵件">Spring Boot 27 - 使用 Spring Mail 寄送電子郵件</a><time datetime="2025-08-13T05:58:46.000Z" title="發表於 2025-08-13 13:58:46">2025-08-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-26/" title="Spring Boot 26 - 非同步 (@Async) 與排程 (@Scheduled) 任務">Spring Boot 26 - 非同步 (@Async) 與排程 (@Scheduled) 任務</a><time datetime="2025-08-13T05:54:09.000Z" title="發表於 2025-08-13 13:54:09">2025-08-13</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By Mendel Lee</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主題 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="淺色和深色模式轉換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到頂部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料庫載入中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜尋文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

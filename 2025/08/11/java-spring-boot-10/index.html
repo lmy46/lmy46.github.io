@@ -1,0 +1,222 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>Spring Boot 10 - 整合 H2 資料庫與 JPA Entity | ⅙阿諺、⅓Mendel、½麵條爸の部落格</title><meta name="author" content="Mendel Lee"><meta name="copyright" content="Mendel Lee"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="本篇將正式帶您進入資料庫的世界。我們將學習如何整合 Spring Data JPA 與 H2 記憶體資料庫，並透過 @Entity 註解將一個 Java 類別映射到資料庫表格中，實現資料的持久化，為後續的 CRUD 操作打下基礎。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Boot 10 - 整合 H2 資料庫與 JPA Entity">
+<meta property="og:url" content="https://lmy46.github.io/2025/08/11/java-spring-boot-10/index.html">
+<meta property="og:site_name" content="⅙阿諺、⅓Mendel、½麵條爸の部落格">
+<meta property="og:description" content="本篇將正式帶您進入資料庫的世界。我們將學習如何整合 Spring Data JPA 與 H2 記憶體資料庫，並透過 @Entity 註解將一個 Java 類別映射到資料庫表格中，實現資料的持久化，為後續的 CRUD 操作打下基礎。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://lmy46.github.io/img/avatar.png">
+<meta property="article:published_time" content="2025-08-11T06:50:04.000Z">
+<meta property="article:modified_time" content="2025-09-26T05:03:49.801Z">
+<meta property="article:author" content="Mendel Lee">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Spring Boot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lmy46.github.io/img/avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lmy46.github.io/2025/08/11/java-spring-boot-10/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"languages":{"hits_empty":"找不到您查詢的內容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '複製成功',
+    error: '複製錯誤',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Spring Boot 10 - 整合 H2 資料庫與 JPA Entity',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-09-26 13:03:49'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = url => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      link.onload = () => resolve()
+      link.onerror = () => reject()
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">54</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">11</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://picsum.photos/id/20/1920/942')"><nav id="nav"><span id="blog-info"><a href="/" title="⅙阿諺、⅓Mendel、½麵條爸の部落格"><span class="site-name">⅙阿諺、⅓Mendel、½麵條爸の部落格</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Spring Boot 10 - 整合 H2 資料庫與 JPA Entity</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2025-08-11T06:50:04.000Z" title="發表於 2025-08-11 14:50:04">2025-08-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2025-09-26T05:03:49.801Z" title="更新於 2025-09-26 13:03:49">2025-09-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Spring/">Spring</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Spring/Spring-Boot-%E5%9F%BA%E7%A4%8E/">Spring Boot 基礎</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字數總計:</span><span class="word-count">1.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時長:</span><span>5分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Spring Boot 10 - 整合 H2 資料庫與 JPA Entity"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前言：讓資料被永久保存"><a href="#前言：讓資料被永久保存" class="headerlink" title="前言：讓資料被永久保存"></a>前言：讓資料被永久保存</h2><p>到目前為止，我們的應用程式已經具備了 API、日誌和文件，但它有一個致命的缺陷：所有資料都只存在於記憶體中。一旦應用程式重新啟動，我們之前透過 API 建立的所有使用者資訊都會消失。為了解決這個問題，我們需要引入<strong>資料持久化 (Data Persistence)</strong> 的概念，也就是將資料儲存到資料庫中。</p>
+<p>本篇文章將帶您進入 Spring Boot 的資料庫整合世界。我們將介紹幾個關鍵技術：</p>
+<ul>
+<li>**JPA (Java Persistence API)**：一套 Java 官方制定的 ORM (物件關聯對映) 標準規範，它定義了如何將 Java 物件對映到關聯式資料庫的表格中。</li>
+<li><strong>Hibernate</strong>：JPA 規範底下最流行、功能最強大的<strong>實現框架</strong>。Spring Boot 預設使用 Hibernate 作為其 JPA 的實現。</li>
+<li><strong>Spring Data JPA</strong>：Spring 提供的一個模組，它在 JPA 的基礎上再次進行封裝，極大地簡化了資料庫存取層的開發。</li>
+<li><strong>H2 Database</strong>：一個用 Java 編寫的輕量級<strong>記憶體資料庫</strong>。它非常適合在開發和測試階段使用，因為它無需安裝、設定簡單，並且會隨著應用程式的啟動而執行。</li>
+</ul>
+<p>我們的目標是：整合這些技術，並建立我們的第一個**實體 (Entity)**——一個能對應到資料庫表格的 Java 類別。</p>
+<h2 id="步驟一：加入必要的-Maven-相依性"><a href="#步驟一：加入必要的-Maven-相依性" class="headerlink" title="步驟一：加入必要的 Maven 相依性"></a>步驟一：加入必要的 Maven 相依性</h2><p>首先，我們需要告訴 Maven 我們的專案需要 JPA 和 H2 資料庫的功能。</p>
+<p>打開專案根目錄下的 <code>pom.xml</code> 檔案，在 <code>&lt;dependencies&gt;</code> 區塊中，加入以下兩段依賴：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-jpa<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.h2database<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>h2<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>runtime<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>spring-boot-starter-data-jpa</code>：這個起步依賴會為我們引入所有需要的 JPA API、Spring Data JPA 函式庫以及預設的 Hibernate 實現。</li>
+<li><code>h2</code>：這個依賴引入了 H2 資料庫的驅動程式與引擎。Spring Boot 非常智慧，當它在 classpath 上偵測到 H2 時，會自動為我們設定一個記憶體資料庫的連線。</li>
+</ul>
+<h2 id="步驟二：設定-H2-資料庫連線"><a href="#步驟二：設定-H2-資料庫連線" class="headerlink" title="步驟二：設定 H2 資料庫連線"></a>步驟二：設定 H2 資料庫連線</h2><p>雖然 Spring Boot 會自動設定，但明確地寫出設定並啟用 H2 的網頁主控台，對於開發與學習非常有幫助。</p>
+<p>打開 <code>src/main/resources/application.properties</code> 檔案，並加入以下設定：<br>(若您使用 <code>application.yml</code>，請轉換為對應的 YML 格式)</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># H2 Database Console Settings</span></span><br><span class="line"><span class="comment"># 啟用 H2 的網頁版主控台</span></span><br><span class="line"><span class="attr">spring.h2.console.enabled</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"># 設定 H2 主控台的訪問路徑</span></span><br><span class="line"><span class="attr">spring.h2.console.path</span>=<span class="string">/h2-console</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># DataSource Settings (資料來源設定)</span></span><br><span class="line"><span class="attr">spring.datasource.url</span>=<span class="string">jdbc:h2:mem:testdb</span></span><br><span class="line"><span class="attr">spring.datasource.driverClassName</span>=<span class="string">org.h2.Driver</span></span><br><span class="line"><span class="attr">spring.datasource.username</span>=<span class="string">sa</span></span><br><span class="line"><span class="attr">spring.datasource.password</span>=<span class="string"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># JPA/Hibernate Settings</span></span><br><span class="line"><span class="comment"># 告訴 Hibernate 我們使用的是 H2 資料庫的方言 (Dialect)</span></span><br><span class="line"><span class="attr">spring.jpa.database-platform</span>=<span class="string">org.hibernate.dialect.H2Dialect</span></span><br><span class="line"><span class="comment"># 這是最重要的設定之一：讓 Hibernate 在啟動時自動更新資料庫綱要 (Schema)</span></span><br><span class="line"><span class="attr">spring.jpa.hibernate.ddl-auto</span>=<span class="string">update</span></span><br><span class="line"><span class="comment"># 在主控台顯示 Hibernate 執行的 SQL 語句，方便除錯</span></span><br><span class="line"><span class="attr">spring.jpa.show-sql</span>=<span class="string">true</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>**<code>spring.jpa.hibernate.ddl-auto=update</code>**：這個設定告訴 Hibernate，在應用程式啟動時，自動檢查您的 Entity 類別與資料庫表格的差異，並試圖更新表格結構（例如新增欄位）。在開發階段這非常方便。</li>
+</ul>
+<h2 id="步驟三：建立您的第一個-Entity"><a href="#步驟三：建立您的第一個-Entity" class="headerlink" title="步驟三：建立您的第一個 Entity"></a>步驟三：建立您的第一個 Entity</h2><p><strong>實體 (Entity)</strong> 是一個特殊的 Java 類別 (POJO)，它被 JPA 標示，用於映射資料庫中的一張表格。類別的每一個實例，就對應著表格中的一筆紀錄。</p>
+<ol>
+<li><p>在 <code>com.example.demoapp</code> 下建立新套件 <code>entity</code>。</p>
+</li>
+<li><p>在 <code>entity</code> 套件中，建立新檔案 <code>User.java</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demoapp.entity;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> jakarta.persistence.*;</span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@Entity</span> <span class="comment">// 1. 告訴 JPA，這是一個需要被持久化的實體類別</span></span><br><span class="line"><span class="meta">@Table(name = &quot;users&quot;)</span> <span class="comment">// 2. 指定對應的資料庫表格名稱為 &quot;users&quot;</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Id</span> <span class="comment">// 3. 標示這個屬性是表格的主鍵 (Primary Key)</span></span><br><span class="line">    <span class="meta">@GeneratedValue(strategy = GenerationType.IDENTITY)</span> <span class="comment">// 4. 設定主鍵的生成策略為「自動遞增」</span></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column(name = &quot;username&quot;, nullable = false, unique = true, length = 50)</span> <span class="comment">// 5. 映射到表格的欄位</span></span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column(name = &quot;email&quot;, nullable = false, unique = true)</span></span><br><span class="line">    <span class="keyword">private</span> String email;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Integer age; <span class="comment">// 6. 若無 @Column，預設會使用屬性名稱 &quot;age&quot; 作為欄位名</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<!-- end list -->
+
+<ul>
+<li><strong>註解詳解</strong>：<ul>
+<li><code>@Entity</code>: 最核心的註解，宣告這是一個 JPA 實體。</li>
+<li><code>@Table</code>: 指定這個實體對應到資料庫中的哪一張表格。</li>
+<li><code>@Id</code>: 指定哪個屬性是這張表格的主鍵。</li>
+<li><code>@GeneratedValue</code>: 定義主鍵值的生成方式。<code>IDENTITY</code> 策略表示將生成工作交給資料庫的自動遞增機制來處理。</li>
+<li><code>@Column</code>: 將屬性對應到表格的特定欄位，並可以定義其屬性，如名稱 (<code>name</code>)、是否允許為空 (<code>nullable</code>)、是否唯一 (<code>unique</code>)、長度 (<code>length</code>) 等。</li>
+</ul>
+</li>
+</ul>
+<h2 id="步驟四：驗證成果：H2-Console"><a href="#步驟四：驗證成果：H2-Console" class="headerlink" title="步驟四：驗證成果：H2 Console"></a>步驟四：驗證成果：H2 Console</h2><p>現在，讓我們來驗證我們的設定是否成功。</p>
+<ol>
+<li><strong>啟動應用程式</strong>。</li>
+<li><strong>觀察主控台日誌</strong>：由於我們設定了 <code>spring.jpa.show-sql=true</code>，您應該能在啟動日誌中找到由 Hibernate 自動產生的 <code>create table users ...</code> SQL 語句。這證明了 JPA 已經成功讀取您的 <code>User</code> 實體並建立了對應的表格。</li>
+<li><strong>訪問 H2 Console</strong>：打開瀏覽器，訪問 <code>http://localhost:8080/h2-console</code>。</li>
+<li><strong>登入資料庫</strong>：<ul>
+<li>確認 <code>JDBC URL</code> 欄位的值是 <code>jdbc:h2:mem:testdb</code>，這必須與您在 <code>application.properties</code> 中設定的完全一致。</li>
+<li>使用者名稱為 <code>sa</code>，密碼留空。</li>
+<li>點擊 <strong>Connect</strong>。</li>
+</ul>
+</li>
+<li><strong>檢視表格</strong>：登入後，您會在左側的導覽列中看到我們剛剛建立的 <code>USERS</code> 表格。您可以點開它查看欄位，或是在右側的 SQL 輸入框中執行 <code>SELECT * FROM USERS;</code> 來確認表格確實存在。</li>
+</ol>
+<h2 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h2><p>在本篇文章中，我們成功地將資料庫整合進了我們的專案，並跨出了資料持久化的第一步。</p>
+<ul>
+<li>我們加入了 <code>Spring Data JPA</code> 和 <code>H2</code> 的相依性。</li>
+<li>我們設定了資料庫連線，並啟用了方便的 H2 Console。</li>
+<li>我們學會了如何使用 <code>@Entity</code> 及相關註解，將一個 Java 類別映射到資料庫的表格中。</li>
+</ul>
+<p>我們的應用程式現在有了一張 <code>users</code> 表格，但我們要如何對它進行操作呢？在下一篇文章中，我們將學習 Spring Data JPA 的核心元件——**<code>JpaRepository</code>**，並體驗如何在不寫一行 SQL 的情況下，輕鬆實現對資料庫的增、刪、改、查 (CRUD) 操作。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://lmy46.github.io">Mendel Lee</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章連結: </span><span class="post-copyright-info"><a href="https://lmy46.github.io/2025/08/11/java-spring-boot-10/">https://lmy46.github.io/2025/08/11/java-spring-boot-10/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 許可協議。轉載請註明來自 <a href="https://lmy46.github.io" target="_blank">⅙阿諺、⅓Mendel、½麵條爸の部落格</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/Spring-Boot/">Spring Boot</a></div><div class="post_share"><div class="social-share" data-image="/img/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/08/11/java-spring-boot-11/" title="Spring Boot 11 - JpaRepository 與 CRUD 操作"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Spring Boot 11 - JpaRepository 與 CRUD 操作</div></div></a></div><div class="next-post pull-right"><a href="/2025/08/11/java-spring-boot-09/" title="Spring Boot 09 - 整合 OpenAPI (Swagger) 產生 API 文件"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Spring Boot 09 - 整合 OpenAPI (Swagger) 產生 API 文件</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><div><a href="/2025/08/08/ide-plugin-01/" title="VSCode 插件：建立 Spring Boot 專案 (含 Lombok)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-08</div><div class="title">VSCode 插件：建立 Spring Boot 專案 (含 Lombok)</div></div></a></div><div><a href="/2025/08/08/java-spring-boot-01/" title="Spring Boot 01 - 學習路徑總覽：從入門到專家之路"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-08</div><div class="title">Spring Boot 01 - 學習路徑總覽：從入門到專家之路</div></div></a></div><div><a href="/2025/08/11/java-spring-boot-03/" title="Spring Boot 03 - 第一個 RESTful API"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">Spring Boot 03 - 第一個 RESTful API</div></div></a></div><div><a href="/2025/08/08/java-spring-boot-02/" title="Spring Boot 02 - 專案結構與核心概念"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-08</div><div class="title">Spring Boot 02 - 專案結構與核心概念</div></div></a></div><div><a href="/2025/08/11/java-spring-boot-05/" title="Spring Boot 05 - 處理請求本文 (Body) 與 DTO"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">Spring Boot 05 - 處理請求本文 (Body) 與 DTO</div></div></a></div><div><a href="/2025/08/11/java-spring-boot-04/" title="Spring Boot 04 - 處理請求參數"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">Spring Boot 04 - 處理請求參數</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Mendel Lee</div><div class="author-info__description">用來記錄在阿諺小小的腦袋中，很容易因塞不下而忘記的東西</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">54</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">11</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80%EF%BC%9A%E8%AE%93%E8%B3%87%E6%96%99%E8%A2%AB%E6%B0%B8%E4%B9%85%E4%BF%9D%E5%AD%98"><span class="toc-number">1.</span> <span class="toc-text">前言：讓資料被永久保存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%A9%9F%E4%B8%80%EF%BC%9A%E5%8A%A0%E5%85%A5%E5%BF%85%E8%A6%81%E7%9A%84-Maven-%E7%9B%B8%E4%BE%9D%E6%80%A7"><span class="toc-number">2.</span> <span class="toc-text">步驟一：加入必要的 Maven 相依性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%A9%9F%E4%BA%8C%EF%BC%9A%E8%A8%AD%E5%AE%9A-H2-%E8%B3%87%E6%96%99%E5%BA%AB%E9%80%A3%E7%B7%9A"><span class="toc-number">3.</span> <span class="toc-text">步驟二：設定 H2 資料庫連線</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%A9%9F%E4%B8%89%EF%BC%9A%E5%BB%BA%E7%AB%8B%E6%82%A8%E7%9A%84%E7%AC%AC%E4%B8%80%E5%80%8B-Entity"><span class="toc-number">4.</span> <span class="toc-text">步驟三：建立您的第一個 Entity</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A5%E9%A9%9F%E5%9B%9B%EF%BC%9A%E9%A9%97%E8%AD%89%E6%88%90%E6%9E%9C%EF%BC%9AH2-Console"><span class="toc-number">5.</span> <span class="toc-text">步驟四：驗證成果：H2 Console</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B8%BD%E7%B5%90"><span class="toc-number">6.</span> <span class="toc-text">總結</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/15/java-spring-boot-30/" title="Spring Boot 30 - 部署至雲端平台 (初步探討)">Spring Boot 30 - 部署至雲端平台 (初步探討)</a><time datetime="2025-08-15T02:56:29.000Z" title="發表於 2025-08-15 10:56:29">2025-08-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/14/java-spring-boot-29/" title="Spring Boot 29 - 使用 Buildpacks 建置 Docker 映像檔">Spring Boot 29 - 使用 Buildpacks 建置 Docker 映像檔</a><time datetime="2025-08-14T07:45:20.000Z" title="發表於 2025-08-14 15:45:20">2025-08-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-28/" title="Spring Boot 28 - 檔案上傳與下載">Spring Boot 28 - 檔案上傳與下載</a><time datetime="2025-08-13T08:25:43.000Z" title="發表於 2025-08-13 16:25:43">2025-08-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-27/" title="Spring Boot 27 - 使用 Spring Mail 寄送電子郵件">Spring Boot 27 - 使用 Spring Mail 寄送電子郵件</a><time datetime="2025-08-13T05:58:46.000Z" title="發表於 2025-08-13 13:58:46">2025-08-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-26/" title="Spring Boot 26 - 非同步 (@Async) 與排程 (@Scheduled) 任務">Spring Boot 26 - 非同步 (@Async) 與排程 (@Scheduled) 任務</a><time datetime="2025-08-13T05:54:09.000Z" title="發表於 2025-08-13 13:54:09">2025-08-13</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By Mendel Lee</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主題 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="淺色和深色模式轉換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到頂部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料庫載入中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜尋文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

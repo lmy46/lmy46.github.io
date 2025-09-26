@@ -1,0 +1,221 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>Spring Boot 05 - 處理請求本文 (Body) 與 DTO | ⅙阿諺、⅓Mendel、½麵條爸の部落格</title><meta name="author" content="Mendel Lee"><meta name="copyright" content="Mendel Lee"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="本篇教學將帶您處理更複雜的 API 輸入。我們將學習使用 @PostMapping 與 @RequestBody 來接收 HTTP 請求本文中的 JSON 資料，並深入探討為何使用資料傳輸物件 (DTO) 是一個重要的開發實踐。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Boot 05 - 處理請求本文 (Body) 與 DTO">
+<meta property="og:url" content="https://lmy46.github.io/2025/08/11/java-spring-boot-05/index.html">
+<meta property="og:site_name" content="⅙阿諺、⅓Mendel、½麵條爸の部落格">
+<meta property="og:description" content="本篇教學將帶您處理更複雜的 API 輸入。我們將學習使用 @PostMapping 與 @RequestBody 來接收 HTTP 請求本文中的 JSON 資料，並深入探討為何使用資料傳輸物件 (DTO) 是一個重要的開發實踐。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://lmy46.github.io/img/avatar.png">
+<meta property="article:published_time" content="2025-08-11T03:59:06.000Z">
+<meta property="article:modified_time" content="2025-09-26T05:01:15.323Z">
+<meta property="article:author" content="Mendel Lee">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Spring Boot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lmy46.github.io/img/avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lmy46.github.io/2025/08/11/java-spring-boot-05/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"languages":{"hits_empty":"找不到您查詢的內容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '複製成功',
+    error: '複製錯誤',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Spring Boot 05 - 處理請求本文 (Body) 與 DTO',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-09-26 13:01:15'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = url => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      link.onload = () => resolve()
+      link.onerror = () => reject()
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">54</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">11</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://picsum.photos/id/20/1920/942')"><nav id="nav"><span id="blog-info"><a href="/" title="⅙阿諺、⅓Mendel、½麵條爸の部落格"><span class="site-name">⅙阿諺、⅓Mendel、½麵條爸の部落格</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Spring Boot 05 - 處理請求本文 (Body) 與 DTO</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2025-08-11T03:59:06.000Z" title="發表於 2025-08-11 11:59:06">2025-08-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2025-09-26T05:01:15.323Z" title="更新於 2025-09-26 13:01:15">2025-09-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Spring/">Spring</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Spring/Spring-Boot-%E5%9F%BA%E7%A4%8E/">Spring Boot 基礎</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字數總計:</span><span class="word-count">1.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時長:</span><span>4分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Spring Boot 05 - 處理請求本文 (Body) 與 DTO"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前言：接收結構化的資料"><a href="#前言：接收結構化的資料" class="headerlink" title="前言：接收結構化的資料"></a>前言：接收結構化的資料</h2><p>在上一篇文章中，我們學會了如何透過 <code>@RequestParam</code> 和 <code>@PathVariable</code> 從 URL 中獲取簡單的參數。然而，當需要建立或更新一個複雜的資源時（例如，註冊一個新使用者），客戶端通常會將包含多個欄位的結構化資料放在 HTTP 請求的「本文 (Request Body)」中，並以 JSON 格式傳送。</p>
+<p>本篇文章將帶您掌握處理這種情境的核心技能。我們將學習如何使用 <code>@PostMapping</code> 來處理建立資源的請求，並透過 <code>@RequestBody</code> 將傳入的 JSON 資料自動轉換為 Java 物件。同時，我們將引入一個極其重要的設計模式——**資料傳輸物件 (Data Transfer Object, DTO)**。</p>
+<h2 id="什麼是請求本文-Request-Body-？"><a href="#什麼是請求本文-Request-Body-？" class="headerlink" title="什麼是請求本文 (Request Body)？"></a>什麼是請求本文 (Request Body)？</h2><p>對於 <code>POST</code> 或 <code>PUT</code> 這類意在「新增」或「修改」資料的 HTTP 方法，其要傳遞的資料內容並非放在 URL 上，而是放在請求的「本文 (Body)」或稱為「酬載 (Payload)」中。在現代的 RESTful API 設計中，這個本文的內容最常見的格式就是 JSON。</p>
+<p>例如，一個用於建立新使用者的請求本文，其 JSON 格式可能如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;username&quot;</span><span class="punctuation">:</span> <span class="string">&quot;alice&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;email&quot;</span><span class="punctuation">:</span> <span class="string">&quot;alice@example.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">30</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="建立資料傳輸物件-DTO"><a href="#建立資料傳輸物件-DTO" class="headerlink" title="建立資料傳輸物件 (DTO)"></a>建立資料傳輸物件 (DTO)</h2><p>在接收請求本文的資料之前，我們需要先在 Java 中定義一個對應的「容器」來承裝這些資料。這個容器就是 DTO。</p>
+<p><strong>為何要使用 DTO？</strong><br>使用 DTO 是一個非常重要的開發實踐，它帶來了幾個好處：</p>
+<ol>
+<li><strong>關注點分離</strong>：將 API 層的資料結構與內部領域模型（例如資料庫的 Entity）分離開來。API 的樣貌不應被資料庫的結構所綁架。</li>
+<li><strong>資料驗證</strong>：可以針對 API 的輸入，在 DTO 上定義特定的驗證規則。</li>
+<li><strong>安全性</strong>：可以精確控制要接收哪些欄位，避免惡意使用者傳入非預期的欄位來試圖修改內部資料。</li>
+</ol>
+<p>現在，讓我們來建立一個與上述 JSON 結構對應的 DTO。</p>
+<ol>
+<li><p>在 <code>com.example.demoapp</code> 套件下，建立一個新的子套件 <code>dto</code>。</p>
+</li>
+<li><p>在 <code>dto</code> 套件中，建立一個新檔案 <code>CreateUserRequest.java</code>，並貼上以下內容：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demoapp.dto;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span> <span class="comment">// Lombok: 自動產生 getter, setter, toString, equals, hashCode</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CreateUserRequest</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    <span class="keyword">private</span> String email;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>這個 <code>CreateUserRequest</code> 類別的屬性，與我們預期接收的 JSON 欄位完全一致。</p>
+</li>
+</ol>
+<h2 id="使用-PostMapping-與-RequestBody-接收資料"><a href="#使用-PostMapping-與-RequestBody-接收資料" class="headerlink" title="使用 @PostMapping 與 @RequestBody 接收資料"></a>使用 <code>@PostMapping</code> 與 <code>@RequestBody</code> 接收資料</h2><p>現在，萬事俱備，我們可以建立一個新的 Controller 來處理使用者建立的請求。</p>
+<ol>
+<li><p>在 <code>com.example.demoapp</code> 套件下，建立一個新檔案 <code>UserController.java</code>。</p>
+</li>
+<li><p>貼上以下程式碼：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demoapp;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demoapp.dto.CreateUserRequest;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.PostMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestBody;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/users&quot;)</span> <span class="comment">// 1. 為 Controller 設定一個基礎路徑</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. 映射 HTTP POST 請求到這個方法</span></span><br><span class="line">    <span class="meta">@PostMapping</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">createUser</span><span class="params">(<span class="meta">@RequestBody</span> CreateUserRequest request)</span> &#123; <span class="comment">// 3. 接收請求本文並轉換為 DTO 物件</span></span><br><span class="line">        System.out.println(<span class="string">&quot;接收到的使用者名稱: &quot;</span> + request.getUsername());</span><br><span class="line">        System.out.println(<span class="string">&quot;接收到的 Email: &quot;</span> + request.getEmail());</span><br><span class="line">        System.out.println(<span class="string">&quot;接收到的年齡: &quot;</span> + request.getAge());</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;使用者 &quot;</span> + request.getUsername() + <span class="string">&quot; 建立成功！&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<ul>
+<li><strong>程式碼詳解</strong>：<ol>
+<li><code>@RequestMapping(&quot;/users&quot;)</code>：在類別層級使用此註解，可以為這個 Controller 內的所有 API 設定一個共同的基礎路徑。</li>
+<li><code>@PostMapping</code>：此註解將 HTTP <code>POST</code> 方法的請求映射到 <code>createUser</code> 方法。因為類別已有 <code>@RequestMapping(&quot;/users&quot;)</code>，所以此方法的完整路徑是 <code>POST /users</code>。</li>
+<li><code>@RequestBody CreateUserRequest request</code>：<strong>這是本篇的關鍵</strong>。<code>@RequestBody</code> 註解告訴 Spring Boot，請讀取整個 HTTP 請求的本文，並使用內建的 Jackson 函式庫，將其 JSON 內容自動地反序列化 (deserialize) 成一個 <code>CreateUserRequest</code> 的 Java 物件。</li>
+</ol>
+</li>
+</ul>
+<h2 id="如何測試-POST-請求"><a href="#如何測試-POST-請求" class="headerlink" title="如何測試 POST 請求"></a>如何測試 <code>POST</code> 請求</h2><p>與可以直接在瀏覽器網址列測試的 <code>GET</code> 請求不同，<code>POST</code> 請求需要使用專門的工具來發送。</p>
+<ul>
+<li><p><strong>方法一：使用 <code>curl</code> 命令列工具</strong><br>打開您的終端機，執行以下指令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http://localhost:8080/users \</span><br><span class="line">-H <span class="string">&quot;Content-Type: application/json&quot;</span> \</span><br><span class="line">-d <span class="string">&#x27;&#123;&quot;username&quot;: &quot;alice&quot;, &quot;email&quot;: &quot;alice@example.com&quot;, &quot;age&quot;: 30&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>您應該會收到 <code>使用者 alice 建立成功！</code> 的回應。</p>
+</li>
+<li><p><strong>方法二：使用 API 測試軟體</strong><br>對於初學者，使用圖形化介面的 API 測試軟體會更直觀，例如 <strong>Postman</strong>, <strong>Insomnia</strong>，或是 VSCode 的 <strong>Thunder Client</strong> 插件。<br>操作步驟大致如下：</p>
+<ol>
+<li>選擇請求方法為 <code>POST</code>。</li>
+<li>輸入 URL：<code>http://localhost:8080/users</code>。</li>
+<li>切換到 “Body” 頁籤，選擇類型為 “raw”，格式為 “JSON”。</li>
+<li>將您的 JSON 內容貼入輸入框中。</li>
+<li>點擊「傳送 (Send)」。</li>
+</ol>
+</li>
+</ul>
+<h2 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h2><p>在本篇文章中，我們學會了如何處理更貼近真實世界應用場景的 API 輸入。</p>
+<ul>
+<li>我們理解了為何需要使用 DTO (資料傳輸物件) 來作為 API 的資料載體。</li>
+<li>我們掌握了如何使用 <code>@PostMapping</code> 和 <code>@RequestBody</code> 來接收並自動轉換請求本文中的 JSON 資料。</li>
+<li>我們知道了如何使用 <code>curl</code> 或 API 測試軟體來驗證 <code>POST</code> 請求。</li>
+</ul>
+<p>我們現在已經掌握了 Spring Boot Web 開發的基礎。然而，這些 Controller 和 DTO 物件都是由誰來實例化和管理的呢？在下一篇文章中，我們將深入 Spring 的靈魂——<strong>IoC 與 DI</strong>，徹底理解 Spring 框架運作的核心機制。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://lmy46.github.io">Mendel Lee</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章連結: </span><span class="post-copyright-info"><a href="https://lmy46.github.io/2025/08/11/java-spring-boot-05/">https://lmy46.github.io/2025/08/11/java-spring-boot-05/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 許可協議。轉載請註明來自 <a href="https://lmy46.github.io" target="_blank">⅙阿諺、⅓Mendel、½麵條爸の部落格</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/Spring-Boot/">Spring Boot</a></div><div class="post_share"><div class="social-share" data-image="/img/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/08/11/java-spring-boot-06/" title="Spring Boot 06 - IoC 與 DI 詳解"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Spring Boot 06 - IoC 與 DI 詳解</div></div></a></div><div class="next-post pull-right"><a href="/2025/08/11/java-spring-boot-04/" title="Spring Boot 04 - 處理請求參數"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Spring Boot 04 - 處理請求參數</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><div><a href="/2025/08/08/ide-plugin-01/" title="VSCode 插件：建立 Spring Boot 專案 (含 Lombok)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-08</div><div class="title">VSCode 插件：建立 Spring Boot 專案 (含 Lombok)</div></div></a></div><div><a href="/2025/08/08/java-spring-boot-01/" title="Spring Boot 01 - 學習路徑總覽：從入門到專家之路"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-08</div><div class="title">Spring Boot 01 - 學習路徑總覽：從入門到專家之路</div></div></a></div><div><a href="/2025/08/11/java-spring-boot-03/" title="Spring Boot 03 - 第一個 RESTful API"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">Spring Boot 03 - 第一個 RESTful API</div></div></a></div><div><a href="/2025/08/08/java-spring-boot-02/" title="Spring Boot 02 - 專案結構與核心概念"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-08</div><div class="title">Spring Boot 02 - 專案結構與核心概念</div></div></a></div><div><a href="/2025/08/11/java-spring-boot-04/" title="Spring Boot 04 - 處理請求參數"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">Spring Boot 04 - 處理請求參數</div></div></a></div><div><a href="/2025/08/11/java-spring-boot-07/" title="Spring Boot 07 - Lombok 深度應用"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">Spring Boot 07 - Lombok 深度應用</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Mendel Lee</div><div class="author-info__description">用來記錄在阿諺小小的腦袋中，很容易因塞不下而忘記的東西</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">54</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">11</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80%EF%BC%9A%E6%8E%A5%E6%94%B6%E7%B5%90%E6%A7%8B%E5%8C%96%E7%9A%84%E8%B3%87%E6%96%99"><span class="toc-number">1.</span> <span class="toc-text">前言：接收結構化的資料</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E9%BA%BC%E6%98%AF%E8%AB%8B%E6%B1%82%E6%9C%AC%E6%96%87-Request-Body-%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">什麼是請求本文 (Request Body)？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BB%BA%E7%AB%8B%E8%B3%87%E6%96%99%E5%82%B3%E8%BC%B8%E7%89%A9%E4%BB%B6-DTO"><span class="toc-number">3.</span> <span class="toc-text">建立資料傳輸物件 (DTO)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-PostMapping-%E8%88%87-RequestBody-%E6%8E%A5%E6%94%B6%E8%B3%87%E6%96%99"><span class="toc-number">4.</span> <span class="toc-text">使用 @PostMapping 與 @RequestBody 接收資料</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%B8%AC%E8%A9%A6-POST-%E8%AB%8B%E6%B1%82"><span class="toc-number">5.</span> <span class="toc-text">如何測試 POST 請求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B8%BD%E7%B5%90"><span class="toc-number">6.</span> <span class="toc-text">總結</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/15/java-spring-boot-30/" title="Spring Boot 30 - 部署至雲端平台 (初步探討)">Spring Boot 30 - 部署至雲端平台 (初步探討)</a><time datetime="2025-08-15T02:56:29.000Z" title="發表於 2025-08-15 10:56:29">2025-08-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/14/java-spring-boot-29/" title="Spring Boot 29 - 使用 Buildpacks 建置 Docker 映像檔">Spring Boot 29 - 使用 Buildpacks 建置 Docker 映像檔</a><time datetime="2025-08-14T07:45:20.000Z" title="發表於 2025-08-14 15:45:20">2025-08-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-28/" title="Spring Boot 28 - 檔案上傳與下載">Spring Boot 28 - 檔案上傳與下載</a><time datetime="2025-08-13T08:25:43.000Z" title="發表於 2025-08-13 16:25:43">2025-08-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-27/" title="Spring Boot 27 - 使用 Spring Mail 寄送電子郵件">Spring Boot 27 - 使用 Spring Mail 寄送電子郵件</a><time datetime="2025-08-13T05:58:46.000Z" title="發表於 2025-08-13 13:58:46">2025-08-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-26/" title="Spring Boot 26 - 非同步 (@Async) 與排程 (@Scheduled) 任務">Spring Boot 26 - 非同步 (@Async) 與排程 (@Scheduled) 任務</a><time datetime="2025-08-13T05:54:09.000Z" title="發表於 2025-08-13 13:54:09">2025-08-13</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By Mendel Lee</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主題 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="淺色和深色模式轉換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到頂部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料庫載入中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜尋文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

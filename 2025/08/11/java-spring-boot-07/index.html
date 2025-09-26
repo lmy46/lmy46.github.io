@@ -1,0 +1,214 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>Spring Boot 07 - Lombok 深度應用 | ⅙阿諺、⅓Mendel、½麵條爸の部落格</title><meta name="author" content="Mendel Lee"><meta name="copyright" content="Mendel Lee"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="本篇將帶您超越 @Data 註解，深入探索 Lombok 更多實用且強大的功能。我們將學習如何使用 @Getter, @Setter, @Builder, @Slf4j 等註解，讓您的 Java 程式碼在保持強大功能的同時，變得極致簡潔與優雅。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Boot 07 - Lombok 深度應用">
+<meta property="og:url" content="https://lmy46.github.io/2025/08/11/java-spring-boot-07/index.html">
+<meta property="og:site_name" content="⅙阿諺、⅓Mendel、½麵條爸の部落格">
+<meta property="og:description" content="本篇將帶您超越 @Data 註解，深入探索 Lombok 更多實用且強大的功能。我們將學習如何使用 @Getter, @Setter, @Builder, @Slf4j 等註解，讓您的 Java 程式碼在保持強大功能的同時，變得極致簡潔與優雅。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://lmy46.github.io/img/avatar.png">
+<meta property="article:published_time" content="2025-08-11T06:31:42.000Z">
+<meta property="article:modified_time" content="2025-09-26T05:01:39.589Z">
+<meta property="article:author" content="Mendel Lee">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Spring Boot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lmy46.github.io/img/avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lmy46.github.io/2025/08/11/java-spring-boot-07/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"languages":{"hits_empty":"找不到您查詢的內容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '複製成功',
+    error: '複製錯誤',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Spring Boot 07 - Lombok 深度應用',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-09-26 13:01:39'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = url => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      link.onload = () => resolve()
+      link.onerror = () => reject()
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">54</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">11</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://picsum.photos/id/20/1920/942')"><nav id="nav"><span id="blog-info"><a href="/" title="⅙阿諺、⅓Mendel、½麵條爸の部落格"><span class="site-name">⅙阿諺、⅓Mendel、½麵條爸の部落格</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Spring Boot 07 - Lombok 深度應用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2025-08-11T06:31:42.000Z" title="發表於 2025-08-11 14:31:42">2025-08-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2025-09-26T05:01:39.589Z" title="更新於 2025-09-26 13:01:39">2025-09-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Spring/">Spring</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Spring/Spring-Boot-%E5%9F%BA%E7%A4%8E/">Spring Boot 基礎</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字數總計:</span><span class="word-count">1.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時長:</span><span>5分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Spring Boot 07 - Lombok 深度應用"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前言：超越-Data-的精細控制"><a href="#前言：超越-Data-的精細控制" class="headerlink" title="前言：超越 @Data 的精細控制"></a>前言：超越 <code>@Data</code> 的精細控制</h2><p>在之前的文章中，我們已經在 DTO (資料傳輸物件) 中體驗了 <code>@Data</code> 註解的便利性，它能為我們自動產生大量的樣板程式碼 (boilerplate code)。然而，<code>@Data</code> 是一個功能強大的「組合包」，有時它的功能過於廣泛，並不完全符合我們的需求。</p>
+<p>例如，我們可能只希望物件的屬性是可讀的（有 getter），但不可寫的（沒有 setter），以確保物件的不可變性。或者，我們想要一個更優雅、更具可讀性的方式來建立物件，而不是使用冗長的建構子。</p>
+<p>本篇文章將帶您深入探索 Lombok 提供的更多樣化且功能專一的註解，學習如何根據不同的場景，精準地選擇最合適的工具，撰寫出更專業、更具意圖且極致簡潔的程式碼。</p>
+<h2 id="Data-的問題與更精細的選擇"><a href="#Data-的問題與更精細的選擇" class="headerlink" title="@Data 的問題與更精細的選擇"></a><code>@Data</code> 的問題與更精細的選擇</h2><p><code>@Data</code> 註解實際上是以下幾個註解的集合體：</p>
+<ul>
+<li><code>@Getter</code></li>
+<li><code>@Setter</code></li>
+<li><code>@ToString</code></li>
+<li><code>@EqualsAndHashCode</code></li>
+<li><code>@RequiredArgsConstructor</code></li>
+</ul>
+<p>這帶來的主要問題是**可變性 (Mutability)**。<code>@Data</code> 會為所有非 final 的屬性產生公開的 <code>setter</code> 方法，這意味著物件在建立後，其狀態可以被輕易地改變，這在某些情境下可能會引發非預期的錯誤。因此，一個好的實踐是根據需求，單獨使用這些更精細的註解。</p>
+<h2 id="核心註解詳解"><a href="#核心註解詳解" class="headerlink" title="核心註解詳解"></a>核心註解詳解</h2><h3 id="Getter-與-Setter"><a href="#Getter-與-Setter" class="headerlink" title="@Getter 與 @Setter"></a><code>@Getter</code> 與 <code>@Setter</code></h3><p>這是最基礎的兩個註解，分別用於產生所有屬性的 <code>getter</code> 和 <code>setter</code> 方法。您可以將它們用在類別層級，也可以用在單一屬性層級。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> lombok.Getter;</span><br><span class="line"><span class="keyword">import</span> lombok.Setter;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Getter</span> <span class="comment">// 為所有屬性產生 getter</span></span><br><span class="line"><span class="meta">@Setter</span> <span class="comment">// 為所有屬性產生 setter</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserProfile</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    <span class="keyword">private</span> String email;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="ToString"><a href="#ToString" class="headerlink" title="@ToString"></a><code>@ToString</code></h3><p>自動覆寫 <code>toString()</code> 方法，預設會印出所有屬性。一個非常有用的功能是排除敏感性資料。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> lombok.Getter;</span><br><span class="line"><span class="keyword">import</span> lombok.ToString;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="meta">@ToString</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@ToString</span>.Exclude <span class="comment">// 在 toString() 的輸出中排除此欄位</span></span><br><span class="line">    <span class="keyword">private</span> String password;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="建構子相關註解"><a href="#建構子相關註解" class="headerlink" title="建構子相關註解"></a>建構子相關註解</h3><ul>
+<li><code>@NoArgsConstructor</code>：產生一個無參數的建構子。</li>
+<li><code>@AllArgsConstructor</code>：產生一個包含所有屬性的建構子。</li>
+<li><code>@RequiredArgsConstructor</code>：<strong>這是與依賴注入結合的神器</strong>。它會為所有被宣告為 <code>final</code> 或被 <code>@NonNull</code> 標註的屬性，產生一個對應的建構子。</li>
+</ul>
+<p>在上一篇文章中，我們在 <code>UserService</code> 中手動編寫了建構子來進行依賴注入。現在，我們可以用 Lombok 來讓它消失！</p>
+<p>修改 <code>com.example.demoapp.service.UserService.java</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demoapp.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demoapp.repository.UserRepository;</span><br><span class="line"><span class="keyword">import</span> lombok.RequiredArgsConstructor; <span class="comment">// 引入 Lombok 註解</span></span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span> <span class="comment">// &lt;&lt;-- 就是這一行！</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 因為 userRepository 是 final 的，Lombok 會為它產生建構子</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> UserRepository userRepository;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 我們不再需要手動編寫以下這段建構子了！</span></span><br><span class="line">    <span class="comment">// public UserService(UserRepository userRepository) &#123;</span></span><br><span class="line">    <span class="comment">//     this.userRepository = userRepository;</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">register</span><span class="params">(String username)</span> &#123;</span><br><span class="line">        userRepository.save(username);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>現在，程式碼變得更加乾淨，並且完美地實現了建構子注入。</p>
+<h2 id="使用-Builder-實現優雅的物件建構"><a href="#使用-Builder-實現優雅的物件建構" class="headerlink" title="使用 @Builder 實現優雅的物件建構"></a>使用 <code>@Builder</code> 實現優雅的物件建構</h2><p>當一個物件有多個屬性，尤其是其中很多是可選的時候，使用建構子來建立物件會變得非常痛苦（需要建立多個重載的建構子，或者傳入很多 <code>null</code>）。<strong>建造者模式 (Builder Pattern)</strong> 是解決這個問題的最佳方案，而 Lombok 讓實現這個模式變得不費吹灰之力。</p>
+<ol>
+<li><p>在 <code>dto</code> 套件下建立 <code>UpdateUserRequest.java</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demoapp.dto;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.Builder;</span><br><span class="line"><span class="keyword">import</span> lombok.Getter;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="meta">@Builder</span> <span class="comment">// &lt;&lt;-- 啟用 Builder 模式</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UpdateUserRequest</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String nickname;</span><br><span class="line">    <span class="keyword">private</span> String address;</span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>如何使用 Builder</strong>：<br>現在，您可以用一種鏈式呼叫、可讀性極高的方式來建立物件，並且可以只設定您需要的屬性。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在某個測試或服務方法中...</span></span><br><span class="line"><span class="type">UpdateUserRequest</span> <span class="variable">request</span> <span class="operator">=</span> UpdateUserRequest.builder()</span><br><span class="line">    .nickname(<span class="string">&quot;Super Alice&quot;</span>)</span><br><span class="line">    .age(<span class="number">31</span>)</span><br><span class="line">    .build(); <span class="comment">// 最後呼叫 build() 來產生最終物件</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// address 屬性因為沒有設定，所以其值會是 null</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="使用-Slf4j-進行日誌記錄"><a href="#使用-Slf4j-進行日誌記錄" class="headerlink" title="使用 @Slf4j 進行日誌記錄"></a>使用 <code>@Slf4j</code> 進行日誌記錄</h2><p>在 Java 中，我們通常需要在每個類別的開頭宣告一個 <code>Logger</code> 物件，這段程式碼既重複又冗長。</p>
+<p><strong>傳統寫法</strong>：<br><code>private static final Logger log = LoggerFactory.getLogger(MyClass.class);</code></p>
+<p>Lombok 同樣為此提供了完美的解決方案。</p>
+<ul>
+<li><code>@Slf4j</code>：為您的類別自動產生一個名為 <code>log</code> 的 <code>Logger</code> 物件，該物件基於 SLF4J API。</li>
+</ul>
+<p>讓我們再次修改 <code>UserService.java</code>，為它加上日誌功能：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demoapp.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demoapp.repository.UserRepository;</span><br><span class="line"><span class="keyword">import</span> lombok.RequiredArgsConstructor;</span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j; <span class="comment">// 引入 Slf4j</span></span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="meta">@Slf4j</span> <span class="comment">// &lt;&lt;-- 加入日誌註解</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> UserRepository userRepository;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">register</span><span class="params">(String username)</span> &#123;</span><br><span class="line">        <span class="comment">// 現在可以直接使用 &quot;log&quot; 物件了</span></span><br><span class="line">        log.info(<span class="string">&quot;準備註冊新使用者: &#123;&#125;&quot;</span>, username);</span><br><span class="line">        userRepository.save(username);</span><br><span class="line">        log.info(<span class="string">&quot;使用者 &#123;&#125; 已成功註冊。&quot;</span>, username);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>當您執行 <code>register</code> 方法時，將會在主控台中看到我們定義的 <code>info</code> 級別的日誌輸出。</p>
+<h2 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h2><p>在本篇文章中，我們一起探索了 Lombok 除了 <code>@Data</code> 以外的眾多強大註解：</p>
+<ul>
+<li>我們學會了使用 <code>@Getter</code>, <code>@Setter</code>, <code>@ToString</code> 進行精細的控制。</li>
+<li>我們掌握了使用 <code>@RequiredArgsConstructor</code> 來極大簡化依賴注入的程式碼。</li>
+<li>我們體驗了 <code>@Builder</code> 帶來的優雅物件建構方式。</li>
+<li>我們利用 <code>@Slf4j</code> 消除了日誌記錄的樣板程式碼。</li>
+</ul>
+<p>Lombok 不僅僅是為了減少程式碼量，更是為了撰寫出意圖更明確、更易於維護、更具專業水準的 Java 程式碼。</p>
+<p>我們已經掌握了撰寫精簡、高效程式碼的技巧。在下一篇文章中，我們將為我們的應用程式加入專業的<strong>日誌管理</strong>功能，學習如何使用 Logback 來控制日誌的輸出格式與級別，這是在正式開發中不可或缺的一環。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://lmy46.github.io">Mendel Lee</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章連結: </span><span class="post-copyright-info"><a href="https://lmy46.github.io/2025/08/11/java-spring-boot-07/">https://lmy46.github.io/2025/08/11/java-spring-boot-07/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 許可協議。轉載請註明來自 <a href="https://lmy46.github.io" target="_blank">⅙阿諺、⅓Mendel、½麵條爸の部落格</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/Spring-Boot/">Spring Boot</a></div><div class="post_share"><div class="social-share" data-image="/img/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/08/11/java-spring-boot-08/" title="Spring Boot 08 - 整合 Logback 進行日誌管理"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Spring Boot 08 - 整合 Logback 進行日誌管理</div></div></a></div><div class="next-post pull-right"><a href="/2025/08/11/java-spring-boot-06/" title="Spring Boot 06 - IoC 與 DI 詳解"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Spring Boot 06 - IoC 與 DI 詳解</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><div><a href="/2025/08/08/ide-plugin-01/" title="VSCode 插件：建立 Spring Boot 專案 (含 Lombok)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-08</div><div class="title">VSCode 插件：建立 Spring Boot 專案 (含 Lombok)</div></div></a></div><div><a href="/2025/08/08/java-spring-boot-01/" title="Spring Boot 01 - 學習路徑總覽：從入門到專家之路"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-08</div><div class="title">Spring Boot 01 - 學習路徑總覽：從入門到專家之路</div></div></a></div><div><a href="/2025/08/11/java-spring-boot-03/" title="Spring Boot 03 - 第一個 RESTful API"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">Spring Boot 03 - 第一個 RESTful API</div></div></a></div><div><a href="/2025/08/08/java-spring-boot-02/" title="Spring Boot 02 - 專案結構與核心概念"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-08</div><div class="title">Spring Boot 02 - 專案結構與核心概念</div></div></a></div><div><a href="/2025/08/11/java-spring-boot-05/" title="Spring Boot 05 - 處理請求本文 (Body) 與 DTO"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">Spring Boot 05 - 處理請求本文 (Body) 與 DTO</div></div></a></div><div><a href="/2025/08/11/java-spring-boot-04/" title="Spring Boot 04 - 處理請求參數"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">Spring Boot 04 - 處理請求參數</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Mendel Lee</div><div class="author-info__description">用來記錄在阿諺小小的腦袋中，很容易因塞不下而忘記的東西</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">54</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">11</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80%EF%BC%9A%E8%B6%85%E8%B6%8A-Data-%E7%9A%84%E7%B2%BE%E7%B4%B0%E6%8E%A7%E5%88%B6"><span class="toc-number">1.</span> <span class="toc-text">前言：超越 @Data 的精細控制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Data-%E7%9A%84%E5%95%8F%E9%A1%8C%E8%88%87%E6%9B%B4%E7%B2%BE%E7%B4%B0%E7%9A%84%E9%81%B8%E6%93%87"><span class="toc-number">2.</span> <span class="toc-text">@Data 的問題與更精細的選擇</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E8%A8%BB%E8%A7%A3%E8%A9%B3%E8%A7%A3"><span class="toc-number">3.</span> <span class="toc-text">核心註解詳解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Getter-%E8%88%87-Setter"><span class="toc-number">3.1.</span> <span class="toc-text">@Getter 與 @Setter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ToString"><span class="toc-number">3.2.</span> <span class="toc-text">@ToString</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BB%BA%E6%A7%8B%E5%AD%90%E7%9B%B8%E9%97%9C%E8%A8%BB%E8%A7%A3"><span class="toc-number">3.3.</span> <span class="toc-text">建構子相關註解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-Builder-%E5%AF%A6%E7%8F%BE%E5%84%AA%E9%9B%85%E7%9A%84%E7%89%A9%E4%BB%B6%E5%BB%BA%E6%A7%8B"><span class="toc-number">4.</span> <span class="toc-text">使用 @Builder 實現優雅的物件建構</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-Slf4j-%E9%80%B2%E8%A1%8C%E6%97%A5%E8%AA%8C%E8%A8%98%E9%8C%84"><span class="toc-number">5.</span> <span class="toc-text">使用 @Slf4j 進行日誌記錄</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B8%BD%E7%B5%90"><span class="toc-number">6.</span> <span class="toc-text">總結</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/15/java-spring-boot-30/" title="Spring Boot 30 - 部署至雲端平台 (初步探討)">Spring Boot 30 - 部署至雲端平台 (初步探討)</a><time datetime="2025-08-15T02:56:29.000Z" title="發表於 2025-08-15 10:56:29">2025-08-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/14/java-spring-boot-29/" title="Spring Boot 29 - 使用 Buildpacks 建置 Docker 映像檔">Spring Boot 29 - 使用 Buildpacks 建置 Docker 映像檔</a><time datetime="2025-08-14T07:45:20.000Z" title="發表於 2025-08-14 15:45:20">2025-08-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-28/" title="Spring Boot 28 - 檔案上傳與下載">Spring Boot 28 - 檔案上傳與下載</a><time datetime="2025-08-13T08:25:43.000Z" title="發表於 2025-08-13 16:25:43">2025-08-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-27/" title="Spring Boot 27 - 使用 Spring Mail 寄送電子郵件">Spring Boot 27 - 使用 Spring Mail 寄送電子郵件</a><time datetime="2025-08-13T05:58:46.000Z" title="發表於 2025-08-13 13:58:46">2025-08-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/13/java-spring-boot-26/" title="Spring Boot 26 - 非同步 (@Async) 與排程 (@Scheduled) 任務">Spring Boot 26 - 非同步 (@Async) 與排程 (@Scheduled) 任務</a><time datetime="2025-08-13T05:54:09.000Z" title="發表於 2025-08-13 13:54:09">2025-08-13</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By Mendel Lee</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主題 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="淺色和深色模式轉換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到頂部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料庫載入中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜尋文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
