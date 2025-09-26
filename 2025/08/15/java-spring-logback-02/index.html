@@ -1,0 +1,226 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>Logback 實戰 02 - 解構 logback-spring.xml：變數、路徑與 Spring 整合 | ⅙阿諺、⅓Mendel、½麵條爸の部落格</title><meta name="author" content="Mendel Lee"><meta name="copyright" content="Mendel Lee"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="本篇為 Logback 實戰系列的基礎，將帶您徹底解構 logback-spring.xml 設定檔。我們將學習其核心結構、如何透過 \ 繼承 Spring Boot 預設值，並深入掌握變數定義 (\)、路徑管理，以及與 application.yml 互動 (\) 的關鍵技巧。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Logback 實戰 02 - 解構 logback-spring.xml：變數、路徑與 Spring 整合">
+<meta property="og:url" content="https://lmy46.github.io/2025/08/15/java-spring-logback-02/index.html">
+<meta property="og:site_name" content="⅙阿諺、⅓Mendel、½麵條爸の部落格">
+<meta property="og:description" content="本篇為 Logback 實戰系列的基礎，將帶您徹底解構 logback-spring.xml 設定檔。我們將學習其核心結構、如何透過 \ 繼承 Spring Boot 預設值，並深入掌握變數定義 (\)、路徑管理，以及與 application.yml 互動 (\) 的關鍵技巧。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://lmy46.github.io/img/avatar.png">
+<meta property="article:published_time" content="2025-08-15T09:08:00.000Z">
+<meta property="article:modified_time" content="2025-09-26T05:16:04.338Z">
+<meta property="article:author" content="Mendel Lee">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Logback">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lmy46.github.io/img/avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lmy46.github.io/2025/08/15/java-spring-logback-02/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"languages":{"hits_empty":"找不到您查詢的內容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '複製成功',
+    error: '複製錯誤',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Logback 實戰 02 - 解構 logback-spring.xml：變數、路徑與 Spring 整合',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-09-26 13:16:04'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = url => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      link.onload = () => resolve()
+      link.onerror = () => reject()
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">67</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">22</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">14</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://picsum.photos/id/20/1920/942')"><nav id="nav"><span id="blog-info"><a href="/" title="⅙阿諺、⅓Mendel、½麵條爸の部落格"><span class="site-name">⅙阿諺、⅓Mendel、½麵條爸の部落格</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Logback 實戰 02 - 解構 logback-spring.xml：變數、路徑與 Spring 整合</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2025-08-15T09:08:00.000Z" title="發表於 2025-08-15 17:08:00">2025-08-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2025-09-26T05:16:04.338Z" title="更新於 2025-09-26 13:16:04">2025-09-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Spring/">Spring</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Spring/Logback-%E5%AF%A6%E6%88%B0/">Logback 實戰</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字數總計:</span><span class="word-count">1.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時長:</span><span>6分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Logback 實戰 02 - 解構 logback-spring.xml：變數、路徑與 Spring 整合"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前言：一切從設定檔開始"><a href="#前言：一切從設定檔開始" class="headerlink" title="前言：一切從設定檔開始"></a>前言：一切從設定檔開始</h2><p>歡迎來到「Logback 實戰」系列的第一篇實作教學。在我們深入探討日誌的輸出目的地 (<code>Appender</code>)、格式 (<code>Layout</code>) 與過濾 (<code>Filter</code>) 之前，我們必須先徹底理解承載這一切設定的容器——<code>logback-spring.xml</code> 檔案本身。</p>
+<p>一個結構清晰、善用變數、並且能與 Spring 環境無縫整合的設定檔，是專業日誌管理的基礎。本篇文章將帶您：</p>
+<ul>
+<li>了解 <code>logback-spring.xml</code> 與 Spring Boot 預設設定的關係。</li>
+<li>學習設定檔的基礎結構與常用標籤。</li>
+<li>掌握在 Logback 中定義與使用變數的兩種核心方式。</li>
+<li>解決日誌檔案路徑在不同環境下的管理難題。</li>
+</ul>
+<p>最終，我們將整合所有知識，打造一個您可以直接應用在未來任何專案中的「黃金模板」。</p>
+<h2 id="核心觀念：覆蓋-Override-vs-引入-Include"><a href="#核心觀念：覆蓋-Override-vs-引入-Include" class="headerlink" title="核心觀念：覆蓋 (Override) vs. 引入 (Include)"></a>核心觀念：覆蓋 (Override) vs. 引入 (Include)</h2><p>當您在專案的 <code>src/main/resources</code> 目錄下建立一個 <code>logback-spring.xml</code> 檔案時，Spring Boot 的內建預設日誌設定將會<strong>完全失效</strong>。這意味著您必須從頭定義所有內容，包括日誌級別、輸出目的地和格式。</p>
+<p>這顯然不是我們想要的，因為 Spring Boot 的預設設定（例如日誌顏色）其實非常好用。因此，業界的最佳實踐是**「引入並擴充」**，而不是完全覆蓋。</p>
+<p>我們可以透過 <code>&lt;include&gt;</code> 標籤來引入 Spring Boot 的預設設定檔，然後在此基礎上進行客製化。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">include</span> <span class="attr">resource</span>=<span class="string">&quot;org/springframework/boot/logging/logback/defaults.xml&quot;</span>/&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">include</span> <span class="attr">resource</span>=<span class="string">&quot;org/springframework/boot/logging/logback/console-appender.xml&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="lt-configuration-gt-根元素詳解"><a href="#lt-configuration-gt-根元素詳解" class="headerlink" title="&lt;configuration&gt; 根元素詳解"></a><code>&lt;configuration&gt;</code> 根元素詳解</h2><p><code>logback-spring.xml</code> 的根元素是 <code>&lt;configuration&gt;</code>，它有幾個常用屬性：</p>
+<ul>
+<li><code>scan=&quot;true&quot;</code>：啟用設定檔的熱重載功能。當您在應用程式執行時修改並儲存此檔案，Logback 會自動重新載入設定。</li>
+<li><code>scanPeriod=&quot;60 seconds&quot;</code>：設定 Logback 每隔多久檢查一次檔案是否有變更。</li>
+<li><code>debug=&quot;false&quot;</code>：是否要印出 Logback 本身的內部除錯訊息。通常保持 <code>false</code>。</li>
+</ul>
+<!-- end list -->
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span> <span class="attr">scan</span>=<span class="string">&quot;true&quot;</span> <span class="attr">scanPeriod</span>=<span class="string">&quot;60 seconds&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">statusListener</span> <span class="attr">class</span>=<span class="string">&quot;ch.qos.logback.core.status.NopStatusListener&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="變數系統：-lt-property-gt-與-lt-springProperty-gt"><a href="#變數系統：-lt-property-gt-與-lt-springProperty-gt" class="headerlink" title="變數系統：&lt;property&gt; 與 &lt;springProperty&gt;"></a>變數系統：<code>&lt;property&gt;</code> 與 <code>&lt;springProperty&gt;</code></h2><p>在設定檔中直接寫死路徑或格式字串是一種不好的習慣。Logback 提供了強大的變數系統。</p>
+<h3 id="1-Logback-原生變數：-lt-property-gt"><a href="#1-Logback-原生變數：-lt-property-gt" class="headerlink" title="1. Logback 原生變數：&lt;property&gt;"></a>1. Logback 原生變數：<code>&lt;property&gt;</code></h3><p>這是 Logback 內建的變數定義方式。</p>
+<ul>
+<li><strong>定義</strong>：<code>&lt;property name=&quot;變數名&quot; value=&quot;變數值&quot;/&gt;</code></li>
+<li><strong>使用</strong>：<code>$&#123;變數名&#125;</code></li>
+<li><strong>預設值語法</strong>：<code>$&#123;變數名:-預設值&#125;</code>。如果 <code>變數名</code> 沒有被定義，就會使用冒號後面的預設值。</li>
+</ul>
+<!-- end list -->
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;LOG_DIR&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;APP_HOME:-logs&#125;&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-與-Spring-的橋樑：-lt-springProperty-gt"><a href="#2-與-Spring-的橋樑：-lt-springProperty-gt" class="headerlink" title="2. 與 Spring 的橋樑：&lt;springProperty&gt;"></a>2. 與 Spring 的橋樑：<code>&lt;springProperty&gt;</code></h3><p>這是 Spring Boot 提供的擴充功能，也是 <code>logback-spring.xml</code> 比 <code>logback.xml</code> 更強大的地方。它允許我們讀取 Spring 環境中的任何屬性，包括 <code>application.yml</code> 中的設定值。</p>
+<ul>
+<li><strong>語法</strong>：<code>&lt;springProperty scope=&quot;context&quot; name=&quot;Logback變數名&quot; source=&quot;application.yml中的屬性路徑&quot;/&gt;</code></li>
+</ul>
+<!-- end list -->
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">springProperty</span> <span class="attr">scope</span>=<span class="string">&quot;context&quot;</span> <span class="attr">name</span>=<span class="string">&quot;APP_NAME&quot;</span> <span class="attr">source</span>=<span class="string">&quot;spring.application.name&quot;</span> <span class="attr">defaultValue</span>=<span class="string">&quot;my-app&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="日誌路徑管理"><a href="#日誌路徑管理" class="headerlink" title="日誌路徑管理"></a>日誌路徑管理</h2><p>這是設定日誌時最常見的陷阱之一。</p>
+<p><strong>問題：相對路徑的基準點是什麼？</strong><br>當您在 <code>&lt;file&gt;</code> 標籤中設定一個相對路徑，如 <code>logs/app.log</code>，這個路徑是相對於<strong>啟動 Java 虛擬機 (JVM) 時的「工作目錄」</strong>，而不是專案本身的目錄。</p>
+<ul>
+<li>如果您在 <code>/my-project/</code> 目錄下執行 <code>java -jar target/app.jar</code>，日誌會寫入 <code>/my-project/logs/</code>。</li>
+<li>如果您在 <code>/</code> 根目錄下執行 <code>java -jar /my-project/target/app.jar</code>，日誌會寫入 <code>/logs/</code>。</li>
+</ul>
+<p><strong>最佳實踐：使用外部屬性定義日誌根目錄</strong><br>為了確保日誌路徑的穩定與可控，最佳實踐是透過系統屬性或環境變數從外部傳入一個絕對路徑。</p>
+<ol>
+<li><strong>啟動應用時傳入屬性</strong>：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -DAPP_HOME=/var/log/my-app -jar your-app.jar</span><br></pre></td></tr></table></figure></li>
+<li><strong>在 <code>logback-spring.xml</code> 中接收</strong>：<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;LOG_DIR&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;APP_HOME:-logs&#125;&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">&quot;FILE&quot;</span> <span class="attr">class</span>=<span class="string">&quot;ch.qos.logback.core.rolling.RollingFileAppender&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">file</span>&gt;</span>$&#123;LOG_DIR&#125;/application.log<span class="tag">&lt;/<span class="name">file</span>&gt;</span></span><br><span class="line">    ...</span><br><span class="line"><span class="tag">&lt;/<span class="name">appender</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="整合實戰：我們的基礎模板"><a href="#整合實戰：我們的基礎模板" class="headerlink" title="整合實戰：我們的基礎模板"></a>整合實戰：我們的基礎模板</h2><p>現在，讓我們將以上所有概念，結合您之前提供的範例，整合成一份專業、可重用的 <code>logback-spring.xml</code> 基礎模板。這份模板將是我們後續所有教學的起點。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span> <span class="attr">scan</span>=<span class="string">&quot;true&quot;</span> <span class="attr">scanPeriod</span>=<span class="string">&quot;60 seconds&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">include</span> <span class="attr">resource</span>=<span class="string">&quot;org/springframework/boot/logging/logback/defaults.xml&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">springProperty</span> <span class="attr">scope</span>=<span class="string">&quot;context&quot;</span> <span class="attr">name</span>=<span class="string">&quot;APP_NAME&quot;</span> <span class="attr">source</span>=<span class="string">&quot;spring.application.name&quot;</span> <span class="attr">defaultValue</span>=<span class="string">&quot;application&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">springProperty</span> <span class="attr">scope</span>=<span class="string">&quot;context&quot;</span> <span class="attr">name</span>=<span class="string">&quot;LOG_PATH&quot;</span> <span class="attr">source</span>=<span class="string">&quot;logging.file.path&quot;</span> <span class="attr">defaultValue</span>=<span class="string">&quot;logs&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;LOG_DIR&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;LOG_PATH&#125;&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;LOG_FILE_NAME&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;APP_NAME&#125;.log&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">&quot;CONSOLE&quot;</span> <span class="attr">class</span>=<span class="string">&quot;ch.qos.logback.core.ConsoleAppender&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">encoder</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>$&#123;CONSOLE_LOG_PATTERN&#125;<span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">charset</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">charset</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">encoder</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">appender</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">&quot;FILE&quot;</span> <span class="attr">class</span>=<span class="string">&quot;ch.qos.logback.core.rolling.RollingFileAppender&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">file</span>&gt;</span>$&#123;LOG_DIR&#125;/$&#123;LOG_FILE_NAME&#125;<span class="tag">&lt;/<span class="name">file</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">rollingPolicy</span> <span class="attr">class</span>=<span class="string">&quot;ch.qos.logback.core.rolling.TimeBasedRollingPolicy&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">fileNamePattern</span>&gt;</span>$&#123;LOG_DIR&#125;/$&#123;APP_NAME&#125;.%d&#123;yyyy-MM-dd&#125;.log<span class="tag">&lt;/<span class="name">fileNamePattern</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">maxHistory</span>&gt;</span>30<span class="tag">&lt;/<span class="name">maxHistory</span>&gt;</span> <span class="tag">&lt;/<span class="name">rollingPolicy</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">encoder</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>$&#123;FILE_LOG_PATTERN&#125;<span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">charset</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">charset</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">encoder</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">appender</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">root</span> <span class="attr">level</span>=<span class="string">&quot;INFO&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">appender-ref</span> <span class="attr">ref</span>=<span class="string">&quot;CONSOLE&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">appender-ref</span> <span class="attr">ref</span>=<span class="string">&quot;FILE&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">root</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h2><p>在本篇文章中，我們為 Logback 的學習打下了堅實的基礎。</p>
+<ul>
+<li>我們理解了<strong>覆蓋 vs. 引入</strong>的核心觀念，並選擇了最佳實踐。</li>
+<li>我們解構了 <code>logback-spring.xml</code> 的基礎標籤與屬性。</li>
+<li>我們掌握了使用 <code>&lt;property&gt;</code> 和 <code>&lt;springProperty&gt;</code> 兩種方式來管理變數。</li>
+<li>我們學會了如何以專業的方式管理日誌檔案的輸出路徑。</li>
+<li>我們最終產出了一份可直接應用於專案的<strong>基礎模板</strong>。</li>
+</ul>
+<p>有了這個穩固的設定檔基礎，我們就可以開始探索 Logback 的三大核心元件了。在下一篇文章中，我們將首先深入探討 **<code>Appender</code>**，學習如何將我們的日誌精準地投遞到各種不同的目的地。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://lmy46.github.io">Mendel Lee</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章連結: </span><span class="post-copyright-info"><a href="https://lmy46.github.io/2025/08/15/java-spring-logback-02/">https://lmy46.github.io/2025/08/15/java-spring-logback-02/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 許可協議。轉載請註明來自 <a href="https://lmy46.github.io" target="_blank">⅙阿諺、⅓Mendel、½麵條爸の部落格</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/Spring-Boot/">Spring Boot</a><a class="post-meta__tags" href="/tags/Logback/">Logback</a></div><div class="post_share"><div class="social-share" data-image="/img/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/08/15/java-spring-logback-03/" title="Logback 實戰 03 - Appender 深度探討：決定日誌的去向"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Logback 實戰 03 - Appender 深度探討：決定日誌的去向</div></div></a></div><div class="next-post pull-right"><a href="/2025/08/15/java-spring-logback-01/" title="Logback 實戰 01 - 專業日誌管理學習路徑"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Logback 實戰 01 - 專業日誌管理學習路徑</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><div><a href="/2025/08/15/java-spring-logback-01/" title="Logback 實戰 01 - 專業日誌管理學習路徑"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-15</div><div class="title">Logback 實戰 01 - 專業日誌管理學習路徑</div></div></a></div><div><a href="/2025/08/15/java-spring-logback-03/" title="Logback 實戰 03 - Appender 深度探討：決定日誌的去向"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-15</div><div class="title">Logback 實戰 03 - Appender 深度探討：決定日誌的去向</div></div></a></div><div><a href="/2025/08/15/java-spring-logback-04/" title="Logback 實戰 04 - Layout 與 MDC：客製化日誌的樣貌與內容"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-15</div><div class="title">Logback 實戰 04 - Layout 與 MDC：客製化日誌的樣貌與內容</div></div></a></div><div><a href="/2025/08/15/java-spring-logback-06/" title="Logback 實戰 06 - 多環境日誌管理 (Spring Profiles)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-15</div><div class="title">Logback 實戰 06 - 多環境日誌管理 (Spring Profiles)</div></div></a></div><div><a href="/2025/08/15/java-spring-logback-05/" title="Logback 實戰 05 - Filter 精準過濾：只看您想看的日誌"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-15</div><div class="title">Logback 實戰 05 - Filter 精準過濾：只看您想看的日誌</div></div></a></div><div><a href="/2025/08/15/java-spring-logback-07/" title="Logback 實戰 07 - AsyncAppender 與效能調校"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-15</div><div class="title">Logback 實戰 07 - AsyncAppender 與效能調校</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Mendel Lee</div><div class="author-info__description">用來記錄在阿諺小小的腦袋中，很容易因塞不下而忘記的東西</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">67</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">22</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">14</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80%EF%BC%9A%E4%B8%80%E5%88%87%E5%BE%9E%E8%A8%AD%E5%AE%9A%E6%AA%94%E9%96%8B%E5%A7%8B"><span class="toc-number">1.</span> <span class="toc-text">前言：一切從設定檔開始</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E8%A7%80%E5%BF%B5%EF%BC%9A%E8%A6%86%E8%93%8B-Override-vs-%E5%BC%95%E5%85%A5-Include"><span class="toc-number">2.</span> <span class="toc-text">核心觀念：覆蓋 (Override) vs. 引入 (Include)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lt-configuration-gt-%E6%A0%B9%E5%85%83%E7%B4%A0%E8%A9%B3%E8%A7%A3"><span class="toc-number">3.</span> <span class="toc-text">&lt;configuration&gt; 根元素詳解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%8A%E6%95%B8%E7%B3%BB%E7%B5%B1%EF%BC%9A-lt-property-gt-%E8%88%87-lt-springProperty-gt"><span class="toc-number">4.</span> <span class="toc-text">變數系統：&lt;property&gt; 與 &lt;springProperty&gt;</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Logback-%E5%8E%9F%E7%94%9F%E8%AE%8A%E6%95%B8%EF%BC%9A-lt-property-gt"><span class="toc-number">4.1.</span> <span class="toc-text">1. Logback 原生變數：&lt;property&gt;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%88%87-Spring-%E7%9A%84%E6%A9%8B%E6%A8%91%EF%BC%9A-lt-springProperty-gt"><span class="toc-number">4.2.</span> <span class="toc-text">2. 與 Spring 的橋樑：&lt;springProperty&gt;</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A5%E8%AA%8C%E8%B7%AF%E5%BE%91%E7%AE%A1%E7%90%86"><span class="toc-number">5.</span> <span class="toc-text">日誌路徑管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E5%90%88%E5%AF%A6%E6%88%B0%EF%BC%9A%E6%88%91%E5%80%91%E7%9A%84%E5%9F%BA%E7%A4%8E%E6%A8%A1%E6%9D%BF"><span class="toc-number">6.</span> <span class="toc-text">整合實戰：我們的基礎模板</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B8%BD%E7%B5%90"><span class="toc-number">7.</span> <span class="toc-text">總結</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/29/java-spring-core-01/" title="Spring 核心 01 - 深度學習路徑與 ApplicationContext 概覽">Spring 核心 01 - 深度學習路徑與 ApplicationContext 概覽</a><time datetime="2025-08-29T03:07:26.000Z" title="發表於 2025-08-29 11:07:26">2025-08-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/26/java-spring-openapi-05/" title="OpenAPI 實戰 05 - 全域組態與最佳實踐">OpenAPI 實戰 05 - 全域組態與最佳實踐</a><time datetime="2025-08-26T08:10:17.000Z" title="發表於 2025-08-26 16:10:17">2025-08-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/26/java-spring-openapi-04/" title="OpenAPI 實戰 04 - 定義安全性方案 (Security Schemes)">OpenAPI 實戰 04 - 定義安全性方案 (Security Schemes)</a><time datetime="2025-08-26T07:23:55.000Z" title="發表於 2025-08-26 15:23:55">2025-08-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/22/java-spring-openapi-03/" title="OpenAPI 實戰 03 - 精通 @Schema：定義您的資料模型">OpenAPI 實戰 03 - 精通 @Schema：定義您的資料模型</a><time datetime="2025-08-22T06:11:12.000Z" title="發表於 2025-08-22 14:11:12">2025-08-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/22/java-spring-openapi-02/" title="OpenAPI 實戰 02 - 基礎註解詳解：豐富您的 API 端點">OpenAPI 實戰 02 - 基礎註解詳解：豐富您的 API 端點</a><time datetime="2025-08-22T06:01:21.000Z" title="發表於 2025-08-22 14:01:21">2025-08-22</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By Mendel Lee</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主題 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="淺色和深色模式轉換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到頂部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料庫載入中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜尋文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

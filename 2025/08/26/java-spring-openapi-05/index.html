@@ -1,0 +1,204 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>OpenAPI 實戰 05 - 全域組態與最佳實踐 | ⅙阿諺、⅓Mendel、½麵條爸の部落格</title><meta name="author" content="Mendel Lee"><meta name="copyright" content="Mendel Lee"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="本篇為「OpenAPI 實戰」系列的最終章，將帶您學習如何透過程式化的 OpenAPI Bean 來集中管理文件的全域組態，包括標題、版本、聯絡資訊與多環境伺服器設定。最後，我們將總結 API 文件的最佳實踐，助您打造出專業、一致且易於維護的文件系統。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenAPI 實戰 05 - 全域組態與最佳實踐">
+<meta property="og:url" content="https://lmy46.github.io/2025/08/26/java-spring-openapi-05/index.html">
+<meta property="og:site_name" content="⅙阿諺、⅓Mendel、½麵條爸の部落格">
+<meta property="og:description" content="本篇為「OpenAPI 實戰」系列的最終章，將帶您學習如何透過程式化的 OpenAPI Bean 來集中管理文件的全域組態，包括標題、版本、聯絡資訊與多環境伺服器設定。最後，我們將總結 API 文件的最佳實踐，助您打造出專業、一致且易於維護的文件系統。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://lmy46.github.io/img/avatar.png">
+<meta property="article:published_time" content="2025-08-26T08:10:17.000Z">
+<meta property="article:modified_time" content="2025-09-26T05:18:07.766Z">
+<meta property="article:author" content="Mendel Lee">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="OpenAPI">
+<meta property="article:tag" content="Swagger">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lmy46.github.io/img/avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lmy46.github.io/2025/08/26/java-spring-openapi-05/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"languages":{"hits_empty":"找不到您查詢的內容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '複製成功',
+    error: '複製錯誤',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'OpenAPI 實戰 05 - 全域組態與最佳實踐',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-09-26 13:18:07'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = url => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      link.onload = () => resolve()
+      link.onerror = () => reject()
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">67</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">22</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">14</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://picsum.photos/id/20/1920/942')"><nav id="nav"><span id="blog-info"><a href="/" title="⅙阿諺、⅓Mendel、½麵條爸の部落格"><span class="site-name">⅙阿諺、⅓Mendel、½麵條爸の部落格</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">OpenAPI 實戰 05 - 全域組態與最佳實踐</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2025-08-26T08:10:17.000Z" title="發表於 2025-08-26 16:10:17">2025-08-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2025-09-26T05:18:07.766Z" title="更新於 2025-09-26 13:18:07">2025-09-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Spring/">Spring</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Spring/OpenAPI-%E5%AF%A6%E6%88%B0/">OpenAPI 實戰</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字數總計:</span><span class="word-count">1.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時長:</span><span>5分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="OpenAPI 實戰 05 - 全域組態與最佳實踐"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前言：當註解變得重複"><a href="#前言：當註解變得重複" class="headerlink" title="前言：當註解變得重複"></a>前言：當註解變得重複</h2><p>在前面的文章中，我們學會了使用一系列的註解來豐富我們的 API 文件。但隨著專案規模的擴大，一些問題也隨之浮現：</p>
+<ul>
+<li>如果公司名稱或聯絡信箱變更了，我們是否要去修改多個 <code>@Tag</code> 或 <code>@Operation</code> 嗎？</li>
+<li>我們的 API 會被部署到開發、測試、生產等多個環境，它們有著不同的 URL。如何在文件中體現這一點，讓測試者可以方便地切換？</li>
+<li>是否有辦法為所有 API 一起加上某些通用設定，而不用在每個 Controller 上都重複貼上相同的註解？</li>
+</ul>
+<p>這些問題都指向同一個解決方案：<strong>集中化的全域組態</strong>。本篇文章將帶您擴充我們在上一篇中建立的 <code>OpenAPI</code> Bean，學習如何透過程式化的方式，來集中管理文件的元數據 (Metadata)、伺服器資訊，並在最後為整個系列總結 API 文件的最佳實踐。</p>
+<h2 id="程式化設定：OpenAPI-Bean-的威力"><a href="#程式化設定：OpenAPI-Bean-的威力" class="headerlink" title="程式化設定：OpenAPI Bean 的威力"></a>程式化設定：<code>OpenAPI</code> Bean 的威力</h2><p>我們在 <code>config/OpenApiConfig.java</code> 中建立的 <code>OpenAPI</code> Bean，是我們進行全域客製化的中樞。它代表了整個 OpenAPI 規格的根物件，透過設定這個物件的屬性，我們就能控制最終產生的文件的每一個角落。</p>
+<h2 id="設定文件基本資訊-Info"><a href="#設定文件基本資訊-Info" class="headerlink" title="設定文件基本資訊 (Info)"></a>設定文件基本資訊 (Info)</h2><p><code>Info</code> 物件定義了 API 文件的「封面頁」，包含了標題、描述、版本、服務條款、聯絡人與授權資訊。一個資訊完整的封面，能讓文件的使用者第一眼就了解這個 API 的用途與背景。</p>
+<p>讓我們來擴充 <code>OpenApiConfig.java</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ... in config/OpenApiConfig.java</span></span><br><span class="line"><span class="keyword">import</span> io.swagger.v3.oas.models.info.Contact;</span><br><span class="line"><span class="keyword">import</span> io.swagger.v3.oas.models.info.Info;</span><br><span class="line"><span class="keyword">import</span> io.swagger.v3.oas.models.info.License;</span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OpenApiConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> OpenAPI <span class="title function_">customOpenAPI</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="type">String</span> <span class="variable">securitySchemeName</span> <span class="operator">=</span> <span class="string">&quot;bearerAuth&quot;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">OpenAPI</span>()</span><br><span class="line">            <span class="comment">// 1. 設定文件的基本資訊</span></span><br><span class="line">            .info(<span class="keyword">new</span> <span class="title class_">Info</span>()</span><br><span class="line">                .title(<span class="string">&quot;Spring Series 專案 API 文件&quot;</span>)</span><br><span class="line">                .version(<span class="string">&quot;1.0.0&quot;</span>)</span><br><span class="line">                .description(<span class="string">&quot;這是一份使用 springdoc-openapi 自動產生的 API 文件，&quot;</span> + </span><br><span class="line">                             <span class="string">&quot;涵蓋了使用者管理與相關操作。&quot;</span>)</span><br><span class="line">                .termsOfService(<span class="string">&quot;https://example.com/terms&quot;</span>)</span><br><span class="line">                .contact(<span class="keyword">new</span> <span class="title class_">Contact</span>().name(<span class="string">&quot;開發團隊&quot;</span>).email(<span class="string">&quot;dev@example.com&quot;</span>))</span><br><span class="line">                .license(<span class="keyword">new</span> <span class="title class_">License</span>().name(<span class="string">&quot;Apache 2.0&quot;</span>).url(<span class="string">&quot;https://springdoc.org&quot;</span>))</span><br><span class="line">            )</span><br><span class="line">            <span class="comment">// ... 保留上一篇的 addSecurityItem 和 components 設定 ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>重新啟動應用並刷新 Swagger UI，您會發現頁面的最頂部，已經顯示出我們剛剛設定的所有詳細資訊，顯得非常專業。</p>
+<h2 id="定義多環境伺服器-Servers"><a href="#定義多環境伺服器-Servers" class="headerlink" title="定義多環境伺服器 (Servers)"></a>定義多環境伺服器 (Servers)</h2><p><strong>問題</strong>：API 的使用者（例如前端工程師）可能需要在本機、開發伺服器、測試伺服器之間切換來進行測試。如果文件中只顯示 <code>localhost</code>，將會非常不便。</p>
+<p><strong>解決方案</strong>：我們可以定義一個 <code>Server</code> 物件列表，讓使用者可以在 Swagger UI 上自由切換要發送請求的目標伺服器。</p>
+<p>繼續修改 <code>OpenApiConfig.java</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ... in config/OpenApiConfig.java</span></span><br><span class="line"><span class="keyword">import</span> io.swagger.v3.oas.models.servers.Server;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="keyword">public</span> OpenAPI <span class="title function_">customOpenAPI</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">OpenAPI</span>()</span><br><span class="line">        .info(<span class="keyword">new</span> <span class="title class_">Info</span>()...) <span class="comment">// ... 接續上面的 info 設定 ...</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. 設定多個伺服器環境</span></span><br><span class="line">        .servers(List.of(</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">Server</span>().url(<span class="string">&quot;http://localhost:8080&quot;</span>).description(<span class="string">&quot;本機開發環境 (DEV)&quot;</span>),</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">Server</span>().url(<span class="string">&quot;https://staging.example.com&quot;</span>).description(<span class="string">&quot;測試環境 (Staging)&quot;</span>),</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">Server</span>().url(<span class="string">&quot;https://api.example.com&quot;</span>).description(<span class="string">&quot;生產環境 (PROD)&quot;</span>)</span><br><span class="line">        ))</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// ... 接續後面的 addSecurityItem 和 components 設定 ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再次刷新 Swagger UI，您會發現在文件標題的下方，出現了一個伺服器列表的<strong>下拉選單</strong>。使用者可以在這裡選擇要對哪個環境的伺服器發送 “Try it out” 請求，這極大地提升了文件的實用性。</p>
+<h2 id="API-文件設計的最佳實踐"><a href="#API-文件設計的最佳實踐" class="headerlink" title="API 文件設計的最佳實踐"></a>API 文件設計的最佳實踐</h2><p>恭喜您！至此，您已經掌握了 <code>springdoc-openapi</code> 從基礎到進階的絕大部分核心功能。在我們結束這個系列之前，讓我們總結一下打造一份卓越 API 文件的最佳實踐：</p>
+<ol>
+<li><strong>為所有公開端點提供文件</strong>：確保每一個提供給外部使用的 API 都被文件化，沒有任何遺漏。</li>
+<li>**使用清晰且一致的命名 (<code>@Tag</code>, <code>@Operation</code>)**：<ul>
+<li>使用 <code>@Tag</code> 將關聯的 API 歸類在一起，例如「使用者管理」、「訂單管理」。</li>
+<li>使用「動詞 + 名詞」的模式來撰寫 <code>@Operation</code> 的 <code>summary</code>，例如「建立使用者」、「查詢特定訂單」。</li>
+</ul>
+</li>
+<li>**詳盡描述資料模型 (<code>@Schema</code>)**：<ul>
+<li>為 DTO 的每一個屬性都提供 <code>description</code> 和 <code>example</code>。</li>
+<li>明確標示 <code>requiredMode</code>，並盡可能提供 <code>minLength</code>, <code>pattern</code> 等驗證提示。</li>
+</ul>
+</li>
+<li>**定義所有可能的回應 (<code>@ApiResponses</code>)**：<ul>
+<li>除了 <code>200</code> 成功的回應，務必也要定義常見的錯誤回應，如 <code>400</code> (請求錯誤)、<code>401</code> (未授權)、<code>404</code> (找不到資源)、<code>500</code> (伺服器內部錯誤)。</li>
+</ul>
+</li>
+<li>**提供豐富的範例 (<code>@ExampleObject</code>)**：對於複雜的請求本文，提供多個不同情境的範例，會遠比文字描述更有效。</li>
+<li>**明確標示安全性 (<code>SecurityScheme</code>)**：確保所有受保護的 API 都有對應的安全性定義，並讓文件本身具備互動測試的能力。</li>
+<li>**集中管理全域設定 (<code>OpenAPI</code> Bean)**：善用程式化的 Bean 組態，將通用資訊（如 <code>Info</code>, <code>Servers</code>, 全域 <code>SecurityRequirement</code>）集中管理，保持程式碼的 DRY (Don’t Repeat Yourself) 原則。</li>
+</ol>
+<h2 id="旅程總結：從程式碼到溝通的橋樑"><a href="#旅程總結：從程式碼到溝通的橋樑" class="headerlink" title="旅程總結：從程式碼到溝通的橋樑"></a>旅程總結：從程式碼到溝通的橋樑</h2><p>在這五篇文章的旅程中，我們從一份陽春的、自動產生的 API 列表開始，一步步地為它添加了豐富的描述、清晰的資料模型、明確的安全規則，並最終學會了如何集中化地管理這份文件的全域設定。</p>
+<p>希望您能體會到，一份好的 API 文件，其價值遠不止於「有就好」。它是在開發團隊中建立「共同語言」的基石，是縮短前後端、測試與維運人員之間溝通鴻溝的橋樑。它能將隱晦的程式碼邏輯，轉化為清晰、明確、無歧義的技術合約。</p>
+<p>掌握 API 文件的藝術，將是您在專業開發者道路上，一項極具價值的軟技能。感謝您完成「OpenAPI 實戰」系列！</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://lmy46.github.io">Mendel Lee</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章連結: </span><span class="post-copyright-info"><a href="https://lmy46.github.io/2025/08/26/java-spring-openapi-05/">https://lmy46.github.io/2025/08/26/java-spring-openapi-05/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 許可協議。轉載請註明來自 <a href="https://lmy46.github.io" target="_blank">⅙阿諺、⅓Mendel、½麵條爸の部落格</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/Spring-Boot/">Spring Boot</a><a class="post-meta__tags" href="/tags/OpenAPI/">OpenAPI</a><a class="post-meta__tags" href="/tags/Swagger/">Swagger</a></div><div class="post_share"><div class="social-share" data-image="/img/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/08/29/java-spring-core-01/" title="Spring 核心 01 - 深度學習路徑與 ApplicationContext 概覽"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Spring 核心 01 - 深度學習路徑與 ApplicationContext 概覽</div></div></a></div><div class="next-post pull-right"><a href="/2025/08/26/java-spring-openapi-04/" title="OpenAPI 實戰 04 - 定義安全性方案 (Security Schemes)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">OpenAPI 實戰 04 - 定義安全性方案 (Security Schemes)</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><div><a href="/2025/08/22/java-spring-openapi-01/" title="OpenAPI 實戰 01 - 專業 API 文件學習路徑"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-22</div><div class="title">OpenAPI 實戰 01 - 專業 API 文件學習路徑</div></div></a></div><div><a href="/2025/08/22/java-spring-openapi-02/" title="OpenAPI 實戰 02 - 基礎註解詳解：豐富您的 API 端點"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-22</div><div class="title">OpenAPI 實戰 02 - 基礎註解詳解：豐富您的 API 端點</div></div></a></div><div><a href="/2025/08/22/java-spring-openapi-03/" title="OpenAPI 實戰 03 - 精通 @Schema：定義您的資料模型"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-22</div><div class="title">OpenAPI 實戰 03 - 精通 @Schema：定義您的資料模型</div></div></a></div><div><a href="/2025/08/26/java-spring-openapi-04/" title="OpenAPI 實戰 04 - 定義安全性方案 (Security Schemes)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-26</div><div class="title">OpenAPI 實戰 04 - 定義安全性方案 (Security Schemes)</div></div></a></div><div><a href="/2025/08/08/ide-plugin-01/" title="VSCode 插件：建立 Spring Boot 專案 (含 Lombok)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-08</div><div class="title">VSCode 插件：建立 Spring Boot 專案 (含 Lombok)</div></div></a></div><div><a href="/2025/08/08/java-spring-boot-01/" title="Spring Boot 01 - 學習路徑總覽：從入門到專家之路"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-08</div><div class="title">Spring Boot 01 - 學習路徑總覽：從入門到專家之路</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Mendel Lee</div><div class="author-info__description">用來記錄在阿諺小小的腦袋中，很容易因塞不下而忘記的東西</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">67</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">22</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">14</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80%EF%BC%9A%E7%95%B6%E8%A8%BB%E8%A7%A3%E8%AE%8A%E5%BE%97%E9%87%8D%E8%A4%87"><span class="toc-number">1.</span> <span class="toc-text">前言：當註解變得重複</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A8%8B%E5%BC%8F%E5%8C%96%E8%A8%AD%E5%AE%9A%EF%BC%9AOpenAPI-Bean-%E7%9A%84%E5%A8%81%E5%8A%9B"><span class="toc-number">2.</span> <span class="toc-text">程式化設定：OpenAPI Bean 的威力</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A8%AD%E5%AE%9A%E6%96%87%E4%BB%B6%E5%9F%BA%E6%9C%AC%E8%B3%87%E8%A8%8A-Info"><span class="toc-number">3.</span> <span class="toc-text">設定文件基本資訊 (Info)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E7%BE%A9%E5%A4%9A%E7%92%B0%E5%A2%83%E4%BC%BA%E6%9C%8D%E5%99%A8-Servers"><span class="toc-number">4.</span> <span class="toc-text">定義多環境伺服器 (Servers)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#API-%E6%96%87%E4%BB%B6%E8%A8%AD%E8%A8%88%E7%9A%84%E6%9C%80%E4%BD%B3%E5%AF%A6%E8%B8%90"><span class="toc-number">5.</span> <span class="toc-text">API 文件設計的最佳實踐</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%85%E7%A8%8B%E7%B8%BD%E7%B5%90%EF%BC%9A%E5%BE%9E%E7%A8%8B%E5%BC%8F%E7%A2%BC%E5%88%B0%E6%BA%9D%E9%80%9A%E7%9A%84%E6%A9%8B%E6%A8%91"><span class="toc-number">6.</span> <span class="toc-text">旅程總結：從程式碼到溝通的橋樑</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/29/java-spring-core-01/" title="Spring 核心 01 - 深度學習路徑與 ApplicationContext 概覽">Spring 核心 01 - 深度學習路徑與 ApplicationContext 概覽</a><time datetime="2025-08-29T03:07:26.000Z" title="發表於 2025-08-29 11:07:26">2025-08-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/26/java-spring-openapi-05/" title="OpenAPI 實戰 05 - 全域組態與最佳實踐">OpenAPI 實戰 05 - 全域組態與最佳實踐</a><time datetime="2025-08-26T08:10:17.000Z" title="發表於 2025-08-26 16:10:17">2025-08-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/26/java-spring-openapi-04/" title="OpenAPI 實戰 04 - 定義安全性方案 (Security Schemes)">OpenAPI 實戰 04 - 定義安全性方案 (Security Schemes)</a><time datetime="2025-08-26T07:23:55.000Z" title="發表於 2025-08-26 15:23:55">2025-08-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/22/java-spring-openapi-03/" title="OpenAPI 實戰 03 - 精通 @Schema：定義您的資料模型">OpenAPI 實戰 03 - 精通 @Schema：定義您的資料模型</a><time datetime="2025-08-22T06:11:12.000Z" title="發表於 2025-08-22 14:11:12">2025-08-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/22/java-spring-openapi-02/" title="OpenAPI 實戰 02 - 基礎註解詳解：豐富您的 API 端點">OpenAPI 實戰 02 - 基礎註解詳解：豐富您的 API 端點</a><time datetime="2025-08-22T06:01:21.000Z" title="發表於 2025-08-22 14:01:21">2025-08-22</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By Mendel Lee</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主題 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="淺色和深色模式轉換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到頂部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料庫載入中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜尋文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
