@@ -1,0 +1,212 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>交易管理 06 - 進階主題與最佳實踐 | ⅙阿諺、⅓Mendel、½麵條爸の部落格</title><meta name="author" content="Mendel Lee"><meta name="copyright" content="Mendel Lee"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="本篇為「交易管理實戰」系列的最終章，將帶您掌握 @Transactional 的進階屬性與設計模式。我們將深入 readOnly 屬性的效能優化原理、timeout 的安全保障機制，並學習 TransactionTemplate 程式化交易與 @TransactionalEventListener 事件驅動模式等專業技巧。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="交易管理 06 - 進階主題與最佳實踐">
+<meta property="og:url" content="https://lmy46.github.io/2025/09/09/java-spring-transaction-06/index.html">
+<meta property="og:site_name" content="⅙阿諺、⅓Mendel、½麵條爸の部落格">
+<meta property="og:description" content="本篇為「交易管理實戰」系列的最終章，將帶您掌握 @Transactional 的進階屬性與設計模式。我們將深入 readOnly 屬性的效能優化原理、timeout 的安全保障機制，並學習 TransactionTemplate 程式化交易與 @TransactionalEventListener 事件驅動模式等專業技巧。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://lmy46.github.io/img/avatar.png">
+<meta property="article:published_time" content="2025-09-09T04:21:13.000Z">
+<meta property="article:modified_time" content="2025-10-25T15:35:45.321Z">
+<meta property="article:author" content="Mendel Lee">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Transaction">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lmy46.github.io/img/avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lmy46.github.io/2025/09/09/java-spring-transaction-06/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"languages":{"hits_empty":"找不到您查詢的內容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '複製成功',
+    error: '複製錯誤',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '交易管理 06 - 進階主題與最佳實踐',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-10-25 23:35:45'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = url => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      link.onload = () => resolve()
+      link.onerror = () => reject()
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">77</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">23</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">15</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://picsum.photos/id/20/1920/942')"><nav id="nav"><span id="blog-info"><a href="/" title="⅙阿諺、⅓Mendel、½麵條爸の部落格"><span class="site-name">⅙阿諺、⅓Mendel、½麵條爸の部落格</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">交易管理 06 - 進階主題與最佳實踐</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2025-09-09T04:21:13.000Z" title="發表於 2025-09-09 12:21:13">2025-09-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2025-10-25T15:35:45.321Z" title="更新於 2025-10-25 23:35:45">2025-10-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Spring/">Spring</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Spring/Spring-%E4%BA%A4%E6%98%93%E7%AE%A1%E7%90%86%E5%AF%A6%E6%88%B0/">Spring 交易管理實戰</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字數總計:</span><span class="word-count">2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時長:</span><span>6分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="交易管理 06 - 進階主題與最佳實踐"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前言：從精通到卓越"><a href="#前言：從精通到卓越" class="headerlink" title="前言：從精通到卓越"></a>前言：從精通到卓越</h2><p>恭喜您來到「交易管理實戰」的最後一站！我們已經一起探索了 AOP 代理的奧秘，穿越了傳播行為與隔離級別的複雜迷宮，也學會了如何避開常見的失效陷阱。現在的您，已經對 Spring 的交易管理有了深刻的理解。</p>
+<p>在本篇最終章中，我們將為您的技能庫，再添增幾件強大的「神兵利器」。我們將學習如何透過 <code>readOnly</code> 屬性榨取查詢效能、如何使用 <code>timeout</code> 為交易加上保險絲，並探索在特殊場景下，比註解更靈活的 <code>TransactionTemplate</code> 程式化交易，以及實現終極解耦的 <code>@TransactionalEventListener</code> 事件驅動模式。</p>
+<h2 id="readOnly-屬性-不只是個標記"><a href="#readOnly-屬性-不只是個標記" class="headerlink" title="readOnly 屬性 - 不只是個標記"></a><code>readOnly</code> 屬性 - 不只是個標記</h2><p>我們在基礎系列中提過，查詢方法應該加上 <code>@Transactional(readOnly = true)</code>。現在，讓我們深入其背後的原因。這不僅僅是一個語義上的標記，它能帶來實質的效能優化。</p>
+<p><strong>優化原理</strong>：</p>
+<ol>
+<li><strong>JPA&#x2F;Hibernate 層面</strong>：當您將交易標示為 <code>readOnly</code>，等於是告訴了底層的 Hibernate：「在這個交易裡，我保證不會有任何資料修改」。Hibernate 收到這個訊號後，就可以省略掉一個非常耗費效能的步驟——**髒檢查 (Dirty Checking)**。在一個讀寫交易結束時，Hibernate 需要檢查所有被載入到記憶體中的 Entity 物件，看它們的狀態是否被修改過，以便將變更同步回資料庫。在唯讀交易中，這個檢查就可以被完全跳過。</li>
+<li><strong>JDBC&#x2F;資料庫層面</strong>：這個 <code>readOnly</code> 標記會一路傳遞到 JDBC 驅動程式，甚至資料庫本身。某些資料庫（尤其是在讀寫分離的架構中）可以利用這個提示，將查詢路由到負載較輕的<strong>唯讀副本 (Read Replica)</strong> 資料庫上，從而減輕主資料庫的壓力。</li>
+</ol>
+<p><strong>最佳實踐</strong>：任何一個只包含查詢操作、不涉及任何資料修改的 Service 方法，都應該毫不猶豫地加上 <code>@Transactional(readOnly = true)</code>。</p>
+<h2 id="timeout-屬性-為您的交易加上保險絲"><a href="#timeout-屬性-為您的交易加上保險絲" class="headerlink" title="timeout 屬性 - 為您的交易加上保險絲"></a><code>timeout</code> 屬性 - 為您的交易加上保險絲</h2><p><strong>問題</strong>：如果一個交易因為某些原因（例如，等待外部服務回應、資料庫死結）而被長時間卡住，它將會長時間地佔用資料庫連線與鎖定資源，最終可能拖垮整個應用程式。</p>
+<p><strong>解決方案</strong>：為交易設定一個<strong>超時時間</strong>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// timeout 單位為秒</span></span><br><span class="line"><span class="meta">@Transactional(timeout = 10)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">processAndSaveData</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 這個方法中的所有資料庫操作，必須在 10 秒內完成</span></span><br><span class="line">    <span class="comment">// 如果超過 10 秒，交易將會被自動回滾，並拋出例外</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>timeout</code> 屬性就像一個保險絲，它為您的交易提供了一個執行時間的上限，是防止單一失控交易影響整個系統穩定性的重要保障。</p>
+<h2 id="程式化交易管理：TransactionTemplate"><a href="#程式化交易管理：TransactionTemplate" class="headerlink" title="程式化交易管理：TransactionTemplate"></a>程式化交易管理：<code>TransactionTemplate</code></h2><p><code>@Transactional</code> 註解非常方便，但它的作用粒度是<strong>整個方法</strong>。如果我們只想在一個長方法的中間一小段程式碼中啟用交易，或者交易的邊界需要由複雜的動態邏輯來決定時，該怎麼辦？</p>
+<p>答案是使用<strong>程式化交易管理</strong>——<code>TransactionTemplate</code>。</p>
+<p><strong>實戰範例</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProgrammaticTxService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> TransactionTemplate transactionTemplate;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> UserRepository userRepository;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">complexBusinessMethod</span><span class="params">()</span> &#123;</span><br><span class="line">        log.info(<span class="string">&quot;... 執行一些無需交易的前置作業 ...&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 只有這段程式碼會被包裹在交易中</span></span><br><span class="line">        <span class="type">Boolean</span> <span class="variable">result</span> <span class="operator">=</span> transactionTemplate.execute(status -&gt; &#123;</span><br><span class="line">            log.info(<span class="string">&quot;... 進入交易，開始執行資料庫操作 ...&quot;</span>);</span><br><span class="line">            <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(...);</span><br><span class="line">            userRepository.save(user);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (someErrorCondition) &#123;</span><br><span class="line">                log.warn(<span class="string">&quot;發生錯誤，手動標示交易為回滾！&quot;</span>);</span><br><span class="line">                status.setRollbackOnly(); <span class="comment">// 手動標示交易需要回滾</span></span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        log.info(<span class="string">&quot;... 回到非交易的程式碼區塊，交易結果: &#123;&#125;&quot;</span>, result);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>使用方式</strong>：只需從 IoC 容器中注入 <code>TransactionTemplate</code>，並使用其 <code>execute</code> 方法。傳入的 Lambda 運算式中的程式碼，就會在一個交易中被執行。</li>
+</ul>
+<h2 id="終極解耦：-TransactionalEventListener"><a href="#終極解耦：-TransactionalEventListener" class="headerlink" title="終極解耦：@TransactionalEventListener"></a>終極解耦：<code>@TransactionalEventListener</code></h2><h3 id="比喻：訂單處理流程"><a href="#比喻：訂單處理流程" class="headerlink" title="比喻：訂單處理流程"></a><strong>比喻：訂單處理流程</strong></h3><p>想像一下，你是一家線上商店的老闆，正在處理一筆新的顧客訂單。你的訂單處理流程有三個主要步驟：</p>
+<ol>
+<li><strong>建立訂單</strong>：在資料庫中新增一筆訂單記錄。</li>
+<li><strong>發送通知</strong>：發送簡訊或電子郵件給顧客，確認訂單已成立。</li>
+<li><strong>記錄日誌</strong>：在日誌系統中記錄這筆訂單的詳細資訊，供後續分析。</li>
+</ol>
+<h3 id="傳統的處理方式-問題所在"><a href="#傳統的處理方式-問題所在" class="headerlink" title="傳統的處理方式 (問題所在)"></a><strong>傳統的處理方式 (問題所在)</strong></h3><p>在沒有 <code>@TransactionalEventListener</code> 的情況下，你的程式碼可能會像這樣：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span> <span class="keyword">private</span> OrderRepository orderRepository;</span><br><span class="line">    <span class="meta">@Autowired</span> <span class="keyword">private</span> NotificationService notificationService;</span><br><span class="line">    <span class="meta">@Autowired</span> <span class="keyword">private</span> LoggerService loggerService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Transactional</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">createOrder</span><span class="params">(Order order)</span> &#123;</span><br><span class="line">        <span class="comment">// 第1步：建立訂單</span></span><br><span class="line">        orderRepository.save(order);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第2步：發送通知</span></span><br><span class="line">        notificationService.sendOrderConfirmation(order); </span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第3步：記錄日誌</span></span><br><span class="line">        loggerService.logOrderCreation(order);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>這個方式看起來沒問題，但存在一個嚴重的 <strong>同步問題</strong>：</p>
+<ul>
+<li>如果 <code>orderRepository.save(order)</code> 執行成功，但後續的 <code>notificationService.sendOrderConfirmation(order)</code> 失敗了，整個 <code>@Transactional</code> 交易就會<strong>回滾</strong>。</li>
+<li>這意味著，雖然資料庫中的訂單記錄被取消了，但 <strong>顧客可能已經收到了「訂單已成立」的通知簡訊</strong>。這會造成資料不一致，讓顧客感到困惑。</li>
+</ul>
+<h3 id="使用-TransactionalEventListener-的解決方案"><a href="#使用-TransactionalEventListener-的解決方案" class="headerlink" title="使用 @TransactionalEventListener 的解決方案"></a><strong>使用 <code>@TransactionalEventListener</code> 的解決方案</strong></h3><p><code>@TransactionalEventListener</code> 就像是訂單處理流程中的一個「<strong>守門員</strong>」。它會告訴程式：「等一下！先不要寄簡訊和寫日誌。等我確認這筆訂單在資料庫中<strong>真的、確實地</strong>建立了，我們再做後續的事情。」</p>
+<p>這個「守門員」的機制就是 <code>TransactionPhase.AFTER_COMMIT</code>。它確保被標註的方法只會在 <strong>交易成功提交後</strong> 才執行。</p>
+<p><strong>具體實現步驟：</strong></p>
+<h4 id="步驟一：定義事件-The-Event"><a href="#步驟一：定義事件-The-Event" class="headerlink" title="步驟一：定義事件 (The Event)"></a><strong>步驟一：定義事件 (The Event)</strong></h4><p>首先，我們需要一個「信號」來傳遞訂單資訊。這就是一個普通的 Java 類別，它代表一個「訂單已建立」的事件。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 就像一張寫著訂單資訊的紙條</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderCreatedEvent</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Order order;</span><br><span class="line">    <span class="comment">// ... constructor and getter</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="步驟二：發布事件-Publish-the-Event"><a href="#步驟二：發布事件-Publish-the-Event" class="headerlink" title="步驟二：發布事件 (Publish the Event)"></a><strong>步驟二：發布事件 (Publish the Event)</strong></h4><p>在 <code>OrderService</code> 中，我們不再直接呼叫通知和日誌服務，而是向「守門員」<strong>發出一個信號</strong>，告訴它「嘿，我這裡有個訂單準備好了」。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderService</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span> <span class="keyword">private</span> OrderRepository orderRepository;</span><br><span class="line">    <span class="meta">@Autowired</span> <span class="keyword">private</span> ApplicationEventPublisher eventPublisher;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Transactional</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">createOrder</span><span class="params">(Order order)</span> &#123;</span><br><span class="line">        <span class="comment">// 第1步：建立訂單</span></span><br><span class="line">        orderRepository.save(order);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 向「守門員」發出信號，但「不執行」後續動作</span></span><br><span class="line">        eventPublisher.publishEvent(<span class="keyword">new</span> <span class="title class_">OrderCreatedEvent</span>(order));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 交易結束，Spring 會準備提交</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="步驟三：建立事件監聽器-The-Gatekeeper"><a href="#步驟三：建立事件監聽器-The-Gatekeeper" class="headerlink" title="步驟三：建立事件監聽器 (The Gatekeeper)"></a><strong>步驟三：建立事件監聽器 (The Gatekeeper)</strong></h4><p>這就是神奇的地方。我們創建兩個「監聽器」來等待這個信號。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderEventListener</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span> <span class="keyword">private</span> NotificationService notificationService;</span><br><span class="line">    <span class="meta">@Autowired</span> <span class="keyword">private</span> LoggerService loggerService;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 只有當交易成功提交後，這個方法才被觸發</span></span><br><span class="line">    <span class="meta">@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handleOrderCreatedEvent</span><span class="params">(OrderCreatedEvent event)</span> &#123;</span><br><span class="line">        <span class="comment">// 第2步：現在，可以安全地發送通知了！</span></span><br><span class="line">        notificationService.sendOrderConfirmation(event.getOrder());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第二個監聽器，同樣在交易成功後執行</span></span><br><span class="line">    <span class="meta">@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handleOrderCreatedEventForLogging</span><span class="params">(OrderCreatedEvent event)</span> &#123;</span><br><span class="line">        <span class="comment">// 第3步：現在，可以安全地記錄日誌了！</span></span><br><span class="line">        loggerService.logOrderCreation(event.getOrder());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>透過這個模式，我們將「建立訂單」，與「發送通知」和「記錄日誌」這兩個業務邏輯<strong>完全解耦</strong>，並保證了它們執行的<strong>時序與一致性</strong>。</p>
+<h2 id="旅程總結：成為交易管理大師"><a href="#旅程總結：成為交易管理大師" class="headerlink" title="旅程總結：成為交易管理大師"></a>旅程總結：成為交易管理大師</h2><p>恭喜您完成了「交易管理實戰」的全部篇章！</p>
+<p>在這趟深度之旅中，我們從 ACID 原則與 AOP 代理的底層原理出發，識別並解決了交易失效的常見陷阱，深入探索了傳播行為與隔離級別的複雜世界，並最終掌握了 <code>readOnly</code> 優化、<code>timeout</code> 安全機制與事件驅動等進階模式。</p>
+<p>現在，<code>@Transactional</code> 對您來說，不再是一個神秘的黑盒子。您已經具備了深刻的理論知識與豐富的實戰技巧，足以自信地為您的應用程式，建構起一道堅不可摧的資料一致性防線。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://lmy46.github.io">Mendel Lee</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章連結: </span><span class="post-copyright-info"><a href="https://lmy46.github.io/2025/09/09/java-spring-transaction-06/">https://lmy46.github.io/2025/09/09/java-spring-transaction-06/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 許可協議。轉載請註明來自 <a href="https://lmy46.github.io" target="_blank">⅙阿諺、⅓Mendel、½麵條爸の部落格</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/Spring-Boot/">Spring Boot</a><a class="post-meta__tags" href="/tags/Transaction/">Transaction</a></div><div class="post_share"><div class="social-share" data-image="/img/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2025/09/09/java-spring-transaction-05/" title="交易管理 05 - 隔離級別 (Isolation) 與併發問題"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">交易管理 05 - 隔離級別 (Isolation) 與併發問題</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><div><a href="/2025/09/09/java-spring-transaction-02/" title="交易管理 02 - 核心原理：ACID 與 AOP 代理"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-09</div><div class="title">交易管理 02 - 核心原理：ACID 與 AOP 代理</div></div></a></div><div><a href="/2025/09/09/java-spring-transaction-03/" title="交易管理 03 - 常見失效場景分析"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-09</div><div class="title">交易管理 03 - 常見失效場景分析</div></div></a></div><div><a href="/2025/09/09/java-spring-transaction-05/" title="交易管理 05 - 隔離級別 (Isolation) 與併發問題"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-09</div><div class="title">交易管理 05 - 隔離級別 (Isolation) 與併發問題</div></div></a></div><div><a href="/2025/09/09/java-spring-transaction-01/" title="交易管理 01 - 深度學習路徑規劃"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-09</div><div class="title">交易管理 01 - 深度學習路徑規劃</div></div></a></div><div><a href="/2025/09/09/java-spring-transaction-04/" title="交易管理 04 - 傳播行為 (Propagation) 深度探討"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-09</div><div class="title">交易管理 04 - 傳播行為 (Propagation) 深度探討</div></div></a></div><div><a href="/2025/08/11/java-spring-boot-03/" title="Spring Boot 03 - 第一個 RESTful API"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">Spring Boot 03 - 第一個 RESTful API</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Mendel Lee</div><div class="author-info__description">用來記錄在阿諺小小的腦袋中，很容易因塞不下而忘記的東西</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">77</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">23</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">15</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80%EF%BC%9A%E5%BE%9E%E7%B2%BE%E9%80%9A%E5%88%B0%E5%8D%93%E8%B6%8A"><span class="toc-number">1.</span> <span class="toc-text">前言：從精通到卓越</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#readOnly-%E5%B1%AC%E6%80%A7-%E4%B8%8D%E5%8F%AA%E6%98%AF%E5%80%8B%E6%A8%99%E8%A8%98"><span class="toc-number">2.</span> <span class="toc-text">readOnly 屬性 - 不只是個標記</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#timeout-%E5%B1%AC%E6%80%A7-%E7%82%BA%E6%82%A8%E7%9A%84%E4%BA%A4%E6%98%93%E5%8A%A0%E4%B8%8A%E4%BF%9D%E9%9A%AA%E7%B5%B2"><span class="toc-number">3.</span> <span class="toc-text">timeout 屬性 - 為您的交易加上保險絲</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A8%8B%E5%BC%8F%E5%8C%96%E4%BA%A4%E6%98%93%E7%AE%A1%E7%90%86%EF%BC%9ATransactionTemplate"><span class="toc-number">4.</span> <span class="toc-text">程式化交易管理：TransactionTemplate</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B5%82%E6%A5%B5%E8%A7%A3%E8%80%A6%EF%BC%9A-TransactionalEventListener"><span class="toc-number">5.</span> <span class="toc-text">終極解耦：@TransactionalEventListener</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AF%94%E5%96%BB%EF%BC%9A%E8%A8%82%E5%96%AE%E8%99%95%E7%90%86%E6%B5%81%E7%A8%8B"><span class="toc-number">5.1.</span> <span class="toc-text">比喻：訂單處理流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%82%B3%E7%B5%B1%E7%9A%84%E8%99%95%E7%90%86%E6%96%B9%E5%BC%8F-%E5%95%8F%E9%A1%8C%E6%89%80%E5%9C%A8"><span class="toc-number">5.2.</span> <span class="toc-text">傳統的處理方式 (問題所在)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-TransactionalEventListener-%E7%9A%84%E8%A7%A3%E6%B1%BA%E6%96%B9%E6%A1%88"><span class="toc-number">5.3.</span> <span class="toc-text">使用 @TransactionalEventListener 的解決方案</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%A9%9F%E4%B8%80%EF%BC%9A%E5%AE%9A%E7%BE%A9%E4%BA%8B%E4%BB%B6-The-Event"><span class="toc-number">5.3.1.</span> <span class="toc-text">步驟一：定義事件 (The Event)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%A9%9F%E4%BA%8C%EF%BC%9A%E7%99%BC%E5%B8%83%E4%BA%8B%E4%BB%B6-Publish-the-Event"><span class="toc-number">5.3.2.</span> <span class="toc-text">步驟二：發布事件 (Publish the Event)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%A9%9F%E4%B8%89%EF%BC%9A%E5%BB%BA%E7%AB%8B%E4%BA%8B%E4%BB%B6%E7%9B%A3%E8%81%BD%E5%99%A8-The-Gatekeeper"><span class="toc-number">5.3.3.</span> <span class="toc-text">步驟三：建立事件監聽器 (The Gatekeeper)</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%85%E7%A8%8B%E7%B8%BD%E7%B5%90%EF%BC%9A%E6%88%90%E7%82%BA%E4%BA%A4%E6%98%93%E7%AE%A1%E7%90%86%E5%A4%A7%E5%B8%AB"><span class="toc-number">6.</span> <span class="toc-text">旅程總結：成為交易管理大師</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/09/java-spring-transaction-06/" title="交易管理 06 - 進階主題與最佳實踐">交易管理 06 - 進階主題與最佳實踐</a><time datetime="2025-09-09T04:21:13.000Z" title="發表於 2025-09-09 12:21:13">2025-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/09/java-spring-transaction-05/" title="交易管理 05 - 隔離級別 (Isolation) 與併發問題">交易管理 05 - 隔離級別 (Isolation) 與併發問題</a><time datetime="2025-09-09T04:20:06.000Z" title="發表於 2025-09-09 12:20:06">2025-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/09/java-spring-transaction-04/" title="交易管理 04 - 傳播行為 (Propagation) 深度探討">交易管理 04 - 傳播行為 (Propagation) 深度探討</a><time datetime="2025-09-09T03:38:25.000Z" title="發表於 2025-09-09 11:38:25">2025-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/09/java-spring-transaction-03/" title="交易管理 03 - 常見失效場景分析">交易管理 03 - 常見失效場景分析</a><time datetime="2025-09-09T03:17:14.000Z" title="發表於 2025-09-09 11:17:14">2025-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/09/java-spring-transaction-02/" title="交易管理 02 - 核心原理：ACID 與 AOP 代理">交易管理 02 - 核心原理：ACID 與 AOP 代理</a><time datetime="2025-09-09T01:41:15.000Z" title="發表於 2025-09-09 09:41:15">2025-09-09</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By Mendel Lee</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主題 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="淺色和深色模式轉換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到頂部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料庫載入中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜尋文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

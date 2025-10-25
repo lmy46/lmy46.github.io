@@ -1,0 +1,370 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>交易管理 04 - 傳播行為 (Propagation) 深度探討 | ⅙阿諺、⅓Mendel、½麵條爸の部落格</title><meta name="author" content="Mendel Lee"><meta name="copyright" content="Mendel Lee"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="本篇將帶您深入 @Transactional 註解中最重要也最複雜的屬性——傳播行為 (Propagation)。我們將透過具體的程式碼範例與場景分析，徹底釐清 REQUIRED、REQUIRES_NEW 與 NESTED 等核心傳播級別的行為差異，讓您能自信地駕馭巢狀交易。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="交易管理 04 - 傳播行為 (Propagation) 深度探討">
+<meta property="og:url" content="https://lmy46.github.io/2025/09/09/java-spring-transaction-04/index.html">
+<meta property="og:site_name" content="⅙阿諺、⅓Mendel、½麵條爸の部落格">
+<meta property="og:description" content="本篇將帶您深入 @Transactional 註解中最重要也最複雜的屬性——傳播行為 (Propagation)。我們將透過具體的程式碼範例與場景分析，徹底釐清 REQUIRED、REQUIRES_NEW 與 NESTED 等核心傳播級別的行為差異，讓您能自信地駕馭巢狀交易。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://lmy46.github.io/img/avatar.png">
+<meta property="article:published_time" content="2025-09-09T03:38:25.000Z">
+<meta property="article:modified_time" content="2025-10-25T15:35:23.062Z">
+<meta property="article:author" content="Mendel Lee">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Transaction">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lmy46.github.io/img/avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lmy46.github.io/2025/09/09/java-spring-transaction-04/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"languages":{"hits_empty":"找不到您查詢的內容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '複製成功',
+    error: '複製錯誤',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '交易管理 04 - 傳播行為 (Propagation) 深度探討',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-10-25 23:35:23'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = url => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      link.onload = () => resolve()
+      link.onerror = () => reject()
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">77</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">23</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">15</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://picsum.photos/id/20/1920/942')"><nav id="nav"><span id="blog-info"><a href="/" title="⅙阿諺、⅓Mendel、½麵條爸の部落格"><span class="site-name">⅙阿諺、⅓Mendel、½麵條爸の部落格</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 類別</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清單</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 電影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情連結</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於我</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">交易管理 04 - 傳播行為 (Propagation) 深度探討</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2025-09-09T03:38:25.000Z" title="發表於 2025-09-09 11:38:25">2025-09-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2025-10-25T15:35:23.062Z" title="更新於 2025-10-25 23:35:23">2025-10-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Spring/">Spring</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/Spring/Spring-%E4%BA%A4%E6%98%93%E7%AE%A1%E7%90%86%E5%AF%A6%E6%88%B0/">Spring 交易管理實戰</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字數總計:</span><span class="word-count">5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時長:</span><span>15分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="交易管理 04 - 傳播行為 (Propagation) 深度探討"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前言：當交易遇上交易"><a href="#前言：當交易遇上交易" class="headerlink" title="前言：當交易遇上交易"></a>前言：當交易遇上交易</h2><p>在一個設計良好的應用程式中，Service 層的職責是清晰且單一的。這意味著，一個業務邏輯複雜的 Service 方法，常常需要去呼叫另一個 Service 的方法來協同完成任務。例如，<code>OrderService</code> 的 <code>placeOrder()</code> 方法，可能需要呼叫 <code>InventoryService</code> 的 <code>updateStock()</code> 方法。</p>
+<p>現在，問題來了：如果 <code>placeOrder()</code> 和 <code>updateStock()</code> 這兩個方法都各自被標註為 <code>@Transactional</code>，那麼當它們被串連呼叫時，交易該如何運作？</p>
+<ul>
+<li><code>updateStock()</code> 是應該加入 <code>placeOrder()</code> 已經開啟的交易，還是在自己的世界裡開啟一個全新的交易？</li>
+<li>如果 <code>updateStock()</code> 執行失敗並回滾，<code>placeOrder()</code> 會發生什麼事？</li>
+</ul>
+<p>Spring 的**交易傳播行為 (Transaction Propagation)**，正是用來定義這一系列規則的。它回答了核心問題：「當一個交易方法被另一個交易方法呼叫時，交易該如何傳播？」</p>
+<h2 id="Propagation-REQUIRED-預設行為-加入現有的「會議」"><a href="#Propagation-REQUIRED-預設行為-加入現有的「會議」" class="headerlink" title="Propagation.REQUIRED (預設行為) - 加入現有的「會議」"></a><code>Propagation.REQUIRED</code> (預設行為) - 加入現有的「會議」</h2><p><code>REQUIRED</code> 是 <code>@Transactional</code> <strong>預設的</strong>傳播行為，也是最常用的一種。</p>
+<ul>
+<li><strong>行為描述</strong>：<ul>
+<li>如果當前已經存在一個交易（外部方法已經開啟了交易），則加入該交易。</li>
+<li>如果當前沒有交易，則建立一個新的交易。</li>
+</ul>
+</li>
+<li><strong>比喻</strong>：想像一場大型的專案會議（外部交易）正在進行中。一位團隊成員（被呼叫的內部方法）被叫進來。使用 <code>REQUIRED</code>，這位成員會自然地<strong>加入這場正在進行的會議</strong>，遵循相同的議程，並與會議的最終結果（提交或回滾）綁定在一起。如果整場會議最終決定取消（回滾），那麼這位成員在會議中所做的所有決策也一併作廢。</li>
+</ul>
+<p><strong>程式碼範例</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderService</span> &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="meta">@Transactional</span> <span class="comment">// 預設 propagation = Propagation.REQUIRED</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">placeOrder</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// ... 建立訂單紀錄 ...</span></span><br><span class="line">        inventoryService.updateStock(); <span class="comment">// 此方法會「加入」placeOrder 的交易</span></span><br><span class="line">        <span class="comment">// ... 如果後續發生錯誤，不僅訂單會回滾，庫存的修改也會一併回滾</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">InventoryService</span> &#123;</span><br><span class="line">    <span class="meta">@Transactional</span> <span class="comment">// 預設 propagation = Propagation.REQUIRED</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updateStock</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// ... 更新庫存紀錄 ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>REQUIRED</code> 確保了一個完整的業務流程，即使它跨越了多個 Service 方法，也能被包裹在<strong>同一個原子交易</strong>中。</p>
+<h2 id="Propagation-REQUIRES-NEW-暫停舊會議，開啟全新的「獨立會議」"><a href="#Propagation-REQUIRES-NEW-暫停舊會議，開啟全新的「獨立會議」" class="headerlink" title="Propagation.REQUIRES_NEW - 暫停舊會議，開啟全新的「獨立會議」"></a><code>Propagation.REQUIRES_NEW</code> - 暫停舊會議，開啟全新的「獨立會議」</h2><p><code>REQUIRES_NEW</code> 提供了完全不同的行為，它追求的是「隔離」與「獨立」。</p>
+<ul>
+<li><strong>行為描述</strong>：<ul>
+<li>無論當前是否存在交易，都會<strong>建立一個全新的、獨立的交易</strong>。</li>
+<li>如果當前存在交易，則會將外部交易**掛起 (suspend)**，直到這個新的內部交易完成為止。</li>
+</ul>
+</li>
+<li><strong>比喻</strong>：專案會議正在進行中。經理突然需要處理一件緊急且無關的獨立事務（例如：簽核一份人事命令）。他會對大家說：「會議暫停一下」。然後，他會<strong>開啟一個全新的、獨立的決策過程</strong>（內部交易）。這個獨立決策的結果（簽核成功或失敗），與專案會議本身無關。完成後，他再回到會議室，<strong>繼續</strong>原來的專案會議。</li>
+</ul>
+<p><strong>適用場景</strong>：<br>最經典的場景是<strong>日誌記錄</strong>或<strong>審計追蹤</strong>。我們希望記錄某個操作的「嘗試行為」，並且<strong>即使主操作最終失敗回滾，這次嘗試的紀錄也必須被成功保存下來</strong>。</p>
+<p><strong>程式碼範例</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AuditService</span> &#123;</span><br><span class="line">    <span class="meta">@Transactional(propagation = Propagation.REQUIRES_NEW)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">logAction</span><span class="params">(String action)</span> &#123;</span><br><span class="line">        <span class="comment">// ... 將操作紀錄儲存到 audit_log 表格 ...</span></span><br><span class="line">        <span class="comment">// 這個儲存動作會在一個獨立的交易中，立即提交。</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderService</span> &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="meta">@Transactional</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">placeOrder</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 呼叫 logAction。它會開啟新交易，並在方法結束時提交，不受外部交易影響。</span></span><br><span class="line">        auditService.logAction(<span class="string">&quot;ATTEMPT_PLACE_ORDER&quot;</span>); </span><br><span class="line">        </span><br><span class="line">        <span class="comment">// ... 建立訂單紀錄 ...</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="comment">// 假設後續發生錯誤，主交易回滾</span></span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;庫存不足！&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>當 <code>placeOrder()</code> 被呼叫時，即使它最終因為「庫存不足」而失敗回滾，<code>audit_log</code> 表格中依然會成功地留下一條 <code>&quot;ATTEMPT_PLACE_ORDER&quot;</code> 的紀錄。</p>
+<h2 id="Propagation-NESTED-在大會議中的「可獨立表決的子議題」"><a href="#Propagation-NESTED-在大會議中的「可獨立表決的子議題」" class="headerlink" title="Propagation.NESTED - 在大會議中的「可獨立表決的子議題」"></a><code>Propagation.NESTED</code> - 在大會議中的「可獨立表決的子議題」</h2><ul>
+<li><p><strong>比喻</strong>：想像一場重要的專案主會議正在進行中（存在外部交易）。討論到某個複雜的技術細節時，會議主席說：「關於這個點，我們需要深入討論。我們在白板上<strong>畫一條線做個記號（建立儲存點 Savepoint）</strong>，現在由技術小組針對這個子議題，在旁邊開一個<strong>分組討論（巢狀交易）</strong>。」</p>
+<ol>
+<li><strong>如果分組討論失敗</strong>：技術小組討論後發現方案不可行，於是他們<strong>決定否決自己的這個子議題（巢狀交易回滾）</strong>。他們會回到主會議說：「這個方案不行，我們撤回。」。主會議的進程<strong>退回到白板上畫線的地方（回滾至儲存點）</strong>，然後可以選擇討論別的方案或繼續，<strong>但主會議本身並未失敗</strong>。</li>
+<li><strong>如果主會議失敗</strong>：分組討論非常成功，並將結論匯報給了主會議。然而，在後續的討論中，整個專案因為預算問題被<strong>董事會整個取消了（外部交易回滾）</strong>。那麼，即使技術小組的那個子議題討論得再成功，它的結論也會<strong>隨著整個會議的取消而作廢（一同被回滾）</strong>。</li>
+</ol>
+</li>
+<li><p><strong>行為描述</strong>：</p>
+<ul>
+<li>如果當前存在交易，它不會建立一個全新的獨立交易，而是在當前交易中設定一個**儲存點 (Savepoint)**。它就像在交易日誌中插了一面旗幟。</li>
+<li>巢狀交易就在這個儲存點之後執行。如果巢狀交易失敗回滾，它只會回滾到這面旗幟的位置，而不會影響到旗幟之前的外部交易。</li>
+<li>但是，如果外部交易回滾，那麼整個交易（包含所有儲存點之後的操作）都會被回滾。巢狀交易的成功提交，最終取決於外部交易的成功提交。</li>
+<li>如果當前沒有交易，其行為就和 <code>REQUIRED</code> 完全一樣：建立一個新的交易。</li>
+<li><strong>重要前提</strong>：底層的資料庫和 JDBC 驅動程式必須支援儲存點 (Savepoint) 功能（絕大多數現代資料庫都支援）。</li>
+</ul>
+</li>
+<li><p><strong>適用場景</strong>：<br><code>NESTED</code> 最適合的場景是：<strong>一個大的業務流程中，包含了一些可以失敗但又不希望影響主流程的非核心子任務</strong>。</p>
+<p>你希望嘗試執行一個子任務，如果它失敗了，你可以捕捉到這個失敗，做一些補救措施（例如記錄日誌），然後讓主流程繼續下去。這給了主流程「反悔」的機會。</p>
+<p><strong>與 <code>REQUIRES_NEW</code> 的關鍵區別</strong>：</p>
+<ul>
+<li>如果你用 <code>REQUIRES_NEW</code>，子任務的交易是<strong>完全獨立</strong>的。一旦它成功提交，即使後來主流程失敗回滾，子任務的結果也<strong>依然存在</strong>。</li>
+<li>如果你用 <code>NESTED</code>，子任務的提交是<strong>暫時的</strong>。它的最終命運和主流程綁定在一起。主流程回滾，它也必須跟著回滾。</li>
+</ul>
+</li>
+<li><p><strong>程式碼範例</strong>：<br>假設我們在使用者註冊時，主流程是建立使用者帳號，子任務是為使用者發放一張體驗優惠券。我們希望即使發券失敗，使用者的註冊也必須成功。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CouponService</span> &#123;</span><br><span class="line">    <span class="comment">// 發放優惠券是一個子任務</span></span><br><span class="line">    <span class="meta">@Transactional(propagation = Propagation.NESTED)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">issueNewUserCoupon</span><span class="params">(Long userId)</span> &#123;</span><br><span class="line">        <span class="comment">// ... 建立優惠券紀錄 ...</span></span><br><span class="line">        System.out.println(<span class="string">&quot;成功為使用者 &quot;</span> + userId + <span class="string">&quot; 建立優惠券記錄。&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 假設這裡因為網路問題，導致更新統計數據時失敗</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;更新優惠券統計服務失敗！&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> CouponService couponService;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 註冊是主流程</span></span><br><span class="line">    <span class="meta">@Transactional</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">registerUser</span><span class="params">(String username)</span> &#123;</span><br><span class="line">        <span class="comment">// 1. 建立使用者帳號，這是主流程的一部分</span></span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> userRepository.save(<span class="keyword">new</span> <span class="title class_">User</span>(username));</span><br><span class="line">        System.out.println(<span class="string">&quot;使用者 &quot;</span> + username + <span class="string">&quot; 成功儲存，ID: &quot;</span> + user.getId());</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 2. 嘗試呼叫巢狀交易方法發放優惠券</span></span><br><span class="line">            <span class="comment">// issueNewUserCoupon 會建立一個 Savepoint</span></span><br><span class="line">            couponService.issueNewUserCoupon(user.getId());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="comment">// 3. 巢狀交易失敗了！異常被拋出</span></span><br><span class="line">            <span class="comment">// 因為是巢狀交易，只會回滾到 Savepoint</span></span><br><span class="line">            <span class="comment">// 主交易（使用者註冊）不受影響，我們可以捕捉異常並繼續</span></span><br><span class="line">            System.out.println(<span class="string">&quot;警告：發放優惠券失敗，但不影響主註冊流程。錯誤: &quot;</span> + e.getMessage());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 4. 主流程繼續執行，並在方法結束時成功提交</span></span><br><span class="line">        <span class="comment">// 最終，使用者記錄會被儲存到資料庫，但優惠券記錄不會</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>執行結果分析</strong>：<br>當呼叫 <code>registerUser(&quot;testuser&quot;)</code> 時：</p>
+<ol>
+<li><code>UserService</code> 開啟一個主交易。</li>
+<li>使用者 “testuser” 的紀錄被成功插入。</li>
+<li>呼叫 <code>couponService.issueNewUserCoupon()</code>，Spring 在主交易中建立一個 Savepoint。</li>
+<li>優惠券紀錄被插入。</li>
+<li><code>couponService</code> 內部拋出 <code>RuntimeException</code>。</li>
+<li><code>NESTED</code> 傳播行為捕獲到此例外，並將交易<strong>回滾到 Savepoint</strong>，這意味著剛剛插入的優惠券紀錄被撤銷。</li>
+<li>例外被繼續拋出，直到被 <code>UserService</code> 中的 <code>try-catch</code> 塊捕獲。</li>
+<li><code>UserService</code> 印出警告日誌，並繼續執行直到方法結束。</li>
+<li><code>registerUser</code> 方法正常結束，<strong>主交易被成功提交</strong>。</li>
+</ol>
+<p>最終資料庫狀態：<code>users</code> 表格中有一條 “testuser” 的紀錄，但 <code>coupons</code> 表格中沒有對應的紀錄。主流程成功，可失敗的子流程被乾淨地隔離了。</p>
+<h2 id="Propagation-SUPPORTS-隨和的「列席顧問」"><a href="#Propagation-SUPPORTS-隨和的「列席顧問」" class="headerlink" title="Propagation.SUPPORTS - 隨和的「列席顧問」"></a><code>Propagation.SUPPORTS</code> - 隨和的「列席顧問」</h2><ul>
+<li><p><strong>比喻</strong>：專案會議正在進行中（存在外部交易）。這時，有人需要一位顧問提供一些數據。這位顧問被叫進會議室，他會<strong>自然地坐下，參與討論（加入交易）</strong>，並在會議記錄上簽名。但如果當時根本沒有會議（不存在外部交易），你只是在走廊上遇到他問了個問題，他也會<strong>直接告訴你答案（以非交易方式執行）</strong>，不需要任何正式程序。這位顧問很隨和，有會議就參加，沒會議也能辦事。</p>
+</li>
+<li><p><strong>行為描述</strong>：</p>
+<ul>
+<li>如果當前存在交易，則加入該交易。</li>
+<li>如果當前沒有交易，則以非交易的方式執行。</li>
+</ul>
+</li>
+<li><p><strong>適用場景</strong>：<br>最典型的場景是<strong>非核心的查詢操作</strong>。這些方法大多時候只是讀取數據，本身不需要開啟交易。但如果它們被一個正在進行寫入操作的交易方法呼叫，我們又希望它能加入該交易，以讀取到同一個交易內「尚未提交」的最新數據，確保資料一致性。</p>
+</li>
+<li><p><strong>程式碼範例</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProductService</span> &#123;</span><br><span class="line">    <span class="comment">// 大部分的查詢方法，並不需要自己獨立開啟交易</span></span><br><span class="line">    <span class="comment">// 但如果被其他交易方法呼叫，加入它們是個好主意</span></span><br><span class="line">    <span class="meta">@Transactional(propagation = Propagation.SUPPORTS)</span></span><br><span class="line">    <span class="keyword">public</span> Product <span class="title function_">getProductDetails</span><span class="params">(Long productId)</span> &#123;</span><br><span class="line">        <span class="comment">// ... 根據 ID 查詢商品詳細資訊 ...</span></span><br><span class="line">        <span class="comment">// 這個查詢可能加入外部交易，也可能獨立執行</span></span><br><span class="line">        <span class="keyword">return</span> productRepository.findById(productId).orElse(<span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderService</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> ProductService productService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Transactional</span> <span class="comment">// REQUIRED (預設)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">placeOrder</span><span class="params">(Long productId)</span> &#123;</span><br><span class="line">        <span class="comment">// ... 建立訂單 ...</span></span><br><span class="line">        <span class="comment">// 在這裡呼叫 getProductDetails，它會加入 placeOrder 的交易</span></span><br><span class="line">        <span class="comment">// 可以讀到這個交易中可能對商品所做的、尚未提交的修改</span></span><br><span class="line">        <span class="type">Product</span> <span class="variable">product</span> <span class="operator">=</span> productService.getProductDetails(productId);</span><br><span class="line">        <span class="comment">// ... 根據商品資訊完成訂單 ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h2 id="Propagation-NOT-SUPPORTED-堅持在會議室外辦事的「獨立專家」"><a href="#Propagation-NOT-SUPPORTED-堅持在會議室外辦事的「獨立專家」" class="headerlink" title="Propagation.NOT_SUPPORTED - 堅持在會議室外辦事的「獨立專家」"></a><code>Propagation.NOT_SUPPORTED</code> - 堅持在會議室外辦事的「獨立專家」</h2><ul>
+<li><p><strong>比喻</strong>：專案會議正在激烈進行中（存在外部交易）。突然，經理需要這位獨立專家提供一份外部市場的分析報告。經理會對大家說：「<strong>會議暫停</strong>」，然後走出會議室，找到這位專家。專家<strong>獨立完成他的工作（以非交易方式執行）</strong>，把報告交給經理。經理再拿著報告回到會議室，<strong>繼續原來的會議</strong>。這位專家從頭到尾都沒有踏入會議室一步。</p>
+</li>
+<li><p><strong>行為描述</strong>：</p>
+<ul>
+<li>總是以非交易的方式執行。</li>
+<li>如果當前存在交易，則將外部交易掛起 (suspend)，直到該方法執行完畢。</li>
+</ul>
+</li>
+<li><p><strong>適用場景</strong>：<br>這種場景比較少見。主要用於一個交易方法內部，需要呼叫一個<strong>絕對不能在交易中執行</strong>的方法。例如，這個方法可能需要與一個不支持交易的外部系統（如某些 NoSQL 或 API）進行互動，或者它需要執行一些與資料庫無關但非常耗時的操作，不希望長時間佔用資料庫連線。</p>
+</li>
+<li><p><strong>程式碼範例</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ExternalReportService</span> &#123;</span><br><span class="line">    <span class="comment">// 這個方法可能需要呼叫一個遠端的、非交易型的 HTTP API</span></span><br><span class="line">    <span class="comment">// 它不應該被包含在任何本地資料庫交易中</span></span><br><span class="line">    <span class="meta">@Transactional(propagation = Propagation.NOT_SUPPORTED)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">generateReport</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// ... 呼叫遠端 API，生成報告，非常耗時 ...</span></span><br><span class="line">        <span class="comment">// 這個過程會獨立執行，外部的資料庫交易會在此期間被掛起</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderService</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> ExternalReportService externalReportService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Transactional</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">placeOrder</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// ... 建立訂單 ...</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 生成報告的操作，會將 placeOrder 的交易暫停</span></span><br><span class="line">        <span class="comment">// 即使 generateReport() 內部出錯，也不會導致 placeOrder 的交易回滾</span></span><br><span class="line">        externalReportService.generateReport();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// ... 繼續訂單處理 ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h2 id="Propagation-MANDATORY-只在會議中發言的「法務總監」"><a href="#Propagation-MANDATORY-只在會議中發言的「法務總監」" class="headerlink" title="Propagation.MANDATORY - 只在會議中發言的「法務總監」"></a><code>Propagation.MANDATORY</code> - 只在會議中發言的「法務總監」</h2><ul>
+<li><p><strong>比喻</strong>：這位法務總監的職責非常關鍵，他**只在正式的、有記錄的會議上（必須存在交易）**提供決策。如果你在辦公室走廊上攔住他，想讓他對某個合約做決定，他會嚴肅地拒絕你，並告訴你：「<strong>對不起，這件事必須在正式的專案會議上提出和解決（拋出例外）</strong>」。他強制要求一個正式的上下文環境。</p>
+</li>
+<li><p><strong>行為描述</strong>：</p>
+<ul>
+<li><strong>強制要求</strong>當前必須存在一個交易，如果不存在，就拋出 <code>IllegalTransactionStateException</code> 例外。</li>
+<li>它<strong>不會自己建立交易</strong>，只會加入一個已經存在的交易。</li>
+</ul>
+</li>
+<li><p><strong>適用場景</strong>：<br>它不常用於核心業務邏輯，而是用於<strong>工具類或核心服務層的保護</strong>。當你設計一個方法，這個方法的功能非常敏感（例如：記錄核心財務流水帳），你希望<strong>強制</strong>所有呼叫它的地方，都必須在一個完整的業務交易中進行，以防止開發者不小心以非交易的方式呼叫了它，從而導致資料不一致。它是一種<strong>設計上</strong>的「防呆」或「斷言」(Assertion) 機制。</p>
+</li>
+<li><p><strong>程式碼範例</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FinancialJournalService</span> &#123;</span><br><span class="line">    <span class="comment">// 記錄一筆財務流水，這個動作必須是某個原子業務的一部分</span></span><br><span class="line">    <span class="comment">// 不允許被單獨、無交易地呼叫</span></span><br><span class="line">    <span class="meta">@Transactional(propagation = Propagation.MANDATORY)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">recordJournalEntry</span><span class="params">(JournalEntry entry)</span> &#123;</span><br><span class="line">        <span class="comment">// ... 儲存流水記錄到資料庫 ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TransferService</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> FinancialJournalService journalService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Transactional</span> <span class="comment">// OK: 這裡有交易，journalService 可以正常執行</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">transferFunds</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// ... 扣款、加款 ...</span></span><br><span class="line">        journalService.recordJournalEntry(...); <span class="comment">// 正常</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">invalidCall</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// ERROR: 這裡沒有交易，直接呼叫會拋出例外</span></span><br><span class="line">        <span class="comment">// 這能防止開發者犯下致命錯誤</span></span><br><span class="line">        journalService.recordJournalEntry(...); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h2 id="Propagation-NEVER-絕不參加任何會議的「系統維護工具」"><a href="#Propagation-NEVER-絕不參加任何會議的「系統維護工具」" class="headerlink" title="Propagation.NEVER - 絕不參加任何會議的「系統維護工具」"></a><code>Propagation.NEVER</code> - 絕不參加任何會議的「系統維護工具」</h2><ul>
+<li><p><strong>比喻</strong>：這是一個只能在「<strong>非會議時間</strong>」執行的系統維護工具（例如：清理伺服器快取）。它的工作性質決定了它不能在任何專案會議（交易）進行中運行，因為這可能會干擾到會議的決策。如果你試圖在會議進行中去執行這個工具，它會立刻報錯並停止：「<strong>偵測到有會議正在進行，請在會議結束後再執行此操作（拋出例外）</strong>」。</p>
+</li>
+<li><p><strong>行為描述</strong>：</p>
+<ul>
+<li><strong>強制要求</strong>當前<strong>不能</strong>存在任何交易，如果存在，就拋出 <code>IllegalTransactionStateException</code> 例外。</li>
+<li>總是以非交易的方式執行。</li>
+</ul>
+</li>
+<li><p><strong>適用場景</strong>：<br>同樣是一種檢查機制，非常罕用。用於確保某些方法絕對不會被意外地捲入任何交易中。例如，一個用來獲取資料庫連線狀態、或執行某些與業務邏輯無關的監控探測 (health check) 的方法，你希望它看到的永遠是資料庫已提交的、最乾淨的狀態，而不是某個未提交交易中的中間狀態。</p>
+</li>
+<li><p><strong>程式碼範例</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SystemMonitorService</span> &#123;</span><br><span class="line">    <span class="comment">// 這個方法用於檢查資料庫連線池的健康狀況</span></span><br><span class="line">    <span class="comment">// 它不應該在任何業務交易中被呼叫，以避免看到不一致的狀態</span></span><br><span class="line">    <span class="meta">@Transactional(propagation = Propagation.NEVER)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getActiveConnections</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// ... 查詢 DataSource 的狀態 ...</span></span><br><span class="line">        <span class="keyword">return</span> dataSource.getActiveConnections();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderService</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> SystemMonitorService monitorService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Transactional</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">placeOrder</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// ... 建立訂單 ...</span></span><br><span class="line">        <span class="comment">// ERROR: 在交易中呼叫 getActiveConnections() 會立刻拋出例外</span></span><br><span class="line">        <span class="comment">// 這保護了監控方法的獨立性</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">connections</span> <span class="operator">=</span> monitorService.getActiveConnections(); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h2 id="Spring-交易傳播行為-Propagation-總結"><a href="#Spring-交易傳播行為-Propagation-總結" class="headerlink" title="Spring 交易傳播行為 (Propagation) 總結"></a>Spring 交易傳播行為 (Propagation) 總結</h2><table>
+<thead>
+<tr>
+<th align="left">傳播行為</th>
+<th align="left">當外部有交易時的行為</th>
+<th align="left">當外部無交易時的行為</th>
+<th align="left">主要用途 &amp; 會議比喻</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong><code>REQUIRED</code></strong> <br> <em>(預設)</em></td>
+<td align="left">✅ <strong>加入</strong>當前交易</td>
+<td align="left">🚀 <strong>建立</strong>新交易</td>
+<td align="left"><strong>最常用的原子性保證</strong>。<br>比喻：被叫進來就自然地<strong>加入「會議」</strong>。</td>
+</tr>
+<tr>
+<td align="left"><strong><code>REQUIRES_NEW</code></strong></td>
+<td align="left">⏸️ <strong>掛起</strong>當前交易，<br>🚀 <strong>建立</strong>全新的獨立交易</td>
+<td align="left">🚀 <strong>建立</strong>新交易</td>
+<td align="left"><strong>需要完全獨立的工作單元</strong> (如日誌)。<br>比喻：暫停舊會議，開啟一個<strong>全新的「獨立會議」</strong>。</td>
+</tr>
+<tr>
+<td align="left"><strong><code>NESTED</code></strong></td>
+<td align="left">🚩 <strong>建立儲存點 (Savepoint)</strong>，<br>形成巢狀交易</td>
+<td align="left">🚀 <strong>建立</strong>新交易<br>(行為同 <code>REQUIRED</code>)</td>
+<td align="left"><strong>可獨立回滾但不影響主流程的子任務</strong>。<br>比喻：大會議中的**「可獨立表決的子議題」**。</td>
+</tr>
+<tr>
+<td align="left"><code>SUPPORTS</code></td>
+<td align="left">✅ 加入當前交易</td>
+<td align="left">🏃‍♂️ 以<strong>非交易</strong>方式執行</td>
+<td align="left">非核心的讀取操作，能適應兩種環境。<br>比喻：隨和的<strong>「列席顧問」</strong>，有會就參加，沒會也能辦事。</td>
+</tr>
+<tr>
+<td align="left"><code>NOT_SUPPORTED</code></td>
+<td align="left">⏸️ 掛起當前交易，<br>🏃‍♂️ 以<strong>非交易</strong>方式執行</td>
+<td align="left">🏃‍♂️ 以<strong>非交易</strong>方式執行</td>
+<td align="left">呼叫不支援交易的外部資源。<br>比喻：堅持在會議室外辦事的<strong>「獨立專家」</strong>。</td>
+</tr>
+<tr>
+<td align="left"><code>MANDATORY</code></td>
+<td align="left">✅ 加入當前交易</td>
+<td align="left">💥 拋出例外</td>
+<td align="left">強制性檢查，確保方法總在交易中被呼叫。<br>比喻：只在會議中發言的<strong>「法務總監」</strong>。</td>
+</tr>
+<tr>
+<td align="left"><code>NEVER</code></td>
+<td align="left">💥 拋出例外</td>
+<td align="left">🏃‍♂️ 以<strong>非交易</strong>方式執行</td>
+<td align="left">強制性檢查，確保方法總不在交易中被呼叫。<br>比喻：絕不參加任何會議的**「系統維護工具」**。</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h2><p>在本篇文章中，我們深入了 Spring 交易管理的核心——傳播行為。</p>
+<p>我們可以將這七種行為，從用途上分為三類：</p>
+<ol>
+<li><p><strong>核心交易管理類 (<code>REQUIRED</code>, <code>REQUIRES_NEW</code>, <code>NESTED</code>)</strong>:</p>
+<ul>
+<li><strong><code>REQUIRED</code></strong> (預設)：最常用，將多個方法綁定在<strong>同一個</strong>原子交易中。</li>
+<li><strong><code>REQUIRES_NEW</code><strong>：用於建立</strong>完全獨立</strong>的隔離交易，適用於日誌記錄等希望與主交易結果脫鉤的場景。</li>
+<li>**<code>NESTED</code>**：建立可獨立回滾的「子交易」，但其最終結果仍受父交易控制。</li>
+</ul>
+</li>
+<li><p><strong>彈性適應類 (<code>SUPPORTS</code>, <code>NOT_SUPPORTED</code>)</strong>:</p>
+<ul>
+<li>這兩者通常不用來開啟或主導一個交易，而是用來定義一個方法該如何「適應」其呼叫者的交易環境。它們提供了與既有交易上下文「共存」或「脫鉤」的彈性。</li>
+</ul>
+</li>
+<li><p><strong>斷言檢查類 (<code>MANDATORY</code>, <code>NEVER</code>)</strong>:</p>
+<ul>
+<li>這兩者更像是開發階段的「防呆」或「保護」機制。它們不處理業務，而是用來<strong>斷言 (Assert)</strong> 程式的執行環境是否符合設計者的預期，透過拋出例外來防止不正確的呼叫方式，從而保證系統的健壯性。</li>
+</ul>
+</li>
+</ol>
+<p>深刻理解並靈活運用不同的傳播行為，是設計出穩健、可靠的複雜業務流程的關鍵所在。</p>
+<p>我們已經掌握了交易如何在方法之間「傳播」。但當多個交易「同時」發生時，它們之間又該如何「隔離」以避免資料錯亂？在下一篇文章中，我們將深入探討**隔離級別 (Isolation)**，學習如何應對高併發帶來的挑戰。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://lmy46.github.io">Mendel Lee</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章連結: </span><span class="post-copyright-info"><a href="https://lmy46.github.io/2025/09/09/java-spring-transaction-04/">https://lmy46.github.io/2025/09/09/java-spring-transaction-04/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 許可協議。轉載請註明來自 <a href="https://lmy46.github.io" target="_blank">⅙阿諺、⅓Mendel、½麵條爸の部落格</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/Spring-Boot/">Spring Boot</a><a class="post-meta__tags" href="/tags/Transaction/">Transaction</a></div><div class="post_share"><div class="social-share" data-image="/img/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/09/09/java-spring-transaction-05/" title="交易管理 05 - 隔離級別 (Isolation) 與併發問題"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">交易管理 05 - 隔離級別 (Isolation) 與併發問題</div></div></a></div><div class="next-post pull-right"><a href="/2025/09/09/java-spring-transaction-03/" title="交易管理 03 - 常見失效場景分析"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">交易管理 03 - 常見失效場景分析</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><div><a href="/2025/09/09/java-spring-transaction-02/" title="交易管理 02 - 核心原理：ACID 與 AOP 代理"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-09</div><div class="title">交易管理 02 - 核心原理：ACID 與 AOP 代理</div></div></a></div><div><a href="/2025/09/09/java-spring-transaction-03/" title="交易管理 03 - 常見失效場景分析"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-09</div><div class="title">交易管理 03 - 常見失效場景分析</div></div></a></div><div><a href="/2025/09/09/java-spring-transaction-05/" title="交易管理 05 - 隔離級別 (Isolation) 與併發問題"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-09</div><div class="title">交易管理 05 - 隔離級別 (Isolation) 與併發問題</div></div></a></div><div><a href="/2025/09/09/java-spring-transaction-06/" title="交易管理 06 - 進階主題與最佳實踐"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-09</div><div class="title">交易管理 06 - 進階主題與最佳實踐</div></div></a></div><div><a href="/2025/09/09/java-spring-transaction-01/" title="交易管理 01 - 深度學習路徑規劃"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-09</div><div class="title">交易管理 01 - 深度學習路徑規劃</div></div></a></div><div><a href="/2025/08/11/java-spring-boot-03/" title="Spring Boot 03 - 第一個 RESTful API"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="title">Spring Boot 03 - 第一個 RESTful API</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Mendel Lee</div><div class="author-info__description">用來記錄在阿諺小小的腦袋中，很容易因塞不下而忘記的東西</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">77</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">23</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">15</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80%EF%BC%9A%E7%95%B6%E4%BA%A4%E6%98%93%E9%81%87%E4%B8%8A%E4%BA%A4%E6%98%93"><span class="toc-number">1.</span> <span class="toc-text">前言：當交易遇上交易</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Propagation-REQUIRED-%E9%A0%90%E8%A8%AD%E8%A1%8C%E7%82%BA-%E5%8A%A0%E5%85%A5%E7%8F%BE%E6%9C%89%E7%9A%84%E3%80%8C%E6%9C%83%E8%AD%B0%E3%80%8D"><span class="toc-number">2.</span> <span class="toc-text">Propagation.REQUIRED (預設行為) - 加入現有的「會議」</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Propagation-REQUIRES-NEW-%E6%9A%AB%E5%81%9C%E8%88%8A%E6%9C%83%E8%AD%B0%EF%BC%8C%E9%96%8B%E5%95%9F%E5%85%A8%E6%96%B0%E7%9A%84%E3%80%8C%E7%8D%A8%E7%AB%8B%E6%9C%83%E8%AD%B0%E3%80%8D"><span class="toc-number">3.</span> <span class="toc-text">Propagation.REQUIRES_NEW - 暫停舊會議，開啟全新的「獨立會議」</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Propagation-NESTED-%E5%9C%A8%E5%A4%A7%E6%9C%83%E8%AD%B0%E4%B8%AD%E7%9A%84%E3%80%8C%E5%8F%AF%E7%8D%A8%E7%AB%8B%E8%A1%A8%E6%B1%BA%E7%9A%84%E5%AD%90%E8%AD%B0%E9%A1%8C%E3%80%8D"><span class="toc-number">4.</span> <span class="toc-text">Propagation.NESTED - 在大會議中的「可獨立表決的子議題」</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Propagation-SUPPORTS-%E9%9A%A8%E5%92%8C%E7%9A%84%E3%80%8C%E5%88%97%E5%B8%AD%E9%A1%A7%E5%95%8F%E3%80%8D"><span class="toc-number">5.</span> <span class="toc-text">Propagation.SUPPORTS - 隨和的「列席顧問」</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Propagation-NOT-SUPPORTED-%E5%A0%85%E6%8C%81%E5%9C%A8%E6%9C%83%E8%AD%B0%E5%AE%A4%E5%A4%96%E8%BE%A6%E4%BA%8B%E7%9A%84%E3%80%8C%E7%8D%A8%E7%AB%8B%E5%B0%88%E5%AE%B6%E3%80%8D"><span class="toc-number">6.</span> <span class="toc-text">Propagation.NOT_SUPPORTED - 堅持在會議室外辦事的「獨立專家」</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Propagation-MANDATORY-%E5%8F%AA%E5%9C%A8%E6%9C%83%E8%AD%B0%E4%B8%AD%E7%99%BC%E8%A8%80%E7%9A%84%E3%80%8C%E6%B3%95%E5%8B%99%E7%B8%BD%E7%9B%A3%E3%80%8D"><span class="toc-number">7.</span> <span class="toc-text">Propagation.MANDATORY - 只在會議中發言的「法務總監」</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Propagation-NEVER-%E7%B5%95%E4%B8%8D%E5%8F%83%E5%8A%A0%E4%BB%BB%E4%BD%95%E6%9C%83%E8%AD%B0%E7%9A%84%E3%80%8C%E7%B3%BB%E7%B5%B1%E7%B6%AD%E8%AD%B7%E5%B7%A5%E5%85%B7%E3%80%8D"><span class="toc-number">8.</span> <span class="toc-text">Propagation.NEVER - 絕不參加任何會議的「系統維護工具」</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-%E4%BA%A4%E6%98%93%E5%82%B3%E6%92%AD%E8%A1%8C%E7%82%BA-Propagation-%E7%B8%BD%E7%B5%90"><span class="toc-number">9.</span> <span class="toc-text">Spring 交易傳播行為 (Propagation) 總結</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B8%BD%E7%B5%90"><span class="toc-number">10.</span> <span class="toc-text">總結</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/09/java-spring-transaction-06/" title="交易管理 06 - 進階主題與最佳實踐">交易管理 06 - 進階主題與最佳實踐</a><time datetime="2025-09-09T04:21:13.000Z" title="發表於 2025-09-09 12:21:13">2025-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/09/java-spring-transaction-05/" title="交易管理 05 - 隔離級別 (Isolation) 與併發問題">交易管理 05 - 隔離級別 (Isolation) 與併發問題</a><time datetime="2025-09-09T04:20:06.000Z" title="發表於 2025-09-09 12:20:06">2025-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/09/java-spring-transaction-04/" title="交易管理 04 - 傳播行為 (Propagation) 深度探討">交易管理 04 - 傳播行為 (Propagation) 深度探討</a><time datetime="2025-09-09T03:38:25.000Z" title="發表於 2025-09-09 11:38:25">2025-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/09/java-spring-transaction-03/" title="交易管理 03 - 常見失效場景分析">交易管理 03 - 常見失效場景分析</a><time datetime="2025-09-09T03:17:14.000Z" title="發表於 2025-09-09 11:17:14">2025-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/09/java-spring-transaction-02/" title="交易管理 02 - 核心原理：ACID 與 AOP 代理">交易管理 02 - 核心原理：ACID 與 AOP 代理</a><time datetime="2025-09-09T01:41:15.000Z" title="發表於 2025-09-09 09:41:15">2025-09-09</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By Mendel Lee</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主題 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="淺色和深色模式轉換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到頂部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料庫載入中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜尋文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
